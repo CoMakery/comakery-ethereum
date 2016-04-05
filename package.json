@@ -1,7 +1,7 @@
 {
-  "name": "ethereum-bridge",
+  "name": "comakery-ethereum",
   "version": "0.0.0",
-  "description": "Ethereum whisperer",
+  "description": "CoMakery Ethereum contracts and infrastructure",
   "author": "Harlan T Wood (https://github.com/harlantwood)",
   "scripts": {
     "dev:server": "nodemon --watch src src/app.coffee",
@@ -12,21 +12,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:comakery/ethereum-bridge.git"
+    "url": "git@github.com:comakery/comakery-ethereum.git"
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/comakery/ethereum-bridge/issues"
+    "url": "https://github.com/comakery/comakery-ethereum/issues"
   },
-  "homepage": "https://github.com/comakery/ethereum-bridge#readme",
+  "homepage": "https://github.com/comakery/comakery-ethereum#readme",
   "dependencies": {
     "body-parser": "^1.14.2",
     "coffee-script": "^1.10.0",
+    "debug": "^2.2.0",
     "ether-pudding": "^2.0.6",
     "express": "^4.13.3",
     "lightsaber": "^0.5.1",
     "lodash": "^4.7.0",
-    "web3": "0.15.3"
+    "web3": "^0.15.3"
   },
   "devDependencies": {
     "ethereumjs-testrpc": "^1.2.1",
