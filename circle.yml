@@ -1,0 +1,15 @@
+machine:
+    timezone:
+        America/Los_Angeles
+
+dependencies:
+    pre:
+        - nvm install 5
+        - nvm alias default 5
+        - nvm use default
+        - npm i -g 'github:ConsenSys/truffle#master'  # wants to run as global
+
+test:
+    pre:
+        - cd ethereum && npm run testrpc:
+            background: true

@@ -1,5 +1,9 @@
+!/environments/production/contracts/*.sol.js
 /.env
 /.node-xmlhttprequest-sync-*
+/environments/*/build/*
+/environments/*/contracts/*.sol.js
 /node_modules/
 /npm-debug.log
+/scratch.md
 /tmp/
