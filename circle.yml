@@ -11,5 +11,5 @@ dependencies:
 
 test:
     pre:
-        - cd ethereum && npm run testrpc:
+        - npm run testrpc:
             background: true
