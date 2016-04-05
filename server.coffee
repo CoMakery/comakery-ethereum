@@ -9,9 +9,10 @@ bodyParser = require 'body-parser'
 app = express()
 app.use bodyParser.json()
 
-app.post '/ethereum', (req, res) ->
-  d req.body
+app.post '/transfer', (req, res) ->
+  { contractAddress, recipient, amount } = req.body
+  Token.transfer contractAddress, recipient, amount
 
 port = process.env.PORT or 3906
-log chalk.magenta "Listenting on port #{port}..."
-app.listen port
+app.listen port, ->
+  log chalk.magenta "Listenting on port #{port}..."

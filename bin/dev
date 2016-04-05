@@ -1,6 +1,8 @@
 #!/usr/bin/env coffee
 
-Contract = require '../lib/contract'
+Token = require '../lib/token'
 
-contract = new Contract
-contract.execute()
+projectContract  = '0x651f979d2c92f236a782f14a0e4d2671f02a8ac8'
+recipient = '0x253ed3c8606a4d594a62ce3c31c224894072c9f9'
+
+Token.transfer projectContract, recipient, 1000

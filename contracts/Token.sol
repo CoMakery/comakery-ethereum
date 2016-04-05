@@ -27,7 +27,7 @@ contract Token {
     name = _name;
   }
 
-  function send(address _to, uint256 _value) {
+  function transfer(address _to, uint256 _value) {
     if (balances[msg.sender] < _value) throw;           // Check if the sender has enough
     if (balances[_to] + _value < balances[_to]) throw;  // Check for overflows
     balances[msg.sender] -= _value;                     // Subtract from the sender
@@ -40,7 +40,7 @@ contract Token {
     return balances[addr];
   }
 
-  /* This unnamed function is called whenever someone tries to send ether to it */
+  /* This unnamed function is called whenever someone tries to transfer ether to it */
   function () {
     throw;     // Prevents accidental sending of ether
   }

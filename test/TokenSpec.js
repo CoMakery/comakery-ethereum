@@ -7,7 +7,7 @@ contract('Token', function(accounts) {
     done()
   })
 
-  it("should send tokens from one address to another", function(done) {
+  it("should transfer tokens from one address to another", function(done) {
     var token = Token.deployed()
 
     // Get initial balances of first and second account.
@@ -28,7 +28,7 @@ contract('Token', function(accounts) {
       return token.getBalance.call(account_two)
     }).then(function(balance) {
       account_two_starting_balance = balance.toNumber()
-      return token.send(account_two, amount, {from: account_one})
+      return token.transfer(account_two, amount, {from: account_one})
     }).then(function() {
       return token.getBalance.call(account_one)
     }).then(function(balance) {

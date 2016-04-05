@@ -1,6 +1,7 @@
 {
   "rpc": {
     "host": "localhost",
-    "port": 7777
+    "port": 7777,
+    "from": "0xdb91195e193fb54b03ccd4b247d75d02fc70c2f3"
   }
 }
