@@ -14,7 +14,9 @@ d = (args...) -> debug pjson args...
 class Token
 
   @transfer: (contractAddress, recipient, amount) ->
-    provider = new Web3.providers.HttpProvider "http://localhost:7777"
+    rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
+    d { rpcUrl }
+    provider = new Web3.providers.HttpProvider rpcUrl
     web3 = new Web3 provider
     Pudding.setWeb3 web3
     TokenContract.load Pudding
