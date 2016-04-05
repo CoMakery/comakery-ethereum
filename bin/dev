@@ -1,0 +1,6 @@
+#!/usr/bin/env coffee
+
+Contract = require '../lib/contract'
+
+contract = new Contract
+contract.execute()
