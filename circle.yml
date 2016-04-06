@@ -1,16 +1,16 @@
 machine:
-    timezone:
-        America/Los_Angeles
+  timezone:
+    America/Los_Angeles
 
 dependencies:
-    pre:
-        - nvm install 5
-        - nvm alias default 5
-        - nvm use default
+  pre:
+    - nvm install 5
+    - nvm alias default 5
+    - nvm use default
 
 test:
-    pre:
-        - npm run testrpc:
-            background: true
+  pre:
+    - npm run testrpc:
+        background: true
   override:
     - npm run fulltest
