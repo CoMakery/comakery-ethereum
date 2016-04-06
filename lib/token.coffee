@@ -21,7 +21,8 @@ class Token
     Pudding.setWeb3 web3
     TokenContract.load Pudding
     tokenContract = TokenContract.at contractAddress
-    sender = config.rpc.from or throw new Error "please set `rpc.from` property: #{envDir}/config.json"
+    sender = config.rpc.from or throw new Error(
+      "please set `rpc.from` property: #{envDir}/config.json")
 
     Promise.resolve()
     .then =>
