@@ -33,13 +33,14 @@ class Token
     .then =>
       d { sender, recipient, amount }
       tokenContract.transfer recipient, amount, from: sender
-    .then (txId) =>
-      d txId
+    .then (@transactionId) =>
+      d @transactionId
       tokenContract.getBalance.call sender
     .then (@senderBalance) =>
       tokenContract.getBalance.call recipient
     .then (@recipientBalance) =>
       d {@senderBalance, @recipientBalance}
+      return @transactionId
 
     .catch (error) =>
       console.error error

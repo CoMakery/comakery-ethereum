@@ -4,9 +4,9 @@
   "description": "CoMakery Ethereum contracts and infrastructure",
   "author": "Harlan T Wood (https://github.com/harlantwood)",
   "scripts": {
-    "dev:server": "nodemon --watch src src/app.coffee",
+    "dev:server": "DEBUG=server,token nodemon --watch lib lib/server.coffee",
     "dev": "bin/dev",
-    "start": "src/app.coffee",
+    "start": "lib/server.coffee",
     "test": "truffle test",
     "testrpc": "testrpc -p 7777"
   },
