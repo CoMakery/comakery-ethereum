@@ -21,7 +21,7 @@ npm test
 ## Deploy
 
 ```sh
-npm run truffle deploy
+npm run truffle deploy [ -- -e testnet ]
 ```
 
 This will tell you your contract address.
