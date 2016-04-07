@@ -4,7 +4,6 @@ debug = require('debug')('server')
 chalk = require 'chalk'
 { log, pjson } = require 'lightsaber'
 express = require 'express'
-path = require 'path'
 bodyParser = require 'body-parser'
 
 Token = require './token'
@@ -14,14 +13,16 @@ d = (args...) -> debug pjson args...
 app = express()
 app.use bodyParser.json()
 
-app.post '/transfer', (req, res) ->
-  { contractAddress, recipient, amount } = req.body
+app.post '/token_transfer', (request, response) ->
+  { contractAddress, recipient, amount } = request.body
   d { contractAddress, recipient, amount }
-  try
+  Promise.try =>
     Token.transfer contractAddress, recipient, amount
-    .then (transactionId) => res.send {transactionId}
-  catch error
-    response.send { error }
+  .then (transactionId) =>
+    response.json {transactionId}
+  .catch (error) =>
+    console.error error.stack
+    response.status(500).json { error: (error.message or error.stack) }
 
 port = process.env.PORT or 3906
 app.listen port, ->

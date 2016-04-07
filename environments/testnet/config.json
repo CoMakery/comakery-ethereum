@@ -1,5 +1,6 @@
 {
   "rpc": {
+    "from": "0xc1ffb10afa9b3c297fd3374c18d0b998f3712290",
     "host": "localhost",
     "port": 8888
   }

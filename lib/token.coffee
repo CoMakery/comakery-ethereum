@@ -1,11 +1,13 @@
 path = require 'path'
-{ pjson } = require 'lightsaber'
+{ json, pjson, type } = require 'lightsaber'
+{ isEmpty } = require 'lodash'
+{ floor } = Math
 debug = require('debug')('token')
 Web3 = require 'web3'
 Pudding = require "ether-pudding"
 
-NODE_ENV = process.env.NODE_ENV or 'development'
-envDir = path.resolve __dirname, "../environments/#{NODE_ENV}"
+{nodeEnv} = require './config'
+envDir = path.resolve __dirname, "../environments/#{nodeEnv}"
 TokenContract = require path.join(envDir, "contracts/Token.sol.js")
 config = require path.join(envDir, "config.json")
 
@@ -14,10 +16,19 @@ d = (args...) -> debug pjson args...
 class Token
 
   @transfer: (contractAddress, recipient, amount) ->
+    web3 = new Web3
+    errors = {}
+    unless web3.isAddress contractAddress
+      errors.contractAddress = "'#{contractAddress}' is not a valid address"
+    unless web3.isAddress recipient
+      errors.recipient       = "'#{recipient      }' is not a valid address"
+    unless type(amount) is 'number' and floor(amount) is amount and amount > 0
+      errors.amount = "'#{amount}' is not a positive integer"
+    throw Promise.OperationalError(json errors) unless isEmpty errors
+
     rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
     d { rpcUrl }
-    provider = new Web3.providers.HttpProvider rpcUrl
-    web3 = new Web3 provider
+    web3.setProvider new Web3.providers.HttpProvider rpcUrl
     Pudding.setWeb3 web3
     TokenContract.load Pudding
     tokenContract = TokenContract.at contractAddress
@@ -42,9 +53,5 @@ class Token
     .then (@recipientBalance) =>
       d {@senderBalance, @recipientBalance}
       return @transactionId
-
-    .catch (error) =>
-      console.error error
-      throw new Error error
 
 module.exports = Token
