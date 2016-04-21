@@ -4,6 +4,7 @@
   "description": "CoMakery Ethereum contracts and infrastructure",
   "author": "Harlan T Wood (https://github.com/harlantwood)",
   "scripts": {
+    "start": "nodemon --ignore . lib/server.coffee",
     "dev:server": "DEBUG=server,token nodemon --watch lib --watch environments lib/server.coffee",
     "dev": "DEBUG=dev,server,token bin/dev",
     "truffle": "truffle",
@@ -15,7 +16,6 @@
     "shipit": "npm run pre-push && git push --tags origin head",
     "pre-push": "npm-run-all check-clean fulltest",
     "check-clean": "if [[ $(git status --porcelain) ]]; then echo '*** Please stash or commit changes first ***\n' && exit 1; fi ",
-    "start": "lib/server.coffee",
     "wrap": "npm prune && npm shrinkwrap"
   },
   "repository": {
