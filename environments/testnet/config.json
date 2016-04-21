@@ -1,6 +1,8 @@
 {
   "rpc": {
     "from": "0xef7ea5b3d74791b9996f8cbcbaebe516f5e4ee36",
+    "from-htw": "0xc1ffb10afa9b3c297fd3374c18d0b998f3712290",
+    "from-civ2": "0xef7ea5b3d74791b9996f8cbcbaebe516f5e4ee36",
     "host": "localhost",
     "port": 8888
   }
