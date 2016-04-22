@@ -13,6 +13,17 @@ d = (args...) -> debug pjson args...
 app = express()
 app.use bodyParser.json()
 
+# create contract(s) related to a project
+app.post '/project', (request, response) ->
+  Promise.try =>
+    Token.create()
+  .then (contractAddress) =>
+    response.json {contractAddress}
+  .catch (error) =>
+    console.error error.stack
+    response.status(500).json { error: (error.message or error.stack) }
+
+# create a token transfer transaction
 app.post '/token_transfer', (request, response) ->
   { contractAddress, recipient, amount } = request.body
   d { contractAddress, recipient, amount }

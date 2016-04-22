@@ -1,5 +1,5 @@
 path = require 'path'
-{ json, pjson, type } = require 'lightsaber'
+{ json, pjson, run, type } = require 'lightsaber'
 { isEmpty } = require 'lodash'
 { floor } = Math
 debug = require('debug')('token')
@@ -14,6 +14,16 @@ config = require path.join(envDir, "config.json")
 d = (args...) -> debug pjson args...
 
 class Token
+
+  @create: ->
+    {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv}"
+    pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
+    contractAddress = pattern.exec(output)?[1]
+    unless contractAddress
+      throw Promise.OperationalError "No contract address found in
+        output [[ #{output} ]] -- searched with pattern [[ #{pattern} ]]"
+    d {contractAddress}
+    contractAddress
 
   @transfer: (contractAddress, recipient, amount) ->
     web3 = new Web3
