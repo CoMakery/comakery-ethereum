@@ -16,7 +16,6 @@ d = (args...) -> debug pjson args...
 class Token
 
   @create: ->
-    throw new Error "test error"
     {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv}"
     pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
     contractAddress = pattern.exec(output)?[1]
