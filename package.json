@@ -4,9 +4,9 @@
   "description": "CoMakery Ethereum contracts and infrastructure",
   "author": "Harlan T Wood (https://github.com/harlantwood)",
   "scripts": {
-    "start": "nodemon --ignore . lib/server.coffee",
-    "dev:server": "DEBUG=server,token nodemon --watch lib --watch environments lib/server.coffee",
-    "dev": "DEBUG=dev,server,token bin/dev",
+    "start": "nodemon --ignore . bin/server",
+    "dev:server": "DEBUG=config,dev,server,token nodemon --watch lib --watch environments bin/server",
+    "dev": "DEBUG=config,dev,server,token bin/dev",
     "truffle": "truffle",
     "testrpc": "testrpc -p 7777",
     "fulltest": "npm-run-all test lint check-ci-config",
@@ -28,16 +28,18 @@
   },
   "homepage": "https://github.com/comakery/comakery-ethereum#readme",
   "dependencies": {
+    "airbrake": "^1.0.1",
     "body-parser": "^1.14.2",
     "coffee-script": "^1.10.0",
     "debug": "^2.2.0",
+    "dotenv": "^2.0.0",
     "express": "^4.13.3",
     "lightsaber": "^0.5.1",
     "lodash": "^4.7.0"
   },
   "devDependencies": {
     "coffeelint": "^1.15.0",
-    "ethereumjs-testrpc": "^1.2.1",
+    "ethereumjs-testrpc": "^2.0.5",
     "js-yaml": "^3.5.5",
     "nodemon": "^1.8.1",
     "npm-run-all": "^1.7.0",

@@ -1,10 +1,9 @@
-#!/usr/bin/env coffee
-
 debug = require('debug')('server')
 chalk = require 'chalk'
 { log, pjson } = require 'lightsaber'
 express = require 'express'
 bodyParser = require 'body-parser'
+{reportError} = require './config'
 
 Token = require './token'
 
@@ -12,6 +11,7 @@ d = (args...) -> debug pjson args...
 
 app = express()
 app.use bodyParser.json()
+# app.use airbrake.expressHandler()  # seems to not work :(
 
 # create contract(s) related to a project
 app.post '/project', (request, response) ->
@@ -20,7 +20,7 @@ app.post '/project', (request, response) ->
   .then (contractAddress) =>
     response.json {contractAddress}
   .catch (error) =>
-    console.error error.stack
+    reportError error
     response.status(500).json { error: (error.message or error.stack) }
 
 # create a token transfer transaction
@@ -32,7 +32,7 @@ app.post '/token_transfer', (request, response) ->
   .then (transactionId) =>
     response.json {transactionId}
   .catch (error) =>
-    console.error error.stack
+    reportError error
     response.status(500).json { error: (error.message or error.stack) }
 
 port = process.env.PORT or 3906
