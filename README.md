@@ -12,6 +12,8 @@ Recommended: run testrpc server for dev and test (fast):
 npm run testrpc  # run in separate window
 ```
 
+Get one of the Available Accounts
+
 ## Run tests
 
 ```sh
