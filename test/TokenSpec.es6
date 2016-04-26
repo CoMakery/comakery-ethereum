@@ -18,32 +18,32 @@ contract('Token', (accounts) => {
     const sender = accounts[1]
     const receiver = accounts[0]
 
-    let receiver_starting_balance
-    let sender_starting_balance
-    let receiver_ending_balance
-    let sender_ending_balance
+    let receiverStartingBalance
+    let senderStartingBalance
+    let receiverEndingBalance
+    let senderEndingBalance
 
     const amount = 10
 
     Promise.resolve().then(() => {
       return token.getBalance.call(receiver)
     }).then((balance) => {
-      receiver_starting_balance = balance.toNumber()
+      receiverStartingBalance = balance.toNumber()
       return token.getBalance.call(sender)
     }).then((balance) => {
-      sender_starting_balance = balance.toNumber()
-      assert.equal(sender_starting_balance, 0)
+      senderStartingBalance = balance.toNumber()
+      assert.equal(senderStartingBalance, 0)
       return token.transfer(receiver, amount, {from: sender})
     }).then(() => {
       return token.getBalance.call(receiver)
     }).then((balance) => {
-      receiver_ending_balance = balance.toNumber()
+      receiverEndingBalance = balance.toNumber()
       return token.getBalance.call(sender)
     }).then((balance) => {
-      sender_ending_balance = balance.toNumber()
+      senderEndingBalance = balance.toNumber()
 
-      assert.equal(receiver_ending_balance, receiver_starting_balance, 'Receiver balance should not change')
-      assert.equal(sender_ending_balance, sender_starting_balance, 'Sender balance should not change')
+      assert.equal(receiverEndingBalance, receiverStartingBalance, 'Receiver balance should not change')
+      assert.equal(senderEndingBalance, senderStartingBalance, 'Sender balance should not change')
     }).then(done).catch(done)
   })
 
@@ -51,34 +51,34 @@ contract('Token', (accounts) => {
     const token = Token.deployed()
 
     // Get initial balances of first and second account.
-    const account_one = accounts[0]
-    const account_two = accounts[1]
+    const accountOne = accounts[0]
+    const accountTwo = accounts[1]
 
-    let account_one_starting_balance
-    let account_two_starting_balance
-    let account_one_ending_balance
-    let account_two_ending_balance
+    let accountOneStartingBalance
+    let accountTwoStartingBalance
+    let accountOneEndingBalance
+    let accountTwoEndingBalance
 
     const amount = 10
 
     Promise.resolve().then(() => {
-      return token.getBalance.call(account_one)
+      return token.getBalance.call(accountOne)
     }).then((balance) => {
-      account_one_starting_balance = balance.toNumber()
-      return token.getBalance.call(account_two)
+      accountOneStartingBalance = balance.toNumber()
+      return token.getBalance.call(accountTwo)
     }).then((balance) => {
-      account_two_starting_balance = balance.toNumber()
-      return token.transfer(account_two, amount, {from: account_one})
+      accountTwoStartingBalance = balance.toNumber()
+      return token.transfer(accountTwo, amount, {from: accountOne})
     }).then(() => {
-      return token.getBalance.call(account_one)
+      return token.getBalance.call(accountOne)
     }).then((balance) => {
-      account_one_ending_balance = balance.toNumber()
-      return token.getBalance.call(account_two)
+      accountOneEndingBalance = balance.toNumber()
+      return token.getBalance.call(accountTwo)
     }).then((balance) => {
-      account_two_ending_balance = balance.toNumber()
+      accountTwoEndingBalance = balance.toNumber()
 
-      assert.equal(account_one_ending_balance, account_one_starting_balance - amount, 'Amount was not correctly taken from the sender')
-      assert.equal(account_two_ending_balance, account_two_starting_balance + amount, 'Amount was not correctly sent to the receiver')
+      assert.equal(accountOneEndingBalance, accountOneStartingBalance - amount, 'Amount was not correctly taken from the sender')
+      assert.equal(accountTwoEndingBalance, accountTwoStartingBalance + amount, 'Amount was not correctly sent to the receiver')
     }).then(done).catch(done)
   })
 })
