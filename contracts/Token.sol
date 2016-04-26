@@ -41,6 +41,11 @@ contract Token {
     return balances[addr];
   }
 
+  /*function setOwner(string newOwner) {
+    if (msg.sender != owner) throw;
+    owner = newOwner;
+  }*/
+
   /* This unnamed function is called whenever someone tries to transfer ether to it */
   function () {
     throw;     // Prevents accidental sending of ether
