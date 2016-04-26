@@ -11,7 +11,8 @@
     "testrpc": "testrpc -p 7777",
     "fulltest": "npm-run-all test lint check-ci-config",
     "test": "truffle test",
-    "lint": "coffeelint --quiet lib test",
+    "lint": "coffeelint --quiet lib && npm run eslint",
+    "eslint": "eslint test/*",
     "check-ci-config": "js-yaml circle.yml > /dev/null",
     "shipit": "npm run pre-push && git push --tags origin head",
     "pre-push": "npm-run-all check-clean fulltest",
@@ -35,7 +36,8 @@
     "dotenv": "^2.0.0",
     "express": "^4.13.3",
     "lightsaber": "^0.5.1",
-    "lodash": "^4.7.0"
+    "lodash": "^4.7.0",
+    "truffle": "^1.0.2"
   },
   "devDependencies": {
     "coffeelint": "^1.15.0",
@@ -43,7 +45,10 @@
     "js-yaml": "^3.5.5",
     "nodemon": "^1.8.1",
     "npm-run-all": "^1.7.0",
-    "truffle": "^1.0.0"
+    "eslint": "^2.7.0",
+    "eslint-config-standard": "^5.1.0",
+    "eslint-plugin-promise": "^1.1.0",
+    "eslint-plugin-standard": "^1.3.2"
   },
   "engines": {
     "node": "~5.6.0"
