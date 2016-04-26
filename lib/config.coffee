@@ -5,6 +5,7 @@ Airbrake = require('airbrake')
 require('dotenv').config()
 
 nodeEnv = process.env.NODE_ENV or 'development'
+debug {nodeEnv}
 
 d = (args...) -> debug pjson args...
 

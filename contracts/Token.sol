@@ -27,11 +27,12 @@ contract Token {
     name = _name;
   }
 
-  function transfer(address _to, uint256 _value) {
-    if (balances[msg.sender] < _value) throw;           // Check if the sender has enough
-    if (balances[_to] + _value < balances[_to]) throw;  // Check for overflows
-    balances[msg.sender] -= _value;                     // Subtract from the sender
-    balances[_to] += _value;                            // Add the same to the recipient
+  function transfer(address _to, uint256 _value) returns(bool) {
+    if (balances[msg.sender] >= _value) {           // Check if the sender has enough*/
+      if (balances[_to] + _value < balances[_to]) throw;  // Check for overflows
+      balances[msg.sender] -= _value;                     // Subtract from the sender
+      balances[_to] += _value;                            // Add the same to the recipient
+    }
     /*return balances[_to];*/
     /*Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place*/
   }
