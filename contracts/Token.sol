@@ -1,39 +1,43 @@
 contract Token {
   string public name;
   address public owner;
-  uint256 public initialSupply;
+  uint256 public maxTokens;
 
   mapping (address => uint256) public balances;
+  /*array addresses;*/
 
   /* public event on the blockchain that will notify clients */
   /*event Transfer(address indexed from, address indexed to, uint256 value);*/
 
-  /* Initializes contract with initial supply tokens to the creator of the contract */
   function Token() {
-    owner = msg.sender;
-    balances[owner] = 10000000;  // ten million
+    owner = msg.sender; // contract owner is contract creator
+    maxTokens = 10000000;
   }
 
-  /*function setInitialSupply(uint256 _initialSupply) {
-    if (msg.sender != owner) throw;
-    if (initialSupply > 0) throw;
-    if (_initialSupply < 0) throw;
-    initialSupply = _initialSupply;
-    balances[owner] = initialSupply;
-  }*/
+  function setMaxTokens(uint256 _maxTokens) {
+    if (msg.sender == owner) {
+      maxTokens = _maxTokens;
+    }
+  }
 
   function setName(string _name) {
     if (msg.sender != owner) throw;
     name = _name;
   }
 
-  function transfer(address _to, uint256 _value) returns(bool) {
+  function issue(address _to, uint256 _value) {
+    if (msg.sender == owner && _value < maxTokens) {
+      balances[_to] = _value;
+    }
+  }
+
+  function transfer(address _to, uint256 _value) {
     if (balances[msg.sender] >= _value) {           // Check if the sender has enough*/
       if (balances[_to] + _value < balances[_to]) throw;  // Check for overflows
+
       balances[msg.sender] -= _value;                     // Subtract from the sender
       balances[_to] += _value;                            // Add the same to the recipient
     }
-    /*return balances[_to];*/
     /*Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place*/
   }
 
