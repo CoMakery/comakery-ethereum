@@ -1,5 +1,4 @@
 contract Token {
-  string public name;
   address public owner;
   uint256 public maxTokens;
 
@@ -18,11 +17,6 @@ contract Token {
     if (msg.sender == owner) {
       maxTokens = _maxTokens;
     }
-  }
-
-  function setName(string _name) {
-    if (msg.sender != owner) throw;
-    name = _name;
   }
 
   function issue(address _to, uint256 _value) {
