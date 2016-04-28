@@ -20,7 +20,7 @@ contract Token {
   }
 
   function issue(address _to, uint256 _value) {
-    if (msg.sender == owner && _value < maxTokens) {
+    if (msg.sender == owner && _value <= maxTokens) {
       balances[_to] = _value;
     }
   }

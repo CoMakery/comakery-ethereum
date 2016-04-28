@@ -198,6 +198,24 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractIt('should allow owner to issue max tokens', (done) => {
+      const token = Token.deployed()
+      const amount = 10e6
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(10e6)
+      }).then(done).catch(done)
+    })
+
     contractIt('should allow owner to set maxTokens', (done) => {
       const token = Token.deployed()
       const newMaxTokens = 117
