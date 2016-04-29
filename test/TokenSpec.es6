@@ -70,7 +70,7 @@ contract('Token', (accounts) => {
     contractIt('should default to 10 million max tokens', (done) => {
       const token = Token.deployed()
       Promise.resolve().then(() => {
-        return token.maxTokens.call()
+        return token.maxTokens()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
       }).then(done).catch(done)
@@ -220,7 +220,7 @@ contract('Token', (accounts) => {
       }).then((users) => {
         token.setMaxTokens(newMaxTokens, {from: users.alice.address})
       }).then(() => {
-        return token.maxTokens.call()
+        return token.maxTokens()
       }).then((max) => {
         expect(max.toNumber()).to.equal(117)
       }).then(done).catch(done)
@@ -235,9 +235,41 @@ contract('Token', (accounts) => {
       }).then((users) => {
         token.setMaxTokens(newMaxTokens, {from: users.bob.address})
       }).then(() => {
-        return token.maxTokens.call()
+        return token.maxTokens()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('setOwner', () => {
+    contractIt('should allow the owner to set a new owner', (done) => {
+      const token = Token.deployed()
+      let users
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((data) => {
+        users = data
+        token.setOwner(users.bob.address, {from: users.alice.address})
+        return token.owner()
+      }).then((newOwner) => {
+        expect(newOwner.toString()).to.equal(users.bob.address)
+      }).then(done).catch(done)
+    })
+
+    contractIt('should not allow other users to set a new owner', (done) => {
+      const token = Token.deployed()
+      let users
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((data) => {
+        users = data
+        token.setOwner(users.bob.address, {from: users.charlie.address})
+        return token.owner()
+      }).then((newOwner) => {
+        expect(newOwner.toString()).to.not.equal(users.bob.address)
       }).then(done).catch(done)
     })
   })

@@ -39,10 +39,11 @@ contract Token {
     return balances[addr];
   }
 
-  /*function setOwner(string newOwner) {
-    if (msg.sender != owner) throw;
-    owner = newOwner;
-  }*/
+  function setOwner(address _newOwner) {
+    if (msg.sender == owner) {
+      owner = _newOwner;
+    }
+  }
 
   /* This unnamed function is called whenever someone tries to transfer ether to it */
   function () {
