@@ -36,11 +36,6 @@ contract('Token', (accounts) => {
     })
   }
 
-  contractIt('constructor', (done) => {
-    Token.deployed()
-    done()
-  })
-
   contractIt('should have the expected test conditions', (done) => {
     const token = Token.deployed()
 
