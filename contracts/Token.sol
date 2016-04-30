@@ -8,23 +8,33 @@ contract Token {
   /* public event on the blockchain that will notify clients */
   /*event Transfer(address indexed from, address indexed to, uint256 value);*/
 
+  modifier onlyOwner {
+    if (msg.sender == owner) {
+      _
+    }
+  }
+
   function Token() {
     owner = msg.sender; // contract owner is contract creator
     maxTokens = 10000000;
   }
 
-  function setMaxTokens(uint256 _maxTokens) {
-    if (msg.sender == owner) {
+  // owner functions ----------------------------
+  function setMaxTokens(uint256 _maxTokens) onlyOwner {
       maxTokens = _maxTokens;
-    }
   }
 
-  function issue(address _to, uint256 _value) {
-    if (msg.sender == owner && _value <= maxTokens) {
+  function issue(address _to, uint256 _value) onlyOwner {
+    if (_value <= maxTokens) {
       balances[_to] = _value;
     }
   }
 
+  function setOwner(address _newOwner) onlyOwner {
+      owner = _newOwner;
+  }
+
+  // user functions -------------------------------
   function transfer(address _to, uint256 _value) {
     if (balances[msg.sender] >= _value) {           // Check if the sender has enough*/
       if (balances[_to] + _value < balances[_to]) throw;  // Check for overflows
@@ -37,12 +47,6 @@ contract Token {
 
   function getBalance(address addr) returns(uint256) {
     return balances[addr];
-  }
-
-  function setOwner(address _newOwner) {
-    if (msg.sender == owner) {
-      owner = _newOwner;
-    }
   }
 
   /* This unnamed function is called whenever someone tries to transfer ether to it */
