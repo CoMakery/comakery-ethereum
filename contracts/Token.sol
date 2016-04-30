@@ -5,7 +5,7 @@ contract Token {
   mapping (address => uint256) public balances;
 
   /* public event on the blockchain that will notify clients */
-  /*event Transfer(address indexed from, address indexed to, uint256 value);*/
+  event Transfer(address indexed from, address indexed to, uint256 value);
 
   function Token() {
     owner = msg.sender; // contract owner is contract creator
@@ -40,8 +40,9 @@ contract Token {
 
       balances[msg.sender] -= _value;                     // Subtract from the sender
       balances[_to] += _value;                            // Add the same to the recipient
+      Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place
+
     }
-    /*Transfer(msg.sender, _to, _value);                   // Notify anyone listening that this transfer took place*/
   }
 
   function getBalance(address addr) returns(uint256) {

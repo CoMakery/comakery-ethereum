@@ -48,7 +48,6 @@ contract('Token', (accounts) => {
   })
 
   describe('happy path', () => {
-    // contractIt('should transfer tokens from user to user', (done) => {
     contractIt('should issue tokens from owner to a user', (done) => {
       const token = Token.deployed()
       const amount = 10
@@ -79,12 +78,25 @@ contract('Token', (accounts) => {
     contractIt('should transfer tokens from owner to a user', (done) => {
       const token = Token.deployed()
       let starting
+      let events = token.allEvents()
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        token.issue(starting.alice.address, 20, {from: starting.alice.address})
+        token.issue(starting.alice.address, 20,
+          {from: starting.alice.address}).then(new Promise(
+            (resolve, reject) => {
+              events.watch((error, log) => {
+                resolve(log, done)
+                return error
+              })
+            }).then((log, event) => {
+              expect(log.args.from).to.equal(starting.alice.address)
+              expect(log.args.to).to.equal(starting.bob.address)
+              expect(log.args.value.toNumber()).to.equal(5)
+            })
+          )
       }).then(() => {
         token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
