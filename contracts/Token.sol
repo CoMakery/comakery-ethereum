@@ -3,16 +3,9 @@ contract Token {
   uint256 public maxTokens;
 
   mapping (address => uint256) public balances;
-  /*array addresses;*/
 
   /* public event on the blockchain that will notify clients */
   /*event Transfer(address indexed from, address indexed to, uint256 value);*/
-
-  modifier onlyOwner {
-    if (msg.sender == owner) {
-      _
-    }
-  }
 
   function Token() {
     owner = msg.sender; // contract owner is contract creator
@@ -20,6 +13,12 @@ contract Token {
   }
 
   // owner functions ----------------------------
+  modifier onlyOwner {
+    if (msg.sender == owner) {
+      _
+    }
+  }
+
   function setMaxTokens(uint256 _maxTokens) onlyOwner {
       maxTokens = _maxTokens;
   }
