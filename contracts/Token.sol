@@ -1,6 +1,7 @@
-contract Token {
+contract Token {  // ComakeryToken ??
   address public owner;
   uint256 public maxTokens;
+  /*string public version;   // eg comakery-token-v1.0 */
 
   mapping (address => uint256) public balances;
 
@@ -30,7 +31,7 @@ contract Token {
   }
 
   function setOwner(address _newOwner) onlyOwner {
-      owner = _newOwner;
+    owner = _newOwner;
   }
 
   // user functions -------------------------------
@@ -45,9 +46,14 @@ contract Token {
     }
   }
 
-  function getBalance(address addr) returns(uint256) {
-    return balances[addr];
+  function getBalance(address _addr) returns(uint256) {
+    return balances[_addr];
   }
+
+  /*TODO*/
+  /*function destroy() onlyOwner {
+    suicide(owner);
+  }*/
 
   /* This unnamed function is called whenever someone tries to transfer ether to it */
   function () {
