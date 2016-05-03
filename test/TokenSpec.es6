@@ -88,8 +88,8 @@ contract('Token', (accounts) => {
           {from: starting.alice.address}).then(new Promise(
             (resolve, reject) => {
               events.watch((error, log) => {
+                if (error) reject(error)
                 resolve(log, done)
-                return error
               })
             }).then((log, event) => {
               expect(log.args.from).to.equal(starting.alice.address)
