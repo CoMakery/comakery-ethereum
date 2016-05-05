@@ -2,19 +2,22 @@
 
 // import {expect} from 'chai'
 let expect = require('chai').expect
-// import {d} from 'lightsaber'
+import {d} from 'lightsaber'
 
 /* global Token */
 /* global contract */
 /* global it */
 /* global describe */
 
-const contractIt = (name, func, only) => {
+const contractItOnly = (name, func) => {
   contract('', () => {
-    if(only)
-      it.only(name, func)
-    else
-      it(name, func)
+    it.only(name, func)
+  })
+}
+
+const contractIt = (name, func) => {
+  contract('', () => {
+    it(name, func)
   })
 }
 
@@ -153,6 +156,29 @@ contract('Token', (accounts) => {
         expect(ending.charlie.balance).to.equal(5)
       }).then(done).catch(done)
     })
+
+    contractIt('account1 can set allowance for account2 to spend', (done) => {
+      const token = Token.deployed()
+      let owner, spender
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        owner = users.alice.address
+        spender = users.bob.address
+
+        return token.allowance.call(owner, spender, {from: owner})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(0)
+
+        token.approve(spender, 100, {from: owner})
+      }).then(() => {
+        return token.allowance.call(owner, spender, {from: owner})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(100)
+      }).then(done).catch(done)
+    })
+
   })
 
   describe('sad path', () => {

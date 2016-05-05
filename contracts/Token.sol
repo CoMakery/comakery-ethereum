@@ -9,9 +9,9 @@ contract TokenInterface {
 
     /* TODO: THIS LATER!
     function transferFrom(address _from, address _to, uint256 _amount) returns (bool success);
+    */
     function approve(address _spender, uint256 _amount) returns (bool success);
     function allowance(address _owner, address _spender) constant returns (uint256 remaining);
-    */
 
     event Transfer(address indexed _from, address indexed _to, uint256 _amount);
     /* event Approval(address indexed _owner,address indexed _spender,uint256 _amount);*/
@@ -67,6 +67,17 @@ contract Token is TokenInterface {
   function balanceOf(address _owner) constant returns(uint256 balance) {
     return balances[_owner];
   }
+
+  function approve(address _spender, uint256 _amount) returns (bool success) {
+    allowed[msg.sender][_spender] = _amount;
+    /*Approval(msg.sender, _spender, _amount);*/
+    return true;
+  }
+
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+    return allowed[_owner][_spender];
+  }
+
 
   /*TODO*/
   /*function destroy() onlyOwner {
