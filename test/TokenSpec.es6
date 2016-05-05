@@ -95,9 +95,9 @@ contract('Token', (accounts) => {
                 resolve(log, done)
               })
             }).then((log, event) => {
-              expect(log.args.from).to.equal(starting.alice.address)
-              expect(log.args.to).to.equal(starting.bob.address)
-              expect(log.args.value.toNumber()).to.equal(5)
+              expect(log.args._from).to.equal(starting.alice.address)
+              expect(log.args._to).to.equal(starting.bob.address)
+              expect(log.args._amount.toNumber()).to.equal(5)
             })
           )
       }).then(() => {
@@ -111,6 +111,28 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should transfer tokens from user to a user', (done) => {
+      const token = Token.deployed()
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        token.issue(starting.alice.address, 20, {from: starting.alice.address})
+      }).then(() => {
+        token.transfer(starting.bob.address, 5, {from: starting.alice.address})
+      }).then(() => {
+        token.transfer(starting.charlie.address, 5, {from: starting.bob.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(15)
+        expect(ending.bob.balance).to.equal(0)
+        expect(ending.charlie.balance).to.equal(5)
+      }).then(done).catch(done)
+    })
+
+    contractIt('should allow owner to transfer tokens between users', (done) => {
       const token = Token.deployed()
       let starting
 

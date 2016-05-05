@@ -41,8 +41,10 @@ contract TokenInterface {
         address _owner,
         address _spender
     ) constant returns (uint256 remaining);
+    */
 
     event Transfer(address indexed _from, address indexed _to, uint256 _amount);
+    /*
     event Approval(
         address indexed _owner,
         address indexed _spender,
@@ -56,7 +58,6 @@ contract Token is TokenInterface {
   address public owner;
 
   /* public event on the blockchain that will notify clients */
-  event Transfer(address indexed from, address indexed to, uint256 value);
 
   function Token() {
     owner = msg.sender; // contract owner is contract creator
