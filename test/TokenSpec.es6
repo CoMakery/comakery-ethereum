@@ -9,19 +9,21 @@ import {d} from 'lightsaber'
 /* global it */
 /* global describe */
 
-const contractItOnly = (name, func) => {
-  contract('', () => {
-    it.only(name, func)
-  })
-}
-
 const contractIt = (name, func) => {
   contract('', () => {
     it(name, func)
   })
 }
 
+const contractItOnly = (name, func) => {
+  contract('', () => {
+    it.only(name, func)
+  })
+}
+
 contract('Token', (accounts) => {
+  let anyone = accounts[9]
+
   let getUsers = (token) => {
     let alice = {address: accounts[0]}
     let bob = {address: accounts[1]}
@@ -42,15 +44,36 @@ contract('Token', (accounts) => {
     })
   }
 
-  contractIt('should have the expected test conditions', (done) => {
-    const token = Token.deployed()
+  describe('expected test conditions', () => {
+    contractIt('token balances of zero', (done) => {
+      const token = Token.deployed()
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then(({alice, bob}) => {
+        expect(alice.balance).to.equal(0)
+        expect(bob.balance).to.equal(0)
+      }).then(done).catch(done)
+    })
 
-    Promise.resolve().then(() => {
-      return getUsers(token)
-    }).then(({alice, bob}) => {
-      expect(alice.balance).to.equal(0)
-      expect(bob.balance).to.equal(0)
-    }).then(done).catch(done)
+    contractIt('allowances of zero', (done) => {
+      const token = Token.deployed()
+      let alice, bob
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        alice = users.alice
+        bob = users.bob
+        return token.allowance.call(alice.address, bob.address)
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(0)
+        return token.allowance.call(bob.address, alice.address)
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(0)
+        return token.allowance.call(alice.address, alice.address)
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(0)
+      }).then(done).catch(done)
+    })
   })
 
   describe('happy path', () => {
@@ -166,14 +189,9 @@ contract('Token', (accounts) => {
       }).then((users) => {
         owner = users.alice.address
         spender = users.bob.address
-
-        return token.allowance.call(owner, spender, {from: owner})
-      }).then((allowance) => {
-        expect(allowance.toNumber()).to.equal(0)
-
         token.approve(spender, 100, {from: owner})
       }).then(() => {
-        return token.allowance.call(owner, spender, {from: owner})
+        return token.allowance.call(owner, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
       }).then(done).catch(done)
