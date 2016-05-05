@@ -47,9 +47,9 @@ class Token
 
     Promise.resolve()
     .then =>
-      tokenContract.getBalance.call sender
+      tokenContract.balanceOf.call sender
     .then (@senderBalance) =>
-      tokenContract.getBalance.call recipient
+      tokenContract.balanceOf.call recipient
     .then (@recipientBalance) =>
       d {@senderBalance, @recipientBalance}
     .then =>
@@ -57,9 +57,9 @@ class Token
       tokenContract.transfer recipient, amount, from: sender
     .then (@transactionId) =>
       d @transactionId
-      tokenContract.getBalance.call sender
+      tokenContract.balanceOf.call sender
     .then (@senderBalance) =>
-      tokenContract.getBalance.call recipient
+      tokenContract.balanceOf.call recipient
     .then (@recipientBalance) =>
       d {@senderBalance, @recipientBalance}
       return @transactionId

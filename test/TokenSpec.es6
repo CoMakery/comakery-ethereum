@@ -9,9 +9,12 @@ let expect = require('chai').expect
 /* global it */
 /* global describe */
 
-const contractIt = (name, func) => {
+const contractIt = (name, func, only) => {
   contract('', () => {
-    it(name, func)
+    if(only)
+      it.only(name, func)
+    else
+      it(name, func)
   })
 }
 
@@ -22,13 +25,13 @@ contract('Token', (accounts) => {
     let charlie = {address: accounts[2]}
 
     return Promise.resolve().then(() => {
-      return token.getBalance.call(accounts[0])
+      return token.balanceOf.call(accounts[0])
     }).then((balance) => {
       alice.balance = balance.toNumber()
-      return token.getBalance.call(accounts[1])
+      return token.balanceOf.call(accounts[1])
     }).then((balance) => {
       bob.balance = balance.toNumber()
-      return token.getBalance.call(accounts[2])
+      return token.balanceOf.call(accounts[2])
     }).then((balance) => {
       charlie.balance = balance.toNumber()
     }).then(() => {
@@ -66,10 +69,10 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should default to 10 million max tokens', (done) => {
+    contractIt('should default to 10 million total supply', (done) => {
       const token = Token.deployed()
       Promise.resolve().then(() => {
-        return token.maxTokens()
+        return token.totalSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
       }).then(done).catch(done)
@@ -186,7 +189,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('maxTokens', () => {
+  describe('totalSupply', () => {
     contractIt('should not allow owner to issue more than max tokens', (done) => {
       const token = Token.deployed()
       const amount = 10e6 + 1
@@ -223,31 +226,31 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should allow owner to set maxTokens', (done) => {
+    contractIt('should allow owner to set totalSupply', (done) => {
       const token = Token.deployed()
-      const newMaxTokens = 117
+      const newTotalSupply = 117
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        token.setMaxTokens(newMaxTokens, {from: users.alice.address})
+        token.setTotalSupply(newTotalSupply, {from: users.alice.address})
       }).then(() => {
-        return token.maxTokens()
+        return token.totalSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(117)
       }).then(done).catch(done)
     })
 
-    contractIt('should forbid non-owner from setting maxTokens', (done) => {
+    contractIt('should forbid non-owner from setting totalSupply', (done) => {
       const token = Token.deployed()
-      const newMaxTokens = 117
+      const newTotalSupply = 117
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        token.setMaxTokens(newMaxTokens, {from: users.bob.address})
+        token.setTotalSupply(newTotalSupply, {from: users.bob.address})
       }).then(() => {
-        return token.maxTokens()
+        return token.totalSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
       }).then(done).catch(done)
