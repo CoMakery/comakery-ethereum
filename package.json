@@ -10,7 +10,7 @@
     "truffle": "truffle",
     "testrpc": "testrpc -p 7777",
     "fulltest": "npm-run-all test lint check-ci-config",
-    "test": "truffle test",
+    "test": "truffle test | grep -v '      Contract:'",
     "lint": "coffeelint --quiet lib && npm run eslint",
     "eslint": "eslint test/*",
     "check-ci-config": "js-yaml circle.yml > /dev/null",
