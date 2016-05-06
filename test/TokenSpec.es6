@@ -9,6 +9,13 @@ import {d} from 'lightsaber'
 /* global it */
 /* global describe */
 
+// let testGroupName
+//
+// const method = (name, func) => {
+//   testGroupName = name
+//   func()
+// }
+
 const contractIt = (name, func) => {
   contract('', () => {
     it(name, func)
@@ -76,7 +83,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('happy path', () => {
+  describe('Token#issue', () => {
     contractIt('should issue tokens from owner to a user', (done) => {
       const token = Token.deployed()
       const amount = 10
@@ -95,6 +102,26 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractIt('should only allow contract owner to issue new tokens', (done) => {
+      const token = Token.deployed()
+      const amount = 10
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, {from: starting.bob.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(0)
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('Token#totalSupply', () => {
     contractIt('should default to 10 million total supply', (done) => {
       const token = Token.deployed()
       Promise.resolve().then(() => {
@@ -104,6 +131,44 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractIt('should not allow owner to issue more than max tokens', (done) => {
+      const token = Token.deployed()
+      const amount = 10e6 + 1
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(0)
+      }).then(done).catch(done)
+    })
+
+    contractIt('should allow owner to issue max tokens', (done) => {
+      const token = Token.deployed()
+      const amount = 10e6
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(10e6)
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('Token#transfer', () => {
     contractIt('should transfer tokens from owner to a user', (done) => {
       const token = Token.deployed()
       let starting
@@ -158,7 +223,7 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should allow owner to transfer tokens between users', (done) => {
+    contractIt('should allow to token owner to transfer tokens to other users', (done) => {
       const token = Token.deployed()
       let starting
 
@@ -180,26 +245,6 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('account1 can set allowance for account2 to spend', (done) => {
-      const token = Token.deployed()
-      let owner, spender
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        owner = users.alice.address
-        spender = users.bob.address
-        token.approve(spender, 100, {from: owner})
-      }).then(() => {
-        return token.allowance.call(owner, spender, {from: anyone})
-      }).then((allowance) => {
-        expect(allowance.toNumber()).to.equal(100)
-      }).then(done).catch(done)
-    })
-
-  })
-
-  describe('sad path', () => {
     contractIt('should do nothing if sender does not have enough tokens', (done) => {
       const token = Token.deployed()
       const amount = 10
@@ -215,24 +260,6 @@ contract('Token', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(starting.alice.balance)
         expect(ending.bob.balance).to.equal(starting.bob.balance)
-      }).then(done).catch(done)
-    })
-
-    contractIt('should only allow contract owner to issue new tokens', (done) => {
-      const token = Token.deployed()
-      const amount = 10
-      let starting
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.bob.address})
-      }).then(() => {
-        return getUsers(token)
-      }).then((ending) => {
-        expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(0)
       }).then(done).catch(done)
     })
 
@@ -255,43 +282,26 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('totalSupply', () => {
-    contractIt('should not allow owner to issue more than max tokens', (done) => {
+  describe('Token#allowance', () => {
+    contractIt('account1 can set allowance for account2 to spend', (done) => {
       const token = Token.deployed()
-      const amount = 10e6 + 1
-      let starting
+      let owner, spender
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+        owner = users.alice.address
+        spender = users.bob.address
+        token.approve(spender, 100, {from: owner})
       }).then(() => {
-        return getUsers(token)
-      }).then((ending) => {
-        expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(0)
+        return token.allowance.call(owner, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(100)
       }).then(done).catch(done)
     })
+  })
 
-    contractIt('should allow owner to issue max tokens', (done) => {
-      const token = Token.deployed()
-      const amount = 10e6
-      let starting
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
-      }).then(() => {
-        return getUsers(token)
-      }).then((ending) => {
-        expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(10e6)
-      }).then(done).catch(done)
-    })
-
+  describe('Token#setTotalSupply', () => {
     contractIt('should allow owner to set totalSupply', (done) => {
       const token = Token.deployed()
       const newTotalSupply = 117
@@ -323,7 +333,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('setOwner', () => {
+  describe('Token#setOwner', () => {
     contractIt('should allow the owner to set a new owner', (done) => {
       const token = Token.deployed()
       let users
