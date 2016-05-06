@@ -1,5 +1,8 @@
 {
   "deploy": [
     "Token"
-  ]
+  ],
+  "mocha": {
+    "useColors": true
+  }
 }
