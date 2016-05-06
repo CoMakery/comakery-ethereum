@@ -22,6 +22,11 @@ contract TokenInterface {
 contract Token is TokenInterface {
   address public owner;
 
+  // Protects users by preventing the execution of method calls that
+  // inadvertently also transferred ether
+  // TODO:
+  //  modifier noEther() {if (msg.value > 0) throw; _}
+
   /* public event on the blockchain that will notify clients */
 
   function Token() {
@@ -67,6 +72,21 @@ contract Token is TokenInterface {
   function balanceOf(address _owner) constant returns(uint256 balance) {
     return balances[_owner];
   }
+
+  /*function transferFrom(address _from, address _to, uint256 _amount) noEther returns (bool success) {
+    if (balances[_from] >= _amount
+      && allowed[_from][msg.sender] >= _amount
+      && _amount > 0) {
+
+      balances[_to] += _amount;
+      balances[_from] -= _amount;
+      allowed[_from][msg.sender] -= _amount;
+      Transfer(_from, _to, _amount);
+      return true;
+    } else {
+      return false;
+    }
+  }*/
 
   function approve(address _spender, uint256 _amount) returns (bool success) {
     allowed[msg.sender][_spender] = _amount;
