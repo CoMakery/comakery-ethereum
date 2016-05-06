@@ -1,6 +1,5 @@
 'use strict'
 
-// import {expect} from 'chai'
 let expect = require('chai').expect
 let d = require('lightsaber').d
 
@@ -8,13 +7,6 @@ let d = require('lightsaber').d
 /* global contract */
 /* global it */
 /* global describe */
-
-// let testGroupName
-//
-// const method = (name, func) => {
-//   testGroupName = name
-//   func()
-// }
 
 const contractIt = (name, func) => {
   contract('', () => {
