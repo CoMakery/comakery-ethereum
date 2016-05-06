@@ -52,7 +52,7 @@ contract('Token', (accounts) => {
   }
 
   describe('expected test conditions', () => {
-    contractIt('token balances of zero', (done) => {
+    contractIt('token balances of all accounts are zero', (done) => {
       const token = Token.deployed()
       Promise.resolve().then(() => {
         return getUsers(token)
@@ -62,7 +62,7 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('allowances of zero', (done) => {
+    contractIt('allowances of all accounts are zero', (done) => {
       const token = Token.deployed()
       let alice, bob
       Promise.resolve().then(() => {
@@ -117,53 +117,6 @@ contract('Token', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
         expect(ending.bob.balance).to.equal(0)
-      }).then(done).catch(done)
-    })
-  })
-
-  describe('Token#totalSupply', () => {
-    contractIt('should default to 10 million total supply', (done) => {
-      const token = Token.deployed()
-      Promise.resolve().then(() => {
-        return token.totalSupply()
-      }).then((max) => {
-        expect(max.toNumber()).to.equal(10e6)
-      }).then(done).catch(done)
-    })
-
-    contractIt('should not allow owner to issue more than max tokens', (done) => {
-      const token = Token.deployed()
-      const amount = 10e6 + 1
-      let starting
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
-      }).then(() => {
-        return getUsers(token)
-      }).then((ending) => {
-        expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(0)
-      }).then(done).catch(done)
-    })
-
-    contractIt('should allow owner to issue max tokens', (done) => {
-      const token = Token.deployed()
-      const amount = 10e6
-      let starting
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
-      }).then(() => {
-        return getUsers(token)
-      }).then((ending) => {
-        expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(10e6)
       }).then(done).catch(done)
     })
   })
@@ -297,6 +250,53 @@ contract('Token', (accounts) => {
         return token.allowance.call(owner, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('Token#totalSupply', () => {
+    contractIt('should default to 10 million total supply', (done) => {
+      const token = Token.deployed()
+      Promise.resolve().then(() => {
+        return token.totalSupply()
+      }).then((max) => {
+        expect(max.toNumber()).to.equal(10e6)
+      }).then(done).catch(done)
+    })
+
+    contractIt('should not allow owner to issue more than max tokens', (done) => {
+      const token = Token.deployed()
+      const amount = 10e6 + 1
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(0)
+      }).then(done).catch(done)
+    })
+
+    contractIt('should allow owner to issue max tokens', (done) => {
+      const token = Token.deployed()
+      const amount = 10e6
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(10e6)
       }).then(done).catch(done)
     })
   })
