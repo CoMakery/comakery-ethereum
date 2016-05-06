@@ -122,25 +122,12 @@ contract('Token', (accounts) => {
     contractIt('should transfer tokens from owner to a user', (done) => {
       const token = Token.deployed()
       let starting
-      let events = token.allEvents()
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        token.issue(starting.alice.address, 20,
-          {from: starting.alice.address}).then(new Promise(
-            (resolve, reject) => {
-              events.watch((error, log) => {
-                if (error) reject(error)
-                resolve(log, done)
-              })
-            }).then((log) => {
-              expect(log.args._from).to.equal(starting.alice.address)
-              expect(log.args._to).to.equal(starting.bob.address)
-              expect(log.args._amount.toNumber()).to.equal(5)
-            })
-          )
+        token.issue(starting.alice.address, 20, {from: starting.alice.address})
       }).then(() => {
         token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
@@ -193,6 +180,35 @@ contract('Token', (accounts) => {
         expect(ending.bob.balance).to.equal(0)
         expect(ending.charlie.balance).to.equal(5)
       }).then(done).catch(done)
+    })
+
+    contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
+      const token = Token.deployed()
+      let starting
+      let events = token.allEvents()
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+      }).then(() => {
+        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
+      }).then(() => {
+        token.transfer(starting.bob.address, 5, {from: starting.alice.address})
+        .then(new Promise(
+            (resolve, reject) => {
+              events.watch((error, log) => {
+                if (error) reject(error)
+                resolve(log)
+              })
+            }).then((log) => {
+              expect(log.args._from).to.equal(starting.alice.address)
+              expect(log.args._to).to.equal(starting.bob.address)
+              expect(log.args._amount.toNumber()).to.equal(5)
+              done()  // we have completed successfully ONLY if we logged an event
+            })
+          )
+      }).catch(done)
     })
 
     contractIt('should do nothing if sender does not have enough tokens', (done) => {
