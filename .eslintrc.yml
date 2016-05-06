@@ -1,4 +1,8 @@
 ---
+# 0 = off
+# 1 = warn
+# 2 = error
+
 extends: standard
 parserOptions:
   sourceType: 'script'
@@ -24,6 +28,9 @@ rules:
   no-loop-func: 2
   no-nested-ternary: 1
   no-script-url: 2
+  no-unused-vars:
+    - 2
+    - {"varsIgnorePattern": "^(contractItOnly|d)$"}
   no-warning-comments: 1
   quote-props: [2, 'as-needed']
   require-yield: 2

@@ -2,7 +2,7 @@
 
 // import {expect} from 'chai'
 let expect = require('chai').expect
-import {d} from 'lightsaber'
+let d = require('lightsaber').d
 
 /* global Token */
 /* global contract */
@@ -138,7 +138,7 @@ contract('Token', (accounts) => {
                 if (error) reject(error)
                 resolve(log, done)
               })
-            }).then((log, event) => {
+            }).then((log) => {
               expect(log.args._from).to.equal(starting.alice.address)
               expect(log.args._to).to.equal(starting.bob.address)
               expect(log.args._amount.toNumber()).to.equal(5)
