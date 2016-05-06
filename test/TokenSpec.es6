@@ -182,7 +182,7 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
+    contractItOnly('should fire a Transfer event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
       let starting
       let events = token.allEvents()
@@ -194,21 +194,20 @@ contract('Token', (accounts) => {
       }).then(() => {
         return token.issue(starting.alice.address, 20, {from: starting.alice.address})
       }).then(() => {
-        token.transfer(starting.bob.address, 5, {from: starting.alice.address})
-        .then(new Promise(
-            (resolve, reject) => {
-              events.watch((error, log) => {
-                if (error) reject(error)
-                resolve(log)
-              })
-            }).then((log) => {
-              expect(log.args._from).to.equal(starting.alice.address)
-              expect(log.args._to).to.equal(starting.bob.address)
-              expect(log.args._amount.toNumber()).to.equal(5)
-              done()  // we have completed successfully ONLY if we logged an event
-            })
-          )
-      }).catch(done)
+        return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          events.watch((error, log) => {
+            if (error) reject(error)
+            resolve(log)
+          })
+        })
+      }).then((log) => {
+        expect(log.args._from).to.equal(starting.alice.address)
+        expect(log.args._to).to.equal(starting.bob.address)
+        expect(log.args._amount.toNumber()).to.equal(5)
+        done()  // we have completed successfully ONLY if we logged an event
+      })
     })
 
     contractIt('should do nothing if sender does not have enough tokens', (done) => {
