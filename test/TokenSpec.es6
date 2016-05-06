@@ -39,7 +39,12 @@ contract('Token', (accounts) => {
     }).then((balance) => {
       charlie.balance = balance.toNumber()
     }).then(() => {
-      return {alice, bob, charlie}
+      // sometimes convenient to identify users by name, other times by role
+      let manager = alice
+      let spender = bob
+      let recipient = charlie
+      return {alice, bob, charlie,
+        manager, spender, recipient}
     })
   }
 
@@ -85,7 +90,7 @@ contract('Token', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+        token.issue(starting.bob.address, amount, {from: starting.alice.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
@@ -227,19 +232,141 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#allowance', () => {
-    contractIt('account1 can set allowance for account2 to spend', (done) => {
+  describe('Token#transferFrom', () => {
+    contractIt('spender can spend within allowance set by manager', (done) => {
       const token = Token.deployed()
-      let owner, spender
+      let manager, spender, recipient
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        owner = users.alice.address
-        spender = users.bob.address
-        token.approve(spender, 100, {from: owner})
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 200, {from: manager})
       }).then(() => {
-        return token.allowance.call(owner, spender, {from: anyone})
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, 40, {from: spender})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.manager.balance).to.equal(160)
+        expect(ending.spender.balance).to.equal(0)
+        expect(ending.recipient.balance).to.equal(40)
+      }).then(() => {
+        return token.allowance.call(manager, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(60)
+      }).then(done).catch(done)
+    })
+
+    contractIt('spender cannot spend more than allowance set by manager', (done) => {
+      const token = Token.deployed()
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 200, {from: manager})
+      }).then(() => {
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        token.transferFrom(manager, recipient, 101, {from: spender})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.manager.balance).to.equal(200)
+        expect(ending.spender.balance).to.equal(0)
+        expect(ending.recipient.balance).to.equal(0)
+      }).then(() => {
+        return token.allowance.call(manager, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(100)
+      }).then(done).catch(done)
+    })
+
+    contractIt('spender cannot spend more than current balance of manager', (done) => {
+      const token = Token.deployed()
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 100, {from: manager})
+      }).then(() => {
+        token.approve(spender, 300, {from: manager})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, 200, {from: spender})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.manager.balance).to.equal(100)
+        expect(ending.spender.balance).to.equal(0)
+        expect(ending.recipient.balance).to.equal(0)
+      }).then(() => {
+        return token.allowance.call(manager, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(300)
+      }).then(done).catch(done)
+    })
+
+    contractIt('spender cannot send a negative token amount', (done) => {
+      const token = Token.deployed()
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 100, {from: manager})
+      }).then(() => {
+        token.issue(recipient, 100, {from: manager})
+      }).then(() => {
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        token.approve(spender, 100, {from: recipient})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, -1, {from: spender})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.manager.balance).to.equal(100)
+        expect(ending.spender.balance).to.equal(0)
+        expect(ending.recipient.balance).to.equal(100)
+      }).then(() => {
+        return token.allowance.call(manager, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(100)
+      }).then(() => {
+        return token.allowance.call(recipient, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(100)
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('Token#approve', () => {
+    contractIt('manager can approve allowance for spender to spend', (done) => {
+      const token = Token.deployed()
+      let manager, spender
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.alice.address
+        spender = users.bob.address
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
       }).then(done).catch(done)

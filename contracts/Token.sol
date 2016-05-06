@@ -7,9 +7,7 @@ contract TokenInterface {
     function balanceOf(address _owner) constant returns (uint256 balance);
     function transfer(address _to, uint256 _amount) returns (bool success);
 
-    /* TODO: THIS LATER!
     function transferFrom(address _from, address _to, uint256 _amount) returns (bool success);
-    */
     function approve(address _spender, uint256 _amount) returns (bool success);
     function allowance(address _owner, address _spender) constant returns (uint256 remaining);
 
@@ -73,20 +71,20 @@ contract Token is TokenInterface {
     return balances[_owner];
   }
 
-  /*function transferFrom(address _from, address _to, uint256 _amount) noEther returns (bool success) {
+  function transferFrom(address _from, address _to, uint256 _amount) returns (bool success) {
     if (balances[_from] >= _amount
       && allowed[_from][msg.sender] >= _amount
-      && _amount > 0) {
-
-      balances[_to] += _amount;
-      balances[_from] -= _amount;
-      allowed[_from][msg.sender] -= _amount;
-      Transfer(_from, _to, _amount);
-      return true;
+      // && _amount > 0) {  -- FIXME the test passes without this, why?
+      ) {
+        balances[_to] += _amount;
+        balances[_from] -= _amount;
+        allowed[_from][msg.sender] -= _amount;
+        /*Transfer(_from, _to, _amount);*/
+        return true;
     } else {
       return false;
     }
-  }*/
+  }
 
   function approve(address _spender, uint256 _amount) returns (bool success) {
     allowed[msg.sender][_spender] = _amount;
