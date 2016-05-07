@@ -182,7 +182,7 @@ contract('Token', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractItOnly('should fire a Transfer event when a tranfer is sucessful', (done) => {
+    contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
       let starting
       let events = token.allEvents()
