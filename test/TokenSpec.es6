@@ -1,7 +1,7 @@
 'use strict'
 
-let expect = require('chai').expect
-let d = require('lightsaber').d
+import {expect} from 'chai'
+import {d} from 'lightsaber'
 
 /* global Token */
 /* global contract */

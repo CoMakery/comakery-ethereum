@@ -4,16 +4,14 @@
 # 2 = error
 
 extends: standard
-parserOptions:
-  sourceType: 'script'
 rules:
-  strict: [2, 'safe']
+  strict: [1, 'safe']
   block-scoped-var: 2
   complexity: 1
   default-case: 2
   dot-notation: 1
   guard-for-in: 1
-  linebreak-style: [1, 'unix']
+  linebreak-style: [2, 'unix']
   no-alert: 2
   no-case-declarations: 2
   no-console: 1
@@ -26,11 +24,12 @@ rules:
   no-implicit-coercion: 2
   no-labels: 2
   no-loop-func: 2
-  no-nested-ternary: 1
+  no-nested-ternary: 2
   no-script-url: 2
   no-unused-vars:
     - 2
-    - {"varsIgnorePattern": "^(contractItOnly|d)$"}
+    - "varsIgnorePattern":
+        "^(contractItOnly|d)$"
   no-warning-comments: 1
   quote-props: [2, 'as-needed']
   require-yield: 2
