@@ -12,7 +12,7 @@ contract TokenInterface {
     function allowance(address _owner, address _spender) constant returns (uint256 remaining);
 
     event Transfer(address indexed _from, address indexed _to, uint256 _amount);
-    /* event Approval(address indexed _owner,address indexed _spender,uint256 _amount);*/
+    event Approval(address indexed _owner,address indexed _spender,uint256 _amount);
 }
 
 /*string public version;   // eg comakery-token-v1.0 */
@@ -79,7 +79,8 @@ contract Token is TokenInterface {
         balances[_to] += _amount;
         balances[_from] -= _amount;
         allowed[_from][msg.sender] -= _amount;
-        /*Transfer(_from, _to, _amount);*/
+        Transfer(_from, _to, _amount);
+        // TODO should we have a TransferFrom event too???
         return true;
     } else {
       return false;
@@ -87,8 +88,9 @@ contract Token is TokenInterface {
   }
 
   function approve(address _spender, uint256 _amount) returns (bool success) {
+    // TODO check that amount > 0 ?
     allowed[msg.sender][_spender] = _amount;
-    /*Approval(msg.sender, _spender, _amount);*/
+    Approval(msg.sender, _spender, _amount);
     return true;
   }
 

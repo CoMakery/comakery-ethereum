@@ -8,13 +8,19 @@ import {d} from 'lightsaber'
 
 const contractIt = (name, func) => {
   contract('', () => {
-    it(name, func)
+    describe('Contract:', function () {
+      this.timeout(2000)
+      it(name, func)
+    })
   })
 }
 
 const contractItOnly = (name, func) => {
   contract('', () => {
-    it.only(name, func)
+    describe('Contract:', function () {
+      this.timeout(2000)
+      it.only(name, func)
+    })
   })
 }
 
@@ -189,10 +195,9 @@ contract('Token', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
+        token.issue(starting.alice.address, 20, {from: starting.alice.address})
       }).then(() => {
-        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
-      }).then(() => {
-        return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
+        token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
         return new Promise((resolve, reject) => {
           events.watch((error, log) => {
@@ -201,6 +206,7 @@ contract('Token', (accounts) => {
           })
         })
       }).then((log) => {
+        expect(log.event).to.equal('Transfer')
         expect(log.args._from).to.equal(starting.alice.address)
         expect(log.args._to).to.equal(starting.bob.address)
         expect(log.args._amount.toNumber()).to.equal(5)
@@ -272,6 +278,37 @@ contract('Token', (accounts) => {
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(60)
       }).then(done).catch(done)
+    })
+
+    contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
+      const token = Token.deployed()
+      let events = token.allEvents()
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 200, {from: manager})
+      }).then(() => {
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, 50, {from: spender})
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          events.watch((error, log) => {
+            if (error) reject(error)
+            if (log.event === 'Transfer') resolve(log)
+          })
+        })
+      }).then((log) => {
+        expect(log.args._from).to.equal(manager)
+        expect(log.args._to).to.equal(recipient)
+        expect(log.args._amount.toNumber()).to.equal(50)
+        done()  // we have completed successfully ONLY if we logged an event
+      })
     })
 
     contractIt('spender cannot spend more than allowance set by manager', (done) => {
@@ -383,6 +420,33 @@ contract('Token', (accounts) => {
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
       }).then(done).catch(done)
+    })
+
+    contractIt('should fire an Approval event when a tranfer is sucessful', (done) => {
+      const token = Token.deployed()
+      let events = token.allEvents()
+      let manager, spender
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        token.approve(spender, 50, {from: manager})
+      }).then(() => {
+        return new Promise((resolve, reject) => {
+          events.watch((error, log) => {
+            if (error) reject(error)
+            resolve(log)
+          })
+        })
+      }).then((log) => {
+        expect(log.event).to.equal('Approval')
+        expect(log.args._owner).to.equal(manager)
+        expect(log.args._spender).to.equal(spender)
+        expect(log.args._amount.toNumber()).to.equal(50)
+        done()  // we have completed successfully ONLY if we logged an event
+      })
     })
   })
 
