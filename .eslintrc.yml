@@ -5,7 +5,7 @@
 
 extends: standard
 rules:
-  strict: [1, 'safe']
+  strict: [2, 'safe']
   block-scoped-var: 2
   complexity: 1
   default-case: 2
