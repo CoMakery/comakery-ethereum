@@ -112,8 +112,14 @@ contract('Token', (accounts) => {
     })
   })
 
-  contractShouldThrow('#allowance', () => {
-    return token.allowance(accounts[1], accounts[2], {value: 1})
+  describe('Token#version', () => {
+    contractIt('should be the expected version', (done) => {
+      Promise.resolve().then(() => {
+        return token.version()
+      }).then((version) => {
+        expect(version).to.equal('dynamic-token-v1.0')
+      }).then(done).catch(done)
+    })
   })
 
   contractShouldThrow('#balanceOf', () => {
