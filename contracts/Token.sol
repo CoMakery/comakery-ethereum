@@ -23,7 +23,7 @@ contract Token is TokenInterface {
   // Protects users by preventing the execution of method calls that
   // inadvertently also transferred ether
   // TODO:
-  //  modifier noEther() {if (msg.value > 0) throw; _}
+  modifier noEther() {if (msg.value > 0) throw; _}
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
 
@@ -42,7 +42,7 @@ contract Token is TokenInterface {
     totalSupply = _totalSupply;
   }
 
-  function issue(address _to, uint256 _value) onlyOwner {
+  function issue(address _to, uint256 _value) onlyOwner noEther {
     if (_value <= totalSupply) {
       balances[_to] = _value;
     }
@@ -103,8 +103,4 @@ contract Token is TokenInterface {
     suicide(owner);
   }*/
 
-  /* This unnamed function is called whenever someone tries to transfer ether to it */
-  function () {
-    throw;     // Prevents accidental sending of ether
-  }
 }
