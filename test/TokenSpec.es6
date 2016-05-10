@@ -28,6 +28,7 @@ const contractItOnly = (name, func) => {
 
 contract('Token', (accounts) => {
   let anyone = accounts[9]
+  let token
 
   let getUsers = (token) => {
     let alice = {address: accounts[0]}
@@ -66,9 +67,11 @@ contract('Token', (accounts) => {
     })
   }
 
+  beforeEach(() => {
+    token = Token.deployed()
+  })
   describe('expected test conditions', () => {
     contractIt('token balances of all accounts are zero', (done) => {
-      const token = Token.deployed()
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then(({alice, bob}) => {
@@ -78,7 +81,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('allowances of all accounts are zero', (done) => {
-      const token = Token.deployed()
       let alice, bob
       Promise.resolve().then(() => {
         return getUsers(token)
@@ -100,7 +102,6 @@ contract('Token', (accounts) => {
 
   describe('Token#issue', () => {
     contractIt('should issue tokens from owner to a user', (done) => {
-      const token = Token.deployed()
       const amount = 10
       let starting
 
@@ -118,7 +119,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should only allow contract owner to issue new tokens', (done) => {
-      const token = Token.deployed()
       const amount = 10
       let starting
 
@@ -138,7 +138,6 @@ contract('Token', (accounts) => {
 
   describe('Token#transfer', () => {
     contractIt('should transfer tokens from owner to a user', (done) => {
-      const token = Token.deployed()
       let starting
 
       Promise.resolve().then(() => {
@@ -157,7 +156,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should transfer tokens from user to a user', (done) => {
-      const token = Token.deployed()
       let starting
 
       Promise.resolve().then(() => {
@@ -179,7 +177,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should allow to token owner to transfer tokens to other users', (done) => {
-      const token = Token.deployed()
       let starting
 
       Promise.resolve().then(() => {
@@ -201,7 +198,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
-      const token = Token.deployed()
       let events = token.Transfer()
       let starting
 
@@ -223,7 +219,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should do nothing if sender does not have enough tokens', (done) => {
-      const token = Token.deployed()
       const amount = 10
       let starting
 
@@ -241,7 +236,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should do nothing if a the send value is a negative number', (done) => {
-      const token = Token.deployed()
       const amount = -1
       let starting
 
@@ -261,7 +255,6 @@ contract('Token', (accounts) => {
 
   describe('Token#transferFrom', () => {
     contractIt('spender can spend within allowance set by manager', (done) => {
-      const token = Token.deployed()
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -289,7 +282,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
-      const token = Token.deployed()
       let events = token.Transfer()
       let manager, spender, recipient
 
@@ -315,7 +307,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should fire a TransferFrom event when a tranfer is sucessful', (done) => {
-      const token = Token.deployed()
       let events = token.TransferFrom()
       let manager, spender, recipient
 
@@ -342,7 +333,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('spender cannot spend more than allowance set by manager', (done) => {
-      const token = Token.deployed()
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -370,7 +360,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('spender cannot spend more than current balance of manager', (done) => {
-      const token = Token.deployed()
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -398,7 +387,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('spender cannot send a negative token amount', (done) => {
-      const token = Token.deployed()
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -436,7 +424,6 @@ contract('Token', (accounts) => {
 
   describe('Token#approve', () => {
     contractIt('manager can approve allowance for spender to spend', (done) => {
-      const token = Token.deployed()
       let manager, spender
 
       Promise.resolve().then(() => {
@@ -453,7 +440,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should fire an Approval event when a tranfer is sucessful', (done) => {
-      const token = Token.deployed()
       let events = token.Approval()
       let manager, spender
 
@@ -476,7 +462,6 @@ contract('Token', (accounts) => {
 
   describe('Token#totalSupply', () => {
     contractIt('should default to 10 million total supply', (done) => {
-      const token = Token.deployed()
       Promise.resolve().then(() => {
         return token.totalSupply()
       }).then((max) => {
@@ -485,7 +470,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should not allow owner to issue more than max tokens', (done) => {
-      const token = Token.deployed()
       const amount = 10e6 + 1
       let starting
 
@@ -503,7 +487,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should allow owner to issue max tokens', (done) => {
-      const token = Token.deployed()
       const amount = 10e6
       let starting
 
@@ -523,7 +506,6 @@ contract('Token', (accounts) => {
 
   describe('Token#setTotalSupply', () => {
     contractIt('should allow owner to set totalSupply', (done) => {
-      const token = Token.deployed()
       const newTotalSupply = 117
 
       Promise.resolve().then(() => {
@@ -538,7 +520,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should forbid non-owner from setting totalSupply', (done) => {
-      const token = Token.deployed()
       const newTotalSupply = 117
 
       Promise.resolve().then(() => {
@@ -555,7 +536,6 @@ contract('Token', (accounts) => {
 
   describe('Token#setOwner', () => {
     contractIt('should allow the owner to set a new owner', (done) => {
-      const token = Token.deployed()
       let users
 
       Promise.resolve().then(() => {
@@ -570,7 +550,6 @@ contract('Token', (accounts) => {
     })
 
     contractIt('should not allow other users to set a new owner', (done) => {
-      const token = Token.deployed()
       let users
 
       Promise.resolve().then(() => {
@@ -596,12 +575,6 @@ contract('Token', (accounts) => {
         }).then(done).catch(done)
       })
     }
-
-    let token
-
-    beforeEach(() => {
-      token = Token.deployed()
-    })
 
     contractShouldThrow('#setTotalSupply', () => {
       return token.setTotalSupply(10, {value: 1})
