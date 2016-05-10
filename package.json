@@ -13,7 +13,7 @@
     "truffle": "truffle",
     "testrpc": "testrpc -p 7777",
     "fulltest": "npm-run-all --silent test lint check-yaml check-for-only",
-    "tdd": "npm-run-all --silent eslint test",
+    "tdd": "npm-run-all --silent test eslint",
     "test": "truffle test | grep -v '      Contract:'",
     "lint": "coffeelint --quiet lib && npm-run-all --silent eslint",
     "eslint": "eslint test/*",
