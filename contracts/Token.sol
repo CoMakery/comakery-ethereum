@@ -88,6 +88,7 @@ contract Token is TokenInterface {
   }
 
   function transfer(address _to, uint256 _amount) noEther returns (bool success) {
+    // if (amount <= 0) return false; // TODO can we test this?
     if (balances[msg.sender] >= _amount) {
       if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
 
@@ -125,7 +126,6 @@ contract Token is TokenInterface {
         allowed[_from][msg.sender] -= _amount;
         Transfer(_from, _to, _amount);
         TransferFrom(_from, _to, msg.sender, _amount);
-        // TODO should we have a TransferFrom event too???
         return true;
     } else {
       return false;
