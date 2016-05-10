@@ -52,6 +52,15 @@ contract('Token', (accounts) => {
     })
   }
 
+  let firstEvent = (events, name) => {
+    return new Promise((resolve, reject) => {
+      events.watch((error, log) => {
+        if (error) reject(error)
+        if (log.event === name) resolve(log)
+      })
+    })
+  }
+
   describe('expected test conditions', () => {
     contractIt('token balances of all accounts are zero', (done) => {
       const token = Token.deployed()
@@ -188,8 +197,8 @@ contract('Token', (accounts) => {
 
     contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
-      let starting
       let events = token.allEvents()
+      let starting
 
       Promise.resolve().then(() => {
         return getUsers(token)
@@ -199,14 +208,8 @@ contract('Token', (accounts) => {
       }).then(() => {
         token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
-        return new Promise((resolve, reject) => {
-          events.watch((error, log) => {
-            if (error) reject(error)
-            resolve(log)
-          })
-        })
+        return firstEvent(events, 'Transfer')
       }).then((log) => {
-        expect(log.event).to.equal('Transfer')
         expect(log.args._from).to.equal(starting.alice.address)
         expect(log.args._to).to.equal(starting.bob.address)
         expect(log.args._amount.toNumber()).to.equal(5)
@@ -297,12 +300,7 @@ contract('Token', (accounts) => {
       }).then(() => {
         return token.transferFrom(manager, recipient, 50, {from: spender})
       }).then(() => {
-        return new Promise((resolve, reject) => {
-          events.watch((error, log) => {
-            if (error) reject(error)
-            if (log.event === 'Transfer') resolve(log)
-          })
-        })
+        return firstEvent(events, 'Transfer')
       }).then((log) => {
         expect(log.args._from).to.equal(manager)
         expect(log.args._to).to.equal(recipient)
@@ -434,14 +432,8 @@ contract('Token', (accounts) => {
         spender = users.spender.address
         token.approve(spender, 50, {from: manager})
       }).then(() => {
-        return new Promise((resolve, reject) => {
-          events.watch((error, log) => {
-            if (error) reject(error)
-            resolve(log)
-          })
-        })
+        return firstEvent(events, 'Approval')
       }).then((log) => {
-        expect(log.event).to.equal('Approval')
         expect(log.args._owner).to.equal(manager)
         expect(log.args._spender).to.equal(spender)
         expect(log.args._amount.toNumber()).to.equal(50)
