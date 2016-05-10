@@ -26,8 +26,8 @@ const contractItOnly = (name, func) => {
   })
 }
 
-let contractShouldThrow = (functionName, functionToCall) => {
-  contractIt(functionName + ' should throw an error if ether ether is sent', (done) => {
+let contractShouldThrow = (functionToCall) => {
+  contractIt('should throw an error if ether ether is sent', (done) => {
     Promise.resolve().then(functionToCall
     ).then(function () {
       throw new Error('Expected solidity error to be thown from contract, but was not')
@@ -122,12 +122,20 @@ contract('Token', (accounts) => {
     })
   })
 
-  contractShouldThrow('#balanceOf', () => {
-    return token.balanceOf(accounts[1], {value: 1})
+  describe('Token#allowance', () => {
+    contractShouldThrow(() => {
+      return token.allowance(accounts[1], accounts[2], {value: 1})
+    })
+  })
+
+  describe('Token#balanceOf', () => {
+    contractShouldThrow(() => {
+      return token.balanceOf(accounts[1], {value: 1})
+    })
   })
 
   describe('Token#issue', () => {
-    contractShouldThrow('#issue', () => {
+    contractShouldThrow(() => {
       return token.issue(accounts[1], 10, {value: 1})
     })
 
@@ -167,7 +175,7 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#transfer', () => {
-    contractShouldThrow('#transfer', () => {
+    contractShouldThrow(() => {
       return token.transfer(accounts[0], 10, {value: 1})
     })
 
@@ -288,7 +296,7 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#transferFrom', () => {
-    contractShouldThrow('#transferFrom', () => {
+    contractShouldThrow(() => {
       return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
     })
 
@@ -461,7 +469,7 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#approve', () => {
-    contractShouldThrow('#approve', () => {
+    contractShouldThrow(() => {
       return token.approve(accounts[1], 100, {value: 1})
     })
 
@@ -503,7 +511,7 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#totalSupply', () => {
-    contractShouldThrow('#setTotalSupply', () => {
+    contractShouldThrow(() => {
       return token.setTotalSupply(10, {value: 1})
     })
 
@@ -581,7 +589,7 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#setOwner', () => {
-    contractShouldThrow('#setOwner', () => {
+    contractShouldThrow(() => {
       return token.setOwner(accounts[1], {value: 1})
     })
 
