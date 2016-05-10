@@ -5,6 +5,7 @@ import {d} from 'lightsaber'
 /* global contract */
 /* global it */
 /* global describe */
+/* global beforeEach */
 
 const contractIt = (name, func) => {
   contract('', () => {
@@ -595,19 +596,42 @@ contract('Token', (accounts) => {
       })
     }
 
-    contractShouldThrow('#setOwner', () => {
-      const token = Token.deployed()
-      return token.setOwner(accounts[1], {value: 1})
-    })
+    let token
 
-    contractShouldThrow('#issue', () => {
-      const token = Token.deployed()
-      return token.issue(accounts[1], 10, {value: 1})
+    beforeEach(() => {
+      token = Token.deployed()
     })
 
     contractShouldThrow('#setTotalSupply', () => {
-      const token = Token.deployed()
       return token.setTotalSupply(10, {value: 1})
+    })
+
+    contractShouldThrow('#issue', () => {
+      return token.issue(accounts[1], 10, {value: 1})
+    })
+
+    contractShouldThrow('#setOwner', () => {
+      return token.setOwner(accounts[1], {value: 1})
+    })
+
+    contractShouldThrow('#transfer', () => {
+      return token.transfer(accounts[0], 10, {value: 1})
+    })
+
+    contractShouldThrow('#balanceOf', () => {
+      return token.balanceOf(accounts[1], {value: 1})
+    })
+
+    contractShouldThrow('#approve', () => {
+      return token.approve(accounts[1], 100, {value: 1})
+    })
+
+    contractShouldThrow('#allowance', () => {
+      return token.allowance(accounts[1], accounts[2], {value: 1})
+    })
+
+    contractShouldThrow('#transferFrom', () => {
+      return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
     })
   })
 })

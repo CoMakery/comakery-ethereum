@@ -52,7 +52,7 @@ contract Token is TokenInterface {
     owner = _newOwner;
   }
 
-  function transfer(address _to, uint256 _amount) returns (bool success) {
+  function transfer(address _to, uint256 _amount) noEther returns (bool success) {
     if (balances[msg.sender] >= _amount) {
       if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
 
@@ -65,11 +65,22 @@ contract Token is TokenInterface {
     }
   }
 
-  function balanceOf(address _owner) constant returns(uint256 balance) {
+  function balanceOf(address _owner) noEther constant returns(uint256 balance) {
     return balances[_owner];
   }
 
-  function transferFrom(address _from, address _to, uint256 _amount) returns (bool success) {
+  function approve(address _spender, uint256 _amount) noEther returns (bool success) {
+    // if (amount <= 0) return false; // TODO can we test this?
+    allowed[msg.sender][_spender] = _amount;
+    Approval(msg.sender, _spender, _amount);
+    return true;
+  }
+
+  function allowance(address _owner, address _spender) noEther constant returns (uint256 remaining) {
+    return allowed[_owner][_spender];
+  }
+
+  function transferFrom(address _from, address _to, uint256 _amount) noEther returns (bool success) {
     if (balances[_from] >= _amount
       && allowed[_from][msg.sender] >= _amount
       // && _amount > 0) {  -- FIXME the test passes without this, why?
@@ -85,18 +96,6 @@ contract Token is TokenInterface {
       return false;
     }
   }
-
-  function approve(address _spender, uint256 _amount) returns (bool success) {
-    // if (amount <= 0) return false; // TODO can we test this?
-    allowed[msg.sender][_spender] = _amount;
-    Approval(msg.sender, _spender, _amount);
-    return true;
-  }
-
-  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
-    return allowed[_owner][_spender];
-  }
-
 
   /*TODO*/
   /*function destroy() onlyOwner {
