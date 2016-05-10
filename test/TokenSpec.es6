@@ -26,6 +26,17 @@ const contractItOnly = (name, func) => {
   })
 }
 
+let contractShouldThrow = (functionName, functionToCall) => {
+  contractIt(functionName + ' should throw an error if ether ether is sent', (done) => {
+    Promise.resolve().then(functionToCall
+    ).then(function () {
+      throw new Error('Expected solidity error to be thown from contract, but was not')
+    }).catch(function (error) {
+      if (error.message.search('invalid JUMP') === -1) throw error
+    }).then(done).catch(done)
+  })
+}
+
 contract('Token', (accounts) => {
   let anyone = accounts[9]
   let token
@@ -70,6 +81,7 @@ contract('Token', (accounts) => {
   beforeEach(() => {
     token = Token.deployed()
   })
+
   describe('expected test conditions', () => {
     contractIt('token balances of all accounts are zero', (done) => {
       Promise.resolve().then(() => {
@@ -100,7 +112,19 @@ contract('Token', (accounts) => {
     })
   })
 
+  contractShouldThrow('#allowance', () => {
+    return token.allowance(accounts[1], accounts[2], {value: 1})
+  })
+
+  contractShouldThrow('#balanceOf', () => {
+    return token.balanceOf(accounts[1], {value: 1})
+  })
+
   describe('Token#issue', () => {
+    contractShouldThrow('#issue', () => {
+      return token.issue(accounts[1], 10, {value: 1})
+    })
+
     contractIt('should issue tokens from owner to a user', (done) => {
       const amount = 10
       let starting
@@ -137,6 +161,10 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#transfer', () => {
+    contractShouldThrow('#transfer', () => {
+      return token.transfer(accounts[0], 10, {value: 1})
+    })
+
     contractIt('should transfer tokens from owner to a user', (done) => {
       let starting
 
@@ -254,6 +282,10 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#transferFrom', () => {
+    contractShouldThrow('#transferFrom', () => {
+      return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
+    })
+
     contractIt('spender can spend within allowance set by manager', (done) => {
       let manager, spender, recipient
 
@@ -423,6 +455,10 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#approve', () => {
+    contractShouldThrow('#approve', () => {
+      return token.approve(accounts[1], 100, {value: 1})
+    })
+
     contractIt('manager can approve allowance for spender to spend', (done) => {
       let manager, spender
 
@@ -461,6 +497,10 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#totalSupply', () => {
+    contractShouldThrow('#setTotalSupply', () => {
+      return token.setTotalSupply(10, {value: 1})
+    })
+
     contractIt('should default to 10 million total supply', (done) => {
       Promise.resolve().then(() => {
         return token.totalSupply()
@@ -535,6 +575,10 @@ contract('Token', (accounts) => {
   })
 
   describe('Token#setOwner', () => {
+    contractShouldThrow('#setOwner', () => {
+      return token.setOwner(accounts[1], {value: 1})
+    })
+
     contractIt('should allow the owner to set a new owner', (done) => {
       let users
 
@@ -561,51 +605,6 @@ contract('Token', (accounts) => {
       }).then((newOwner) => {
         expect(newOwner.toString()).to.not.equal(users.bob.address)
       }).then(done).catch(done)
-    })
-  })
-
-  describe('sending ether', () => {
-    let contractShouldThrow = (functionName, functionToCall) => {
-      contractIt(functionName + ' should throw not send Ether', (done) => {
-        Promise.resolve().then(functionToCall
-        ).then(function () {
-          throw new Error('Expected solidity error to be thown from contract, but was not')
-        }).catch(function (error) {
-          if (error.message.search('invalid JUMP') === -1) throw error
-        }).then(done).catch(done)
-      })
-    }
-
-    contractShouldThrow('#setTotalSupply', () => {
-      return token.setTotalSupply(10, {value: 1})
-    })
-
-    contractShouldThrow('#issue', () => {
-      return token.issue(accounts[1], 10, {value: 1})
-    })
-
-    contractShouldThrow('#setOwner', () => {
-      return token.setOwner(accounts[1], {value: 1})
-    })
-
-    contractShouldThrow('#transfer', () => {
-      return token.transfer(accounts[0], 10, {value: 1})
-    })
-
-    contractShouldThrow('#balanceOf', () => {
-      return token.balanceOf(accounts[1], {value: 1})
-    })
-
-    contractShouldThrow('#approve', () => {
-      return token.approve(accounts[1], 100, {value: 1})
-    })
-
-    contractShouldThrow('#allowance', () => {
-      return token.allowance(accounts[1], accounts[2], {value: 1})
-    })
-
-    contractShouldThrow('#transferFrom', () => {
-      return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
     })
   })
 })

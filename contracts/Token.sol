@@ -22,7 +22,6 @@ contract Token is TokenInterface {
 
   // Protects users by preventing the execution of method calls that
   // inadvertently also transferred ether
-  // TODO:
   modifier noEther() {if (msg.value > 0) throw; _}
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
