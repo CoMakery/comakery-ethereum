@@ -25,14 +25,13 @@ contract Token is TokenInterface {
   // TODO:
   //  modifier noEther() {if (msg.value > 0) throw; _}
 
-  /* public event on the blockchain that will notify clients */
+  event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
 
   function Token() {
     owner = msg.sender; // contract owner is contract creator
     totalSupply = 10000000;
   }
 
-  // owner functions ----------------------------
   modifier onlyOwner {
     if (msg.sender == owner) {
       _
@@ -40,7 +39,7 @@ contract Token is TokenInterface {
   }
 
   function setTotalSupply(uint256 _totalSupply) onlyOwner {
-      totalSupply = _totalSupply;
+    totalSupply = _totalSupply;
   }
 
   function issue(address _to, uint256 _value) onlyOwner {
@@ -53,14 +52,13 @@ contract Token is TokenInterface {
     owner = _newOwner;
   }
 
-  // user functions -------------------------------
   function transfer(address _to, uint256 _amount) returns (bool success) {
-    if (balances[msg.sender] >= _amount) {           // Check if the sender has enough*/
+    if (balances[msg.sender] >= _amount) {
       if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
 
-      balances[msg.sender] -= _amount;                     // Subtract from the sender
-      balances[_to] += _amount;                            // Add the same to the recipient
-      Transfer(msg.sender, _to, _amount);                   // Notify anyone listening that this transfer took place
+      balances[msg.sender] -= _amount;
+      balances[_to] += _amount;
+      Transfer(msg.sender, _to, _amount);
       return true;
     } else {
       return false;
@@ -80,6 +78,7 @@ contract Token is TokenInterface {
         balances[_from] -= _amount;
         allowed[_from][msg.sender] -= _amount;
         Transfer(_from, _to, _amount);
+        TransferFrom(_from, _to, msg.sender, _amount);
         // TODO should we have a TransferFrom event too???
         return true;
     } else {
@@ -88,7 +87,7 @@ contract Token is TokenInterface {
   }
 
   function approve(address _spender, uint256 _amount) returns (bool success) {
-    // TODO check that amount > 0 ?
+    // if (amount <= 0) return false; // TODO can we test this?
     allowed[msg.sender][_spender] = _amount;
     Approval(msg.sender, _spender, _amount);
     return true;

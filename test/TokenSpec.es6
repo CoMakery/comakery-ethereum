@@ -312,6 +312,33 @@ contract('Token', (accounts) => {
       })
     })
 
+    contractItOnly('should fire a TransferFrom event when a tranfer is sucessful', (done) => {
+      const token = Token.deployed()
+      let events = token.TransferFrom()
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 200, {from: manager})
+      }).then(() => {
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, 50, {from: spender})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((log) => {
+        expect(log.args._from).to.equal(manager)
+        expect(log.args._to).to.equal(recipient)
+        expect(log.args._spender).to.equal(spender)
+        expect(log.args._amount.toNumber()).to.equal(50)
+        done()
+      })
+    })
+
     contractIt('spender cannot spend more than allowance set by manager', (done) => {
       const token = Token.deployed()
       let manager, spender, recipient
