@@ -51,7 +51,7 @@ contract TokenInterface {
     );
 }
 
-contract Token is TokenInterface {
+contract DynamicToken is TokenInterface {
   address public owner;
 
   string public version;
@@ -62,7 +62,7 @@ contract Token is TokenInterface {
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
 
-  function Token() {
+  function DynamicToken() {
     owner = msg.sender; // contract owner is contract creator
     totalSupply = 10000000;
   }

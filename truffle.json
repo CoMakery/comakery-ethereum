@@ -1,6 +1,6 @@
 {
   "deploy": [
-    "Token"
+    "DynamicToken"
   ],
   "mocha": {
     "useColors": true

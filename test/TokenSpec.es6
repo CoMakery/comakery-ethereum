@@ -6,7 +6,7 @@ import {d} from 'lightsaber'
 /* global contract */
 /* global describe */
 /* global it */
-/* global Token */
+/* global DynamicToken */
 
 const contractIt = (name, func) => {
   contract('', () => {
@@ -37,7 +37,7 @@ let contractShouldThrow = (functionToCall) => {
   })
 }
 
-contract('Token', (accounts) => {
+contract('DynamicToken', (accounts) => {
   let anyone = accounts[9]
   let token
 
@@ -79,7 +79,7 @@ contract('Token', (accounts) => {
   }
 
   beforeEach(() => {
-    token = Token.deployed()
+    token = DynamicToken.deployed()
   })
 
   describe('expected test conditions', () => {
@@ -112,19 +112,19 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#allowance', () => {
+  describe('DynamicToken#allowance', () => {
     contractShouldThrow(() => {
       return token.allowance(accounts[1], accounts[2], {value: 1})
     })
   })
 
-  describe('Token#balanceOf', () => {
+  describe('DynamicToken#balanceOf', () => {
     contractShouldThrow(() => {
       return token.balanceOf(accounts[1], {value: 1})
     })
   })
 
-  describe('Token#issue', () => {
+  describe('DynamicToken#issue', () => {
     contractShouldThrow(() => {
       return token.issue(accounts[1], 10, {value: 1})
     })
@@ -164,7 +164,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#transfer', () => {
+  describe('DynamicToken#transfer', () => {
     contractShouldThrow(() => {
       return token.transfer(accounts[0], 10, {value: 1})
     })
@@ -285,7 +285,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#transferFrom', () => {
+  describe('DynamicToken#transferFrom', () => {
     contractShouldThrow(() => {
       return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
     })
@@ -458,7 +458,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#approve', () => {
+  describe('DynamicToken#approve', () => {
     contractShouldThrow(() => {
       return token.approve(accounts[1], 100, {value: 1})
     })
@@ -500,7 +500,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#totalSupply', () => {
+  describe('DynamicToken#totalSupply', () => {
     contractShouldThrow(() => {
       return token.setTotalSupply(10, {value: 1})
     })
@@ -548,7 +548,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#setTotalSupply', () => {
+  describe('DynamicToken#setTotalSupply', () => {
     contractIt('should allow owner to set totalSupply', (done) => {
       const newTotalSupply = 117
 
@@ -578,7 +578,7 @@ contract('Token', (accounts) => {
     })
   })
 
-  describe('Token#setOwner', () => {
+  describe('DynamicToken#setOwner', () => {
     contractShouldThrow(() => {
       return token.setOwner(accounts[1], {value: 1})
     })
