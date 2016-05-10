@@ -52,11 +52,14 @@ contract('Token', (accounts) => {
     })
   }
 
-  let firstEvent = (events, name) => {
+  let firstEvent = (events) => {
     return new Promise((resolve, reject) => {
       events.watch((error, log) => {
-        if (error) reject(error)
-        if (log.event === name) resolve(log)
+        if (error) {
+          reject(error)
+        } else {
+          resolve(log)
+        }
       })
     })
   }
@@ -197,7 +200,7 @@ contract('Token', (accounts) => {
 
     contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
-      let events = token.allEvents()
+      let events = token.Transfer()
       let starting
 
       Promise.resolve().then(() => {
@@ -208,12 +211,12 @@ contract('Token', (accounts) => {
       }).then(() => {
         token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
-        return firstEvent(events, 'Transfer')
+        return firstEvent(events)
       }).then((log) => {
         expect(log.args._from).to.equal(starting.alice.address)
         expect(log.args._to).to.equal(starting.bob.address)
         expect(log.args._amount.toNumber()).to.equal(5)
-        done()  // we have completed successfully ONLY if we logged an event
+        done()
       })
     })
 
@@ -285,7 +288,7 @@ contract('Token', (accounts) => {
 
     contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
-      let events = token.allEvents()
+      let events = token.Transfer()
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -300,12 +303,12 @@ contract('Token', (accounts) => {
       }).then(() => {
         return token.transferFrom(manager, recipient, 50, {from: spender})
       }).then(() => {
-        return firstEvent(events, 'Transfer')
+        return firstEvent(events)
       }).then((log) => {
         expect(log.args._from).to.equal(manager)
         expect(log.args._to).to.equal(recipient)
         expect(log.args._amount.toNumber()).to.equal(50)
-        done()  // we have completed successfully ONLY if we logged an event
+        done()
       })
     })
 
@@ -422,7 +425,7 @@ contract('Token', (accounts) => {
 
     contractIt('should fire an Approval event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
-      let events = token.allEvents()
+      let events = token.Approval()
       let manager, spender
 
       Promise.resolve().then(() => {
@@ -432,12 +435,12 @@ contract('Token', (accounts) => {
         spender = users.spender.address
         token.approve(spender, 50, {from: manager})
       }).then(() => {
-        return firstEvent(events, 'Approval')
+        return firstEvent(events)
       }).then((log) => {
         expect(log.args._owner).to.equal(manager)
         expect(log.args._spender).to.equal(spender)
         expect(log.args._amount.toNumber()).to.equal(50)
-        done()  // we have completed successfully ONLY if we logged an event
+        done()
       })
     })
   })
