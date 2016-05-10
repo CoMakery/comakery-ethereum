@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "CoMakery Ethereum contracts and infrastructure",
   "author": "Harlan T Wood (https://github.com/harlantwood)",
+  "contributors": [
+    "Noah Thorp (https://github.com/aquabu)"
+  ],
   "scripts": {
     "start": "nodemon --ignore . bin/server",
     "dev:server": "DEBUG=config,dev,server,token nodemon --watch lib --watch environments bin/server",
