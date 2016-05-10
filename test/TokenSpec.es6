@@ -112,19 +112,19 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#allowance', () => {
+  describe('#allowance', () => {
     contractShouldThrow(() => {
       return token.allowance(accounts[1], accounts[2], {value: 1})
     })
   })
 
-  describe('DynamicToken#balanceOf', () => {
+  describe('#balanceOf', () => {
     contractShouldThrow(() => {
       return token.balanceOf(accounts[1], {value: 1})
     })
   })
 
-  describe('DynamicToken#issue', () => {
+  describe('#issue', () => {
     contractShouldThrow(() => {
       return token.issue(accounts[1], 10, {value: 1})
     })
@@ -164,7 +164,7 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#transfer', () => {
+  describe('#transfer', () => {
     contractShouldThrow(() => {
       return token.transfer(accounts[0], 10, {value: 1})
     })
@@ -285,7 +285,7 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#transferFrom', () => {
+  describe('#transferFrom', () => {
     contractShouldThrow(() => {
       return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
     })
@@ -458,7 +458,7 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#approve', () => {
+  describe('#approve', () => {
     contractShouldThrow(() => {
       return token.approve(accounts[1], 100, {value: 1})
     })
@@ -500,7 +500,7 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#totalSupply', () => {
+  describe('#totalSupply', () => {
     contractShouldThrow(() => {
       return token.setTotalSupply(10, {value: 1})
     })
@@ -548,7 +548,7 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#setTotalSupply', () => {
+  describe('#setTotalSupply', () => {
     contractIt('should allow owner to set totalSupply', (done) => {
       const newTotalSupply = 117
 
@@ -578,7 +578,7 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('DynamicToken#setOwner', () => {
+  describe('#setOwner', () => {
     contractShouldThrow(() => {
       return token.setOwner(accounts[1], {value: 1})
     })
