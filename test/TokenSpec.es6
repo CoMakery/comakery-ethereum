@@ -584,17 +584,30 @@ contract('Token', (accounts) => {
   })
 
   describe('sending ether', () => {
-    contractIt('should throw and not allow sending of Ether', (done) => {
-      const token = Token.deployed()
-      let sender = accounts[0]
+    let contractShouldThrow = (functionName, functionToCall) => {
+      contractIt(functionName + ' should throw not send Ether', (done) => {
+        Promise.resolve().then(functionToCall
+        ).then(function () {
+          throw new Error('Expected solidity error to be thown from contract, but was not')
+        }).catch(function (error) {
+          if (error.message.search('invalid JUMP') === -1) throw error
+        }).then(done).catch(done)
+      })
+    }
 
-      Promise.resolve().then(() => {
-        return token.issue(accounts[1], 10, {from: sender, value: 1})
-      }).then(function () {
-        throw new Error('Expected solidity error to be thown from contract, but was not')
-      }).catch(function (error) {
-        if (error.message.search('invalid JUMP') === -1) throw error
-      }).then(done).catch(done)
+    contractShouldThrow('#setOwner', () => {
+      const token = Token.deployed()
+      return token.setOwner(accounts[1], {value: 1})
+    })
+
+    contractShouldThrow('#issue', () => {
+      const token = Token.deployed()
+      return token.issue(accounts[1], 10, {value: 1})
+    })
+
+    contractShouldThrow('#setTotalSupply', () => {
+      const token = Token.deployed()
+      return token.setTotalSupply(10, {value: 1})
     })
   })
 })

@@ -38,7 +38,7 @@ contract Token is TokenInterface {
     }
   }
 
-  function setTotalSupply(uint256 _totalSupply) onlyOwner {
+  function setTotalSupply(uint256 _totalSupply) onlyOwner noEther {
     totalSupply = _totalSupply;
   }
 
@@ -48,7 +48,7 @@ contract Token is TokenInterface {
     }
   }
 
-  function setOwner(address _newOwner) onlyOwner {
+  function setOwner(address _newOwner) onlyOwner noEther {
     owner = _newOwner;
   }
 
