@@ -312,7 +312,7 @@ contract('Token', (accounts) => {
       })
     })
 
-    contractItOnly('should fire a TransferFrom event when a tranfer is sucessful', (done) => {
+    contractIt('should fire a TransferFrom event when a tranfer is sucessful', (done) => {
       const token = Token.deployed()
       let events = token.TransferFrom()
       let manager, spender, recipient
