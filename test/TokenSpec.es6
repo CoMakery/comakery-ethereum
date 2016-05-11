@@ -26,8 +26,12 @@ const contractItOnly = (name, func) => {
   })
 }
 
-let contractShouldThrow = (functionToCall) => {
-  contractIt('should throw an error if ether ether is sent', (done) => {
+let contractShouldThrowIfEtherSent = (functionToCall) => {
+  contractShouldThrow('should throw an error if ether is sent', functionToCall)
+}
+
+let contractShouldThrow = (description, functionToCall) => {
+  contractIt(description, (done) => {
     Promise.resolve().then(functionToCall
     ).then(function () {
       throw new Error('Expected solidity error to be thown from contract, but was not')
@@ -113,19 +117,19 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#allowance', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.allowance(accounts[1], accounts[2], {value: 1})
     })
   })
 
   describe('#balanceOf', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.balanceOf(accounts[1], {value: 1})
     })
   })
 
   describe('#issue', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.issue(accounts[1], 10, {value: 1})
     })
 
@@ -162,10 +166,22 @@ contract('DynamicToken', (accounts) => {
         expect(ending.bob.balance).to.equal(0)
       }).then(done).catch(done)
     })
+
+    contractShouldThrow('should throw an error if token balance overflows', () => {
+      let MAXISH = 1e77  // max value of a uint256 is ~ 1.157920892373162e+77
+
+      return Promise.resolve().then(() => {
+        return token.setTotalSupply(MAXISH)
+      }).then(() => {
+        return token.issue(accounts[1], MAXISH)
+      }).then(() => {
+        return token.issue(accounts[1], MAXISH)
+      })
+    })
   })
 
   describe('#transfer', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.transfer(accounts[0], 10, {value: 1})
     })
 
@@ -286,7 +302,7 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#transferFrom', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
     })
 
@@ -459,7 +475,7 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#approve', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.approve(accounts[1], 100, {value: 1})
     })
 
@@ -501,7 +517,7 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#totalSupply', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.setTotalSupply(10, {value: 1})
     })
 
@@ -579,7 +595,7 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#setOwner', () => {
-    contractShouldThrow(() => {
+    contractShouldThrowIfEtherSent(() => {
       return token.setOwner(accounts[1], {value: 1})
     })
 

@@ -63,8 +63,8 @@ contract DynamicToken is TokenInterface {
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
 
   function DynamicToken() {
-    owner = msg.sender; // contract owner is contract creator
-    totalSupply = 10000000;
+    owner = msg.sender;     // contract owner is contract creator
+    totalSupply = 10**7;
   }
 
   modifier onlyOwner {
@@ -78,6 +78,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function issue(address _to, uint256 _value) onlyOwner noEther {
+    if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
     if (_value <= totalSupply) {
       balances[_to] = _value;
     }
