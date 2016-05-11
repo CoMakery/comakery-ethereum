@@ -693,6 +693,11 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
+  contractIt('#indexAccount should be private', (done) => {
+    expect(token.indexAccount).to.equal(undefined)
+    done()
+  })
+
   // This kills the server unless it runs last...
   describe('#close', () => {
     contractShouldThrow('should throw an error if called by a non-owner', () => {

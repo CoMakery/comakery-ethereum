@@ -90,13 +90,6 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function indexAccount(address _account) {
-    for (uint32 i = 0;  i < accounts.length; i++) {
-      if (accounts[i] == _account) return ;
-    }
-    accounts.push(_account);
-  }
-
   function setOwner(address _newOwner) onlyOwner noEther {
     owner = _newOwner;
   }
@@ -145,6 +138,13 @@ contract DynamicToken is TokenInterface {
     } else {
       return false;
     }
+  }
+
+  function indexAccount(address _account) private {
+    for (uint32 i = 0;  i < accounts.length; i++) {
+      if (accounts[i] == _account) return ;
+    }
+    accounts.push(_account);
   }
 
   function close() {
