@@ -224,7 +224,7 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should allow to token owner to transfer tokens to other users', (done) => {
+    contractIt('should allow the token owner to transfer tokens to other users', (done) => {
       let starting
 
       Promise.resolve().then(() => {
@@ -624,6 +624,26 @@ contract('DynamicToken', (accounts) => {
         return token.owner()
       }).then((newOwner) => {
         expect(newOwner.toString()).to.not.equal(users.bob.address)
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('#close', (done) => {
+    contractShouldThrow('should throw an error if called by a non-owner', () => {
+      return token.close(accounts[1], {from: accounts[1]})
+    })
+
+    contractIt('owner can self destruct the contract', (done) => {
+      Promise.resolve().then(() => {
+        return token.owner()
+      }).then((owner) => {
+        expect(owner).to.equal(accounts[0])
+      }).then(() => {
+        return token.close()
+      }).then(() => {
+        return token.owner()
+      }).then((owner) => {
+        expect(owner).to.equal('0x')
       }).then(done).catch(done)
     })
   })

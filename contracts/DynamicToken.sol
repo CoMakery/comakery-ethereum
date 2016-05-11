@@ -133,9 +133,8 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  /*TODO*/
-  /*function destroy() onlyOwner {
-    suicide(owner);
-  }*/
-
+  function close() {
+    if(msg.sender != owner) throw;
+    selfdestruct(owner);
+  }
 }
