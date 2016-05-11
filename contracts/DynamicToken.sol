@@ -54,7 +54,7 @@ contract TokenInterface {
 contract DynamicToken is TokenInterface {
   address public owner;
 
-  string public version;
+  address[] public accounts;
 
   // Protects users by preventing the execution of method calls that
   // inadvertently also transferred ether
@@ -65,6 +65,7 @@ contract DynamicToken is TokenInterface {
   function DynamicToken() {
     owner = msg.sender;     // contract owner is contract creator
     totalSupply = 10**7;
+    accounts.push(msg.sender);
   }
 
   modifier onlyOwner {
@@ -77,11 +78,23 @@ contract DynamicToken is TokenInterface {
     totalSupply = _totalSupply;
   }
 
+  function getAccounts() returns (address[] _accounts) {
+    return accounts;
+  }
+
   function issue(address _to, uint256 _value) onlyOwner noEther {
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
     if (_value <= totalSupply) {
       balances[_to] = _value;
+      indexAccount(_to);
     }
+  }
+
+  function indexAccount(address _account) {
+    for (uint32 i = 0;  i < accounts.length; i++) {
+      if (accounts[i] == _account) return ;
+    }
+    accounts.push(_account);
   }
 
   function setOwner(address _newOwner) onlyOwner noEther {
@@ -95,6 +108,7 @@ contract DynamicToken is TokenInterface {
 
       balances[msg.sender] -= _amount;
       balances[_to] += _amount;
+      indexAccount(_to);
       Transfer(msg.sender, _to, _amount);
       return true;
     } else {
@@ -107,7 +121,6 @@ contract DynamicToken is TokenInterface {
   }
 
   function approve(address _spender, uint256 _amount) noEther returns (bool success) {
-    // if (amount <= 0) return false; // TODO can we test this?
     allowed[msg.sender][_spender] = _amount;
     Approval(msg.sender, _spender, _amount);
     return true;
@@ -120,8 +133,9 @@ contract DynamicToken is TokenInterface {
   function transferFrom(address _from, address _to, uint256 _amount) noEther returns (bool success) {
     if (balances[_from] >= _amount
       && allowed[_from][msg.sender] >= _amount
-      // && _amount > 0) {  -- FIXME the test passes without this, why?
       ) {
+        indexAccount(_to);
+
         balances[_to] += _amount;
         balances[_from] -= _amount;
         allowed[_from][msg.sender] -= _amount;
@@ -136,5 +150,10 @@ contract DynamicToken is TokenInterface {
   function close() {
     if(msg.sender != owner) throw;
     selfdestruct(owner);
+  }
+
+  // throw on malformed calls
+  function () {
+    throw;
   }
 }

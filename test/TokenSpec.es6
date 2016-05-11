@@ -628,7 +628,73 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('#close', (done) => {
+  describe('#getAccounts accessbile by everyone', () => {
+    contractIt('includes the owner address by default', (done) => {
+      Promise.resolve().then(() => {
+        return token.getAccounts.call()
+      }).then((tokenAccounts) => {
+        expect(tokenAccounts[0]).to.equal(accounts[0])
+        expect(tokenAccounts.length).to.equal(1)
+      }).then(done).catch(done)
+    })
+
+    contractIt('includes accounts that are issued tokens without duplicates', (done) => {
+      let expected = [accounts[0], accounts[2]]
+
+      Promise.resolve().then(() => {
+        return token.issue(accounts[2], 20)
+      }).then(() => {
+        return token.issue(accounts[2], 25)
+      }).then(() => {
+        return token.getAccounts.call()
+      }).then((tokenAccounts) => {
+        expect(tokenAccounts.length).to.equal(expected.length)
+        expect(tokenAccounts).to.have.members(expected)
+      }).then(done).catch(done)
+    })
+
+    contractIt('includes accounts that are transfered tokens without duplicates', (done) => {
+      let expected = [accounts[0], accounts[2]]
+
+      Promise.resolve().then(() => {
+        return token.issue(accounts[0], 2000)
+      }).then(() => {
+        return token.transfer(accounts[2], 20)
+      }).then(() => {
+        return token.transfer(accounts[2], 25)
+      }).then(() => {
+        return token.getAccounts.call()
+      }).then((tokenAccounts) => {
+        expect(tokenAccounts).to.have.members(expected)
+        expect(tokenAccounts.length).to.equal(expected.length)
+      }).then(done).catch(done)
+    })
+
+    contractIt('includes accounts that are transferedFrom tokens without duplicates', (done) => {
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 200, {from: manager})
+      }).then(() => {
+        token.approve(spender, 100, {from: manager})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, 50, {from: spender})
+      }).then(() => {
+        return token.getAccounts.call()
+      }).then((tokenAccounts) => {
+        let expected = [manager, recipient]
+        expect(tokenAccounts).to.have.members(expected)
+      }).then(done).catch(done)
+    })
+  })
+
+  // This kills the server unless it runs last...
+  describe('#close', () => {
     contractShouldThrow('should throw an error if called by a non-owner', () => {
       return token.close(accounts[1], {from: accounts[1]})
     })
