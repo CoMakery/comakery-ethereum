@@ -629,6 +629,10 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#getAccounts accessbile by everyone', () => {
+    contractShouldThrowIfEtherSent(() => {
+      return token.getAccounts({value: 1})
+    })
+
     contractIt('includes the owner address by default', (done) => {
       Promise.resolve().then(() => {
         return token.getAccounts.call()

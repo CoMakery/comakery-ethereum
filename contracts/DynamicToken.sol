@@ -78,7 +78,7 @@ contract DynamicToken is TokenInterface {
     totalSupply = _totalSupply;
   }
 
-  function getAccounts() returns (address[] _accounts) {
+  function getAccounts() noEther returns (address[] _accounts) {
     return accounts;
   }
 
