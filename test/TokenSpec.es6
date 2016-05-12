@@ -626,6 +626,11 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractShouldThrow('should not allow maxSupply to be set less than total supply', () => {
+      token.issue(accounts[0], 10)
+      return token.setMaxSupply(1)
+    })
+
     contractIt('should forbid non-owner from setting maxSupply', (done) => {
       const newTotalSupply = 117
 

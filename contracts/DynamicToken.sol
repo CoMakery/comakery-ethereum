@@ -97,6 +97,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function setMaxSupply(uint256 _maxSupply) onlyOwner noEther {
+    if (_maxSupply < totalSupply) throw;
     maxSupply = _maxSupply;
   }
 
