@@ -53,8 +53,8 @@ contract TokenInterface {
 
 contract DynamicToken is TokenInterface {
   address public owner;
-
   address[] public accounts;
+  uint256 public maxSupply;
 
   // Protects users by preventing the execution of method calls that
   // inadvertently also transferred ether
@@ -64,7 +64,8 @@ contract DynamicToken is TokenInterface {
 
   function DynamicToken() {
     owner = msg.sender;     // contract owner is contract creator
-    totalSupply = 10**7;
+    maxSupply = 10**7;
+    totalSupply = 0;
     accounts.push(msg.sender);
   }
 
@@ -74,8 +75,8 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function setTotalSupply(uint256 _totalSupply) onlyOwner noEther {
-    totalSupply = _totalSupply;
+  function setMaxSupply(uint256 _maxSupply) onlyOwner noEther {
+    maxSupply = _maxSupply;
   }
 
   function getAccounts() noEther returns (address[] _accounts) {
@@ -84,8 +85,9 @@ contract DynamicToken is TokenInterface {
 
   function issue(address _to, uint256 _value) onlyOwner noEther {
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
-    if (_value <= totalSupply) {
+    if (_value <= maxSupply) {
       balances[_to] = _value;
+      totalSupply += _value;
       _indexAccount(_to);
     }
   }

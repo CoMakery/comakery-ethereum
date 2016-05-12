@@ -150,6 +150,18 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractIt('should track totalSupply issued', (done) => {
+      Promise.resolve().then(() => {
+        return token.issue(accounts[0], 17)
+      }).then(() => {
+        return token.issue(accounts[1], 100)
+      }).then(() => {
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(117)
+      }).then(done).catch(done)
+    })
+
     contractIt('should only allow contract owner to issue new tokens', (done) => {
       const amount = 10
       let starting
@@ -171,7 +183,7 @@ contract('DynamicToken', (accounts) => {
       let MAXISH = 1e77  // max value of a uint256 is ~ 1.157920892373162e+77
 
       return Promise.resolve().then(() => {
-        return token.setTotalSupply(MAXISH)
+        return token.setMaxSupply(MAXISH)
       }).then(() => {
         return token.issue(accounts[1], MAXISH)
       }).then(() => {
@@ -516,14 +528,14 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('#totalSupply', () => {
+  describe('#maxSupply', () => {
     contractShouldThrowIfEtherSent(() => {
-      return token.setTotalSupply(10, {value: 1})
+      return token.setMaxSupply(10, {value: 1})
     })
 
     contractIt('should default to 10 million total supply', (done) => {
       Promise.resolve().then(() => {
-        return token.totalSupply()
+        return token.maxSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
       }).then(done).catch(done)
@@ -564,30 +576,30 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('#setTotalSupply', () => {
-    contractIt('should allow owner to set totalSupply', (done) => {
+  describe('#setMaxSupply', () => {
+    contractIt('should allow owner to set maxSupply', (done) => {
       const newTotalSupply = 117
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        token.setTotalSupply(newTotalSupply, {from: users.alice.address})
+        token.setMaxSupply(newTotalSupply, {from: users.alice.address})
       }).then(() => {
-        return token.totalSupply()
+        return token.maxSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(117)
       }).then(done).catch(done)
     })
 
-    contractIt('should forbid non-owner from setting totalSupply', (done) => {
+    contractIt('should forbid non-owner from setting maxSupply', (done) => {
       const newTotalSupply = 117
 
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        token.setTotalSupply(newTotalSupply, {from: users.bob.address})
+        token.setMaxSupply(newTotalSupply, {from: users.bob.address})
       }).then(() => {
-        return token.totalSupply()
+        return token.maxSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
       }).then(done).catch(done)
