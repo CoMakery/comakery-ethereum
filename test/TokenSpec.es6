@@ -152,6 +152,14 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractShouldThrow('should throw when value issued is a negative number', () => {
+      return Promise.resolve().then(() => {
+        return token.issue(accounts[0], 10)
+      }).then(() => {
+        return token.issue(accounts[0], -1)
+      })
+    })
+
     contractIt('should track totalSupply issued', (done) => {
       Promise.resolve().then(() => {
         return token.issue(accounts[0], 17)

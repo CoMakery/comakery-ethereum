@@ -75,13 +75,17 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function setMaxSupply(uint256 _maxSupply) onlyOwner noEther {
-    maxSupply = _maxSupply;
-  }
+  // accessors
 
   function getAccounts() noEther returns (address[] _accounts) {
     return accounts;
   }
+
+  function balanceOf(address _owner) noEther constant returns(uint256 balance) {
+    return balances[_owner];
+  }
+
+  //mutators
 
   function issue(address _to, uint256 _value) onlyOwner noEther {
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
@@ -92,16 +96,16 @@ contract DynamicToken is TokenInterface {
     }
   }
 
+  function setMaxSupply(uint256 _maxSupply) onlyOwner noEther {
+    maxSupply = _maxSupply;
+  }
+
   function setOwner(address _newOwner) onlyOwner noEther {
     owner = _newOwner;
   }
 
   function transfer(address _to, uint256 _amount) noEther returns (bool success) {
     return _transfer(msg.sender, _to, _amount);
-  }
-
-  function balanceOf(address _owner) noEther constant returns(uint256 balance) {
-    return balances[_owner];
   }
 
   function approve(address _spender, uint256 _amount) noEther returns (bool success) {
