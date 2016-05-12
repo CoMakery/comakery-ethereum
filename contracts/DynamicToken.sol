@@ -86,7 +86,7 @@ contract DynamicToken is TokenInterface {
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
     if (_value <= totalSupply) {
       balances[_to] = _value;
-      indexAccount(_to);
+      _indexAccount(_to);
     }
   }
 
@@ -129,7 +129,7 @@ contract DynamicToken is TokenInterface {
     if (balances[_from] >= _amount) {
       balances[_to] += _amount;
       balances[_from] -= _amount;
-      indexAccount(_to);
+      _indexAccount(_to);
       Transfer(_from, _to, _amount);
       return true;
     } else {
@@ -137,7 +137,7 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function indexAccount(address _account) private {
+  function _indexAccount(address _account) private {
     for (uint32 i = 0;  i < accounts.length; i++) {
       if (accounts[i] == _account) return ;
     }
