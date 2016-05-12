@@ -133,7 +133,7 @@ contract('DynamicToken', (accounts) => {
       return token.issue(accounts[1], 10, {value: 1})
     })
 
-    contractIt('should issue tokens from owner to a user', (done) => {
+    contractIt('should issue tokens to a user and add tokens to their balance', (done) => {
       const amount = 10
       let starting
 
@@ -143,10 +143,12 @@ contract('DynamicToken', (accounts) => {
         starting = users
         token.issue(starting.bob.address, amount, {from: starting.alice.address})
       }).then(() => {
+        token.issue(starting.bob.address, amount, {from: starting.alice.address})
+      }).then(() => {
         return getUsers(token)
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(amount)
+        expect(ending.bob.balance).to.equal(amount * 2)
       }).then(done).catch(done)
     })
 
