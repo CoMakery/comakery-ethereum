@@ -95,18 +95,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function transfer(address _to, uint256 _amount) noEther returns (bool success) {
-    // if (amount <= 0) return false; // TODO can we test this?
-    if (balances[msg.sender] >= _amount) {
-      if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
-
-      balances[msg.sender] -= _amount;
-      balances[_to] += _amount;
-      indexAccount(_to);
-      Transfer(msg.sender, _to, _amount);
-      return true;
-    } else {
-      return false;
-    }
+    return _transfer(msg.sender, _to, _amount);
   }
 
   function balanceOf(address _owner) noEther constant returns(uint256 balance) {
@@ -124,17 +113,25 @@ contract DynamicToken is TokenInterface {
   }
 
   function transferFrom(address _from, address _to, uint256 _amount) noEther returns (bool success) {
-    if (balances[_from] >= _amount
-      && allowed[_from][msg.sender] >= _amount
-      ) {
-        indexAccount(_to);
+    if (allowed[_from][msg.sender] >= _amount &&
+      _transfer(_from, _to, _amount)) {
+      allowed[_from][msg.sender] -= _amount;
+      TransferFrom(_from, _to, msg.sender, _amount);
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-        balances[_to] += _amount;
-        balances[_from] -= _amount;
-        allowed[_from][msg.sender] -= _amount;
-        Transfer(_from, _to, _amount);
-        TransferFrom(_from, _to, msg.sender, _amount);
-        return true;
+  function _transfer(address _from, address _to, uint256 _amount) private returns (bool success) {
+    if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
+
+    if (balances[_from] >= _amount) {
+      balances[_to] += _amount;
+      balances[_from] -= _amount;
+      indexAccount(_to);
+      Transfer(_from, _to, _amount);
+      return true;
     } else {
       return false;
     }
