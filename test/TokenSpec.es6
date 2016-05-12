@@ -199,7 +199,7 @@ contract('DynamicToken', (accounts) => {
       return token.transfer(accounts[0], 10, {value: 1})
     })
 
-    contractIt('should transfer tokens from owner to a user', (done) => {
+    contractIt('should transfer tokens from contract owner to a receiver', (done) => {
       let starting
 
       Promise.resolve().then(() => {
@@ -344,6 +344,31 @@ contract('DynamicToken', (accounts) => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(60)
+      }).then(done).catch(done)
+    })
+
+    contractIt('spender cannot spend without allowance set by manager', (done) => {
+      let manager, spender, recipient
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        manager = users.manager.address
+        spender = users.spender.address
+        recipient = users.recipient.address
+        token.issue(manager, 200, {from: manager})
+      }).then(() => {
+        return token.transferFrom(manager, recipient, 40, {from: spender})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.manager.balance).to.equal(200)
+        expect(ending.spender.balance).to.equal(0)
+        expect(ending.recipient.balance).to.equal(0)
+      }).then(() => {
+        return token.allowance.call(manager, spender, {from: anyone})
+      }).then((allowance) => {
+        expect(allowance.toNumber()).to.equal(0)
       }).then(done).catch(done)
     })
 
