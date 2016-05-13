@@ -54,21 +54,16 @@ class Token
 
     Promise.resolve()
     .then =>
-      tokenContract.balanceOf.call sender
-    .then (@senderBalance) =>
       tokenContract.balanceOf.call recipient
     .then (@recipientBalance) =>
-      d {@senderBalance, @recipientBalance}
-    .then =>
+      d {@recipientBalance}
       d { sender, recipient, amount }
       tokenContract.issue recipient, amount, from: sender
     .then (@transactionId) =>
       d @transactionId
-      tokenContract.balanceOf.call sender
-    .then (@senderBalance) =>
       tokenContract.balanceOf.call recipient
     .then (@recipientBalance) =>
-      d {@senderBalance, @recipientBalance}
+      d {@recipientBalance}
       return @transactionId
 
 module.exports = Token
