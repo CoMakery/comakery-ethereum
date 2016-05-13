@@ -31,6 +31,7 @@ class Token
     contractAddress
 
   @transfer: (contractAddress, recipient, amount) ->
+    d { config }
     web3 = new Web3
     errors = {}
     unless web3.isAddress contractAddress
@@ -47,7 +48,8 @@ class Token
     Pudding.setWeb3 web3
     TokenContract.load Pudding
     tokenContract = TokenContract.at contractAddress
-    sender = config.rpc.from or throw new Error(
+    d { tokenContract }
+     sender = config.rpc.from or throw new Error(
       "please set `rpc.from` property: #{envDir}/config.json")
 
     Promise.resolve()
