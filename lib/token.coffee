@@ -49,7 +49,7 @@ class Token
     TokenContract.load Pudding
     tokenContract = TokenContract.at contractAddress
     d { tokenContract }
-     sender = config.rpc.from or throw new Error(
+    sender = config.rpc.from or throw new Error(
       "please set `rpc.from` property: #{envDir}/config.json")
 
     Promise.resolve()
