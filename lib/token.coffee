@@ -13,6 +13,11 @@ config = require path.join(envDir, "config.json")
 
 d = (args...) -> debug pjson args...
 
+# This Token class is a high level wrapper
+# which loads the Pudding contract, which:
+# 1) is created by Truffle, and
+# 2) under the hood uses web3 to make JSON RPC calls to geth
+
 class Token
 
   @create: ->
