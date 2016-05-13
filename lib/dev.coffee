@@ -1,7 +1,7 @@
+{nodeEnv} = require '../lib/config'
 { pjson, type } = require 'lightsaber'
 debug = require('debug')('dev')
 
-{nodeEnv} = require '../lib/config'
 Token = require '../lib/token'
 
 d = (args...) -> debug pjson args...

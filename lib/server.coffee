@@ -1,9 +1,9 @@
+{reportError} = require './config'
 debug = require('debug')('server')
 chalk = require 'chalk'
 { log, pjson } = require 'lightsaber'
 express = require 'express'
 bodyParser = require 'body-parser'
-{reportError} = require './config'
 
 Token = require './token'
 

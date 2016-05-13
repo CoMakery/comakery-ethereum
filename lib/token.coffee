@@ -1,3 +1,4 @@
+{nodeEnv} = require './config'
 path = require 'path'
 { json, pjson, run, type } = require 'lightsaber'
 { isEmpty } = require 'lodash'
@@ -6,7 +7,6 @@ debug = require('debug')('token')
 Web3 = require 'web3'
 Pudding = require "ether-pudding"
 
-{nodeEnv} = require './config'
 envDir = path.resolve __dirname, "../environments/#{nodeEnv}"
 TokenContract = require path.join(envDir, "contracts/Token.sol.js")
 config = require path.join(envDir, "config.json")
