@@ -1,8 +1,8 @@
+require('dotenv').config()
 { log, pjson } = require 'lightsaber'
 debug = require('debug')('config')
 global.Promise = require 'bluebird'
 Airbrake = require('airbrake')
-require('dotenv').config()
 
 nodeEnv = process.env.NODE_ENV or 'development'
 debug {nodeEnv}
