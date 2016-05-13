@@ -8,7 +8,7 @@ Web3 = require 'web3'
 Pudding = require "ether-pudding"
 
 envDir = path.resolve __dirname, "../environments/#{nodeEnv}"
-TokenContract = require path.join(envDir, "contracts/Token.sol.js")
+TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
 config = require path.join(envDir, "config.json")
 
 d = (args...) -> debug pjson args...
