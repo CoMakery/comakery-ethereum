@@ -48,7 +48,6 @@ class Token
     Pudding.setWeb3 web3
     TokenContract.load Pudding
     tokenContract = TokenContract.at contractAddress
-    d { tokenContract }
     sender = config.rpc.from or throw new Error(
       "please set `rpc.from` property: #{envDir}/config.json")
 
