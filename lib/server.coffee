@@ -15,8 +15,10 @@ app.use bodyParser.json()
 
 # create contract(s) related to a project
 app.post '/project', (request, response) ->
+  { maxSupply } = request.body
+  d { maxSupply }
   Promise.try =>
-    Token.create()
+    Token.create(maxSupply)
   .then (contractAddress) =>
     response.json {contractAddress}
   .catch (error) =>

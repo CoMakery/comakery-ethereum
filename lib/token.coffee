@@ -8,7 +8,6 @@ Web3 = require 'web3'
 Pudding = require "ether-pudding"
 
 envDir = path.resolve __dirname, "../environments/#{nodeEnv}"
-TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
 config = require path.join(envDir, "config.json")
 
 d = (args...) -> debug pjson args...
@@ -20,7 +19,8 @@ d = (args...) -> debug pjson args...
 
 class Token
 
-  @create: ->
+  # @create: ->
+  @create: (newMaxSupply) ->
     {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv}"
     pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
     contractAddress = pattern.exec(output)?[1]
@@ -28,9 +28,25 @@ class Token
       throw Promise.OperationalError "No contract address found in
         output [[ #{output} ]] -- searched with pattern [[ #{pattern} ]]"
     d {contractAddress}
-    contractAddress
+
+    TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
+    tokenContract = TokenContract.at contractAddress
+    Promise.resolve()
+    .then =>
+      tokenContract.maxSupply.call()
+    .then (maxSupply) =>
+      d {maxSupply, newMaxSupply}
+      d {config}
+      tokenContract.setMaxSupply newMaxSupply, from: config.rpc.from
+    .then (@transactionId) =>
+      d @transactionId
+      tokenContract.maxSupply.call()
+    .then (maxSupply) =>
+      d {maxSupply}
+      contractAddress
 
   @transfer: (contractAddress, recipient, amount) ->
+    TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
     d { config }
     web3 = new Web3
     errors = {}
