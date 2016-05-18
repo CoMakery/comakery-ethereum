@@ -30,6 +30,14 @@ class Token
     d {contractAddress}
 
     TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
+
+    web3 = new Web3
+    rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
+    d { rpcUrl }
+    web3.setProvider new Web3.providers.HttpProvider rpcUrl
+    Pudding.setWeb3 web3
+    TokenContract.load Pudding
+
     tokenContract = TokenContract.at contractAddress
     Promise.resolve()
     .then =>
