@@ -12,7 +12,7 @@
     "dev": "DEBUG=config,dev,server,token bin/dev",
     "truffle": "truffle",
     "testrpc": "testrpc -p 7777 --account='0x0000000000000000000000000000000000000000000000000000000000000001,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000002,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000003,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000004,10000000000000000000000'",
-    "fulltest": "npm-run-all --silent test lint check-yaml check-for-only",
+    "fulltest": "npm-run-all --silent test lint check-yaml",
     "tdd": "npm-run-all --silent test eslint",
     "test:mocha": "mocha --opts test/js/mocha.opts test/js",
     "test:truffle": "truffle test test/solidity/*.es6",
@@ -22,7 +22,7 @@
     "eslint": "eslint test/*",
     "check-yaml": "(js-yaml circle.yml && js-yaml .eslintrc.yml) > /dev/null",
     "shipit": "npm-run-all --silent pre-push && git push --tags origin head",
-    "pre-push": "npm-run-all --silent check-clean fulltest",
+    "pre-push": "npm-run-all --silent check-clean check-for-only fulltest",
     "check-clean": "if [[ $(git status --porcelain) ]]; then echo '*** Please stash or commit changes first ***\n' && exit 1; fi ",
     "check-for-only": "if [[ $(grep -r 'contractItOnly(' test) ]]; then echo '*** contractItOnly( *** found in test, please remove' && exit 1; fi",
     "wrap": "npm prune && npm shrinkwrap"
