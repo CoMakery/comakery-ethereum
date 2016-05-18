@@ -3,17 +3,13 @@
 { d } = require 'lightsaber'
 { exec } = require 'shelljs'
 
-clean = (text) ->
+print = (text, logger) ->
   text = text.replace(/[\r\n]+$/, '')
   text = text.replace(/\u001b\[0m      \s*Contract:\s*\u001b\[0m/, '')
-  if text.trim() is '' then null else text
+  logger(text) if text.trim()
 
 command = "truffle test test/solidity/*.es6"
 testRun = exec(command, {async: true, silent: true})
-testRun.stdout.on 'data', (data) ->
-  data = clean data
-  console.log data if data
-testRun.stderr.on 'data', (data) ->
-  data = clean data
-  console.error data if data
+testRun.stdout.on 'data', (data) -> print(data, console.log)
+testRun.stderr.on 'data', (data) -> print(data, console.error)
 testRun.on 'close', (code) -> process.exit code
