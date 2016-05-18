@@ -23,11 +23,10 @@ describe('DynamicToken', () => {
     Pudding.setWeb3(web3)
 
     it('should set max supply', (done) => {
-      const TokenContract = require(path.join(envDir, 'contracts/DynamicToken.sol.js'))
-      TokenContract.load(Pudding)
-
       Token.create(101)
       .then((contractAddress) => {
+        const TokenContract = require(path.join(envDir, 'contracts/DynamicToken.sol.js'))
+        TokenContract.load(Pudding)
         const tokenContract = TokenContract.at(contractAddress)
         return tokenContract.maxSupply.call()
       }).then((maxSupply) => {
