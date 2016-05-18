@@ -1,0 +1,17 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard"
+  ],
+  "rules": {
+    "linebreak-style": [2, "unix"],
+    "no-console": 1,
+    "no-nested-ternary": 2,
+    "strict": [2, "safe"],
+    "no-unused-vars": [2,
+      {
+        "varsIgnorePattern": "^(contractItOnly|d)$"
+      }
+    ]
+  }
+}
