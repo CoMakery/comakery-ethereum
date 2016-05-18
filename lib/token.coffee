@@ -19,7 +19,7 @@ d = (args...) -> debug pjson args...
 
 class Token
 
-  @create: (newMaxSupply) ->
+  @deployContract: ->
     quiet = nodeEnv is 'test'
     {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv}", {quiet}
     pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
@@ -28,7 +28,10 @@ class Token
       throw Promise.OperationalError "No contract address found in
         output [[ #{output} ]] -- searched with pattern [[ #{pattern} ]]"
     d {contractAddress}
+    contractAddress
 
+  @create: (newMaxSupply) ->
+    contractAddress = @deployContract()
     TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
 
     web3 = new Web3
