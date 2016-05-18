@@ -13,7 +13,7 @@ app = express()
 app.use bodyParser.json()
 # app.use airbrake.expressHandler()  # seems to not work :(
 
-# create contract(s) related to a project
+# create new contract for a project
 app.post '/project', (request, response) ->
   { maxSupply } = request.body
   d { maxSupply }

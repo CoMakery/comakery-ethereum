@@ -19,7 +19,6 @@ d = (args...) -> debug pjson args...
 
 class Token
 
-  # @create: ->
   @create: (newMaxSupply) ->
     {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv}"
     pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
@@ -44,13 +43,12 @@ class Token
       tokenContract.maxSupply.call()
     .then (maxSupply) =>
       d {maxSupply, newMaxSupply}
-      d {config}
       tokenContract.setMaxSupply newMaxSupply, from: config.rpc.from
-    .then (@transactionId) =>
-      d @transactionId
+    .then =>
       tokenContract.maxSupply.call()
     .then (maxSupply) =>
       d {maxSupply}
+      d {contractAddress}
       contractAddress
 
   @transfer: (contractAddress, recipient, amount) ->
