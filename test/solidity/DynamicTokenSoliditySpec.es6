@@ -1,13 +1,6 @@
 import {expect} from 'chai'
 import {d} from 'lightsaber'
 
-/* Declare global variables for eslint to ignore: */
-/* global beforeEach */
-/* global contract */
-/* global describe */
-/* global it */
-/* global DynamicToken */
-
 const contractIt = (name, func) => {
   contract('', () => {
     describe('Contract:', function () {
@@ -775,3 +768,10 @@ contract('DynamicToken', (accounts) => {
     })
   })
 })
+
+/* Declare global variables for eslint to ignore: */
+/* global beforeEach */
+/* global contract */
+/* global describe */
+/* global it */
+/* global DynamicToken */
