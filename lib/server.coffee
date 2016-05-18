@@ -1,6 +1,5 @@
 {reportError} = require './config'
 debug = require('debug')('server')
-chalk = require 'chalk'
 { log, pjson } = require 'lightsaber'
 express = require 'express'
 bodyParser = require 'body-parser'
@@ -37,6 +36,4 @@ app.post '/token_transfer', (request, response) ->
     reportError error
     response.status(500).json { error: (error.message or error.stack) }
 
-port = process.env.PORT or 3906
-app.listen port, ->
-  log chalk.magenta "Listenting on port #{port}..."
+module.exports = app

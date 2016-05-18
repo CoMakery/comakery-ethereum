@@ -1,4 +1,4 @@
-process.env.NODE_ENV = 'test'
+require('./testHelper')
 require('coffee-script/register')
 
 const Web3 = require('web3')
@@ -8,10 +8,6 @@ import {expect} from 'chai'
 const path = require('path')
 // import Token from '../lib/token'
 const Token = require('../../lib/token')
-
-/* Declare global variables for eslint to ignore: */
-/* global describe */
-/* global it */
 
 describe('DynamicToken', () => {
   describe('#create', function () {
@@ -35,3 +31,7 @@ describe('DynamicToken', () => {
     })
   })
 })
+
+/* Declare global variables for eslint to ignore: */
+/* global describe */
+/* global it */
