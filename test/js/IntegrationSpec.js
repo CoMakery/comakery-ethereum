@@ -1,7 +1,7 @@
 import './testHelper'
 import {keys} from 'lodash'
 import chai, {expect} from 'chai'
-const chaiHttp = require('chai-http')
+import chaiHttp from 'chai-http'
 
 const server = require('../../lib/server')
 const Token = require('../../lib/token')

@@ -30,18 +30,19 @@ class Token
     d {contractAddress}
     contractAddress
 
-  @create: (newMaxSupply) ->
-    contractAddress = @deployContract()
+  @loadContract: (contractAddress) ->
     TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
-
     web3 = new Web3
     rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
     d { rpcUrl }
     web3.setProvider new Web3.providers.HttpProvider rpcUrl
     Pudding.setWeb3 web3
     TokenContract.load Pudding
+    TokenContract.at contractAddress
 
-    tokenContract = TokenContract.at contractAddress
+  @create: (newMaxSupply) ->
+    contractAddress = @deployContract()
+    tokenContract = @loadContract contractAddress
     Promise.resolve()
     .then =>
       tokenContract.maxSupply.call()
@@ -56,8 +57,6 @@ class Token
       contractAddress
 
   @transfer: (contractAddress, recipient, amount) ->
-    TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
-    d { config }
     web3 = new Web3
     errors = {}
     unless web3.isAddress contractAddress
@@ -68,12 +67,7 @@ class Token
       errors.amount = "'#{amount}' is not a positive integer"
     throw Promise.OperationalError(json errors) unless isEmpty errors
 
-    rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
-    d { rpcUrl }
-    web3.setProvider new Web3.providers.HttpProvider rpcUrl
-    Pudding.setWeb3 web3
-    TokenContract.load Pudding
-    tokenContract = TokenContract.at contractAddress
+    tokenContract = @loadContract contractAddress
     sender = config.rpc.from or throw new Error(
       "please set `rpc.from` property: #{envDir}/config.json")
 
@@ -89,6 +83,6 @@ class Token
       tokenContract.balanceOf.call recipient
     .then (@recipientBalance) =>
       d {@recipientBalance}
-      return @transactionId
+      @transactionId
 
 module.exports = Token
