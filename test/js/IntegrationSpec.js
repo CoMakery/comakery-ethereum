@@ -41,13 +41,13 @@ describe('POST /project', () => {
   })
 })
 
-describe('POST /token_transfer', () => {
+describe('POST /token_issue', () => {
   it('should return a transaction address', (done) => {
     const contractAddress = Token.deployContract()
     const recipient = '0x2b5ad5c4795c026514f8317c7a215e218dccd6cf'  // pubkey of private key 0x0000000000000000000000000000000000000000000000000000000000000002
     chai
     .request(server)
-    .post('/token_transfer')
+    .post('/token_issue')
     .send({ contractAddress, recipient, amount: 111 })
     .then(function (res) {
       expect(res).to.have.status(200)

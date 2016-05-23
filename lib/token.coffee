@@ -56,7 +56,7 @@ class Token
       d {contractAddress}
       contractAddress
 
-  @transfer: (contractAddress, recipient, amount) ->
+  @issue: (contractAddress, recipient, amount) ->
     web3 = new Web3
     errors = {}
     unless web3.isAddress contractAddress

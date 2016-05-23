@@ -27,12 +27,12 @@ app.post '/project', (request, response) ->
     reportError error
     response.status(500).json { error: (error.message or error.stack) }
 
-# create a token transfer transaction
-app.post '/token_transfer', (request, response) ->
+# create a token issue transaction
+app.post '/token_issue', (request, response) ->
   { contractAddress, recipient, amount } = request.body
   d { contractAddress, recipient, amount }
   Promise.try =>
-    Token.transfer contractAddress, recipient, amount
+    Token.issue contractAddress, recipient, amount
   .then (transactionId) =>
     response.json {transactionId}
   .catch (error) =>

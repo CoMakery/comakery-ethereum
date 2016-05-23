@@ -22,7 +22,7 @@ recipient = '0x253ed3c8606a4d594a62ce3c31c224894072c9f9'
 # projectContract  = '0x10cfad11830b591400d846ff7e574407f082afbd'
 # recipient = '0x7588f984f396d569ba244a0b61a4905fa26a69ba'
 
-# Token.transfer projectContract, recipient, 100
+# Token.issue projectContract, recipient, 100
 
 
 contractAddress = Token.create()
