@@ -2,6 +2,7 @@ import './testHelper'
 import {keys} from 'lodash'
 import chai, {expect} from 'chai'
 import chaiHttp from 'chai-http'
+import {d} from 'lightsaber'
 
 const server = require('../../lib/server')
 const Token = require('../../lib/token')
@@ -18,7 +19,24 @@ describe('POST /project', () => {
       expect(res).to.have.status(200)
       const {body} = res
       expect(keys(body)).to.deep.equal(['contractAddress'])
-      expect(body.contractAddress).to.match(/^0x[0-9a-f]{40}$/)
+      const {contractAddress} = body
+      expect(contractAddress).to.match(/^0x[0-9a-f]{40}$/)
+      const tokenContract = Token.loadContract(contractAddress)
+      return tokenContract.maxSupply.call()
+    }).then((maxSupply) => {
+      expect(maxSupply.toNumber()).to.eq(101)
+    }).then(done).catch(done)
+  })
+
+  it('should fail if no maxSupply sent', (done) => {
+    chai
+    .request(server)
+    .post('/project')
+    .send({})
+    .catch(function (res) {
+      expect(res).to.have.status(500)
+      const {response: {text}} = res
+      expect(text).to.match(/maxSupply/)
     }).then(done).catch(done)
   })
 })

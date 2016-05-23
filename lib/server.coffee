@@ -1,6 +1,6 @@
 {reportError} = require './config'
 debug = require('debug')('server')
-{ log, pjson } = require 'lightsaber'
+{ json, log, pjson } = require 'lightsaber'
 express = require 'express'
 bodyParser = require 'body-parser'
 
@@ -14,9 +14,12 @@ app.use bodyParser.json()
 
 # create new contract for a project
 app.post '/project', (request, response) ->
-  { maxSupply } = request.body
-  d { maxSupply }
   Promise.try =>
+    { maxSupply } = request.body
+    unless maxSupply
+      throw Promise.OperationalError(
+        "maxSupply required but not found in body #{json request.body}")
+    d { maxSupply }
     Token.create(maxSupply)
   .then (contractAddress) =>
     response.json {contractAddress}
