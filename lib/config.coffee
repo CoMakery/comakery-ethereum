@@ -19,7 +19,7 @@ if AIRBRAKE_API_KEY and AIRBRAKE_PROJECT_ID
   airbrake.whiteListKeys = []
 
 reportError = (error) ->
-  console.error error.stack
+  console.error error.stack unless process.env.NODE_ENV is 'test'
   { AIRBRAKE_API_KEY, AIRBRAKE_PROJECT_ID } = process.env
   if AIRBRAKE_API_KEY and AIRBRAKE_PROJECT_ID
     airbrake.notify error, (errorNotifying, url) ->
