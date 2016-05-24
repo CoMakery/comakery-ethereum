@@ -26,7 +26,7 @@ app.post '/project', (request, response) ->
   .catch (error) =>
     reportError error
     response.status(500).json { error: (error.message or error.stack) }
-
+    
 # create a token issue transaction
 app.post '/token_issue', (request, response) ->
   { contractAddress, recipient, amount } = request.body

@@ -32,12 +32,15 @@ describe('POST /project', () => {
     chai
     .request(server)
     .post('/project')
-    .send({})
-    .catch(function (res) {
+    .send()
+    .then(() => {
+      throw new Error('expected server 500 error')
+    }).catch(function (res) {
       expect(res).to.have.status(500)
       const {response: {text}} = res
       expect(text).to.match(/maxSupply/)
-    }).then(done).catch(done)
+    })
+    .then(done).catch(done)
   })
 })
 
@@ -54,6 +57,35 @@ describe('POST /token_issue', () => {
       const {body} = res
       expect(keys(body)).to.deep.equal(['transactionId'])
       expect(body.transactionId).to.match(/^0x[0-9a-f]{64}$/)
+
+      const tokenContract = Token.loadContract(contractAddress)
+      return tokenContract.balanceOf.call(recipient)
+    }).then((balanceOf) => {
+      expect(balanceOf.toNumber()).to.eq(111)
+    }).then(done).catch(done)
+  })
+
+  it('should fail if missing params', (done) => {
+    const contractAddress = Token.deployContract()
+    const recipient = '0x2b5ad5c4795c026514f8317c7a215e218dccd6cf'  // pubkey of private key 0x0000000000000000000000000000000000000000000000000000000000000002
+    chai
+    .request(server)
+    .post('/token_issue')
+    .send({contractAddress, recipient})
+    .then(() => {
+      throw new Error(
+        'hey no error was thrown and I thought it would be'
+      )
+    })
+    .catch(function (res) {
+      expect(res).to.have.status(500)
+      const {response: {text}} = res
+      expect(text).to.match(/amount.*is not a positive integer/)
+    }).then(() => {
+      const tokenContract = Token.loadContract(contractAddress)
+      return tokenContract.balanceOf.call(recipient)
+    }).then((balanceOf) => {
+      expect(balanceOf.toNumber()).to.eq(0)
     }).then(done).catch(done)
   })
 })
