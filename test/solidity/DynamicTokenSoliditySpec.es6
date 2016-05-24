@@ -570,19 +570,22 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractIt('should not allow owner to issue more than max tokens', (done) => {
-      const amount = 10e6 + 1
+      const halfAmount = 6e6
       let starting
 
+      // Issue in halfAmount twice. Don't issue the second amount which is over the maxSupply
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+        return token.issue(starting.bob.address, halfAmount, {from: starting.alice.address})
+      }).then(() => {
+        return token.issue(starting.bob.address, halfAmount, {from: starting.alice.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(halfAmount)
       }).then(done).catch(done)
     })
 

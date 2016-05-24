@@ -89,7 +89,7 @@ contract DynamicToken is TokenInterface {
 
   function issue(address _to, uint256 _value) onlyOwner noEther {
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
-    if (_value <= maxSupply) {
+    if (totalSupply + _value <= maxSupply) {
       balances[_to] += _value;
       totalSupply += _value;
       _indexAccount(_to);
