@@ -6,5 +6,6 @@
     "from-noah": "0xe363e99273c2007168590e89c9580d83cc91a4eb",
     "host": "localhost",
     "port": 8888
-  }
+  },
+  "ethercamp-subdomain": "morden-state"
 }

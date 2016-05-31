@@ -1,8 +1,10 @@
 {nodeEnv} = require './config'
 path = require 'path'
-{ json, pjson, run, type } = require 'lightsaber'
+{ json, log, pjson, run, type } = require 'lightsaber'
 { isEmpty } = require 'lodash'
 { floor } = Math
+fs = require 'fs'
+request = require 'request'
 debug = require('debug')('token')
 Web3 = require 'web3'
 Pudding = require "ether-pudding"
@@ -18,6 +20,7 @@ d = (args...) -> debug pjson args...
 # 2) under the hood uses web3 to make JSON RPC calls to geth
 
 class Token
+  CONTRACT_NAME = 'DynamicToken'
 
   @deployContract: ->
     quiet = nodeEnv is 'test'
@@ -31,7 +34,7 @@ class Token
     contractAddress
 
   @loadContract: (contractAddress) ->
-    TokenContract = require path.join(envDir, "contracts/DynamicToken.sol.js")
+    TokenContract = require path.join(envDir, "contracts/#{CONTRACT_NAME}.sol.js")
     web3 = new Web3
     rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
     d { rpcUrl }
@@ -42,6 +45,7 @@ class Token
 
   @create: (newMaxSupply) ->
     contractAddress = @deployContract()
+    @uploadSource contractAddress
     tokenContract = @loadContract contractAddress
     Promise.resolve()
     .then =>
@@ -55,6 +59,33 @@ class Token
       d {maxSupply}
       d {contractAddress}
       contractAddress
+
+  @uploadSource: (contractAddress, callback) ->
+    return if nodeEnv is 'development'
+    contractAddress = contractAddress.replace /^0x/, ''
+    subdomain = config['ethercamp-subdomain']
+    url = "https://#{subdomain}.ether.camp/api/v1/accounts/#{contractAddress}/contract"
+    d { url }
+    formData =
+      name: CONTRACT_NAME
+      contracts:
+        value: fs.createReadStream(path.resolve(__dirname, "../contracts/#{CONTRACT_NAME}.sol"))
+        options:
+          name: 'contracts'
+          filename: "#{CONTRACT_NAME}.sol"
+    headers = "rejectUnauthorized": false
+    NODE_TLS_REJECT_UNAUTHORIZED = process.env.NODE_TLS_REJECT_UNAUTHORIZED
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+    request.post {url, formData, headers}, (err, httpResponse, body) ->
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = NODE_TLS_REJECT_UNAUTHORIZED
+      info = JSON.parse(body) if httpResponse?['content-type'] is 'application/json;charset=UTF-8'
+      if info?.success
+        d "Uploaded contract source to:"
+        d "https://#{subdomain}.ether.camp/account/#{contractAddress}/contract"
+      else
+        d 'Contract upload failed'
+      debug body
+      callback?(err, body)
 
   @issue: (contractAddress, recipient, amount) ->
     web3 = new Web3
