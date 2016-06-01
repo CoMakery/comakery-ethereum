@@ -78,13 +78,7 @@ class Token
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
     request.post {url, formData, headers}, (err, httpResponse, body) ->
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = NODE_TLS_REJECT_UNAUTHORIZED
-      info = JSON.parse(body) if httpResponse?['content-type'] is 'application/json;charset=UTF-8'
-      if info?.success
-        d "Uploaded contract source to:"
-        d "https://#{subdomain}.ether.camp/account/#{contractAddress}/contract"
-      else
-        d 'Contract upload failed'
-      debug body
+      d "attempted to upload smart contract to #{url}"
       callback?(err, body)
 
   @issue: (contractAddress, recipient, amount) ->
