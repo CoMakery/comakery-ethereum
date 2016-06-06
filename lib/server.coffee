@@ -1,6 +1,7 @@
 {reportError} = require './config'
 debug = require('debug')('server')
 { json, log, pjson } = require 'lightsaber'
+{ includes, isEmpty } = require 'lodash'
 express = require 'express'
 bodyParser = require 'body-parser'
 timeout = require('connect-timeout')
@@ -11,12 +12,25 @@ d = (args...) -> debug pjson args...
 
 app = express()
 # app.use airbrake.expressHandler()  # seems to not work :(
-# from https://github.com/expressjs/timeout#as-top-level-middleware
-haltOnTimedout = (req, res, next) ->
-  next() if (!req.timedout)
 
-app.use(timeout('600s'))
+# NOTE the use of haltOnTimedout
+# after every middleware; it will stop the request flow on a timeout
+# from https://github.com/expressjs/timeout#as-top-level-middleware
+haltOnTimedout = (req, res, next) -> next() if (!req.timedout)
+
+requireApiKey = (req, res, next) ->
+  # log pjson req
+  apiKeyWhitelist = (process.env.API_KEY_WHITELIST || '').split(',')
+  {apiKey} = req.body
+  if !isEmpty(apiKey) and includes(apiKeyWhitelist, req.body.apiKey)
+    next()
+  else
+    res.status(403).json { error: 'API key not found'}
+
+app.use(timeout('600s'))  # 10 min
 app.use(bodyParser.json())
+app.use(haltOnTimedout)
+app.use(requireApiKey)
 app.use(haltOnTimedout)
 
 # create new contract for a project
