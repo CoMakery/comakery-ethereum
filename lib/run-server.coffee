@@ -4,5 +4,5 @@ chalk = require 'chalk'
 app = require './server'
 
 port = process.env.PORT or 3906
-app.listen port, ->
+app.listen port, 'localhost', ->
   log chalk.magenta "Listenting on port #{port}..."
