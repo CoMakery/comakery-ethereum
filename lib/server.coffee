@@ -19,7 +19,6 @@ app = express()
 haltOnTimedout = (req, res, next) -> next() if (!req.timedout)
 
 requireApiKey = (req, res, next) ->
-  # log pjson req
   apiKeyWhitelist = (process.env.API_KEY_WHITELIST || '').split(',')
   {apiKey} = req.body
   if !isEmpty(apiKey) and includes(apiKeyWhitelist, req.body.apiKey)
