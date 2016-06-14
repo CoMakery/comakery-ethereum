@@ -1,3 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env coffee
 
-git fetch && git reset --hard origin/master && git clean -fd && npm install && npm prune && pm2 update
+{ run } = require 'lightsaber'
+
+run "which pm2"
+run "git fetch"
+run "git reset --hard origin/master"
+run "git clean -fd"
+run "npm install"
+run "npm prune"
+run "npm install pm2@latest -g"
+run "pm2 update"
