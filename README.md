@@ -1,4 +1,27 @@
+STATUS: This is BETA software. Use it with caution. Your feedback via github issues and code contribution pull requests are welcome.
+
 # CoMakery Ethereum
+
+CoMakery Ethereum helps you create and administer collaborative token based projects. It consists of [Ethereum](https://www.ethereum.org/) Smart Contracts, blockchain deployment scripts, and a Node REST API server using the [Truffle](https://github.com/ConsenSys/truffle) Javascript framework. The smart contracts deployed can be used by talking to the CoMakery Ethereum node server, through an Ethereum Wallet, through your own software which communicates with an Ethereum node via RPC, or through the [CoMakery.com](http://www.comakery.com) site.
+
+The [DynamicToken](https://github.com/CoMakery/comakery-ethereum/blob/master/contracts/DynamicToken.sol) smart contract conforms to the Ethereum Solidity [ERC 20 Standard Token interface](https://github.com/ethereum/EIPs/issues/20) for easy integration with exchanges and other smart contracts. It's the same Token interface used by the [Standard DAO](https://github.com/slockit/DAO/blob/f640568e694a057aaeb64a0f1049fae27efe818b/Token.sol). 
+
+Each Dynamic Token issued increases the total supply of tokens. This is an alternative to pre-issuing all tokens to a single account.
+
+## Road Map
+
+CoMakery Ethereum is currently Beta software. Use it with caution and at your own risk.
+
+This software currently implements the Dynamic Token, deployment scripts, and a simple REST server that communicates to an Ethereum node (e.g. geth or parity).
+
+Future features planned include:
+- Integration with multiple DAO governance approaches such as The Standard DAO, Backfeed governance, and more classical governance models.
+- Token exchange smart contracts suitable for integration with token based crowd sale platforms
+- Licenses suitable for open innovation
+
+## Open Source License
+
+This software is released under an Open Source MIT licensed. It can be extended and used for commercial or non-commercial purposes.
 
 ## Prerequisites
 
@@ -34,12 +57,4 @@ This starts an express server which receives simple calls and executes contract 
 
 ```sh
 npm run dev:server  # run in separate window
-```
-
-Then you should be able to transfer funds:
-
-```sh
-curl -H "Content-Type: application/json" -X POST \
-  --data '{"contractAddress":"0x...", "recipient":"0x...", "amount":"100"}' \
-  http://127.0.0.1:3906/transfer
 ```
