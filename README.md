@@ -1,4 +1,4 @@
-STATUS: This is BETA software. Use it with caution. Your feedback via github issues and code contribution pull requests are welcome.
+STATUS: This is BETA software. Use it with caution. Please send us feedback using [github issues](https://github.com/CoMakery/comakery-ethereum/issues) and code contributions using [pull requests](https://github.com/CoMakery/comakery-ethereum/pulls).
 
 # CoMakery Ethereum
 
@@ -15,7 +15,7 @@ CoMakery Ethereum is currently Beta software. Use it with caution and at your ow
 This software currently implements the Dynamic Token, deployment scripts, and a simple REST server that communicates to an Ethereum node (e.g. geth or parity).
 
 Future features planned include:
-- Integration with multiple DAO governance approaches such as The Standard DAO, Backfeed governance, and more classical governance models.
+- Integration with multiple DAO governance approaches such as [Backfeed](http://backfeed.cc), [The Standard DAO](https://github.com/slockit/DAO), and more classical Access Control DAOs.
 - Token exchange smart contracts suitable for integration with token based crowd sale platforms
 - Licenses suitable for open innovation
 
