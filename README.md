@@ -1,6 +1,6 @@
 STATUS: This is BETA software. Use it with caution. Please send us feedback using [github issues](https://github.com/CoMakery/comakery-ethereum/issues) and code contributions using [pull requests](https://github.com/CoMakery/comakery-ethereum/pulls).
 
-# CoMakery Ethereum Dapp
+# CoMakery Ethereum
 
 CoMakery Ethereum helps you create and administer collaborative token based projects. It consists of [Ethereum](https://www.ethereum.org/) Smart Contracts, blockchain deployment scripts, and a Node REST API server using the [Truffle](https://github.com/ConsenSys/truffle) Javascript framework. The smart contracts deployed can be used by talking to the CoMakery Ethereum node server, through an Ethereum Wallet, through your own software which communicates with an Ethereum node via RPC, or through the [CoMakery.com](http://www.comakery.com) site.
 
