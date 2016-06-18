@@ -25,7 +25,7 @@ This software is released under an Open Source MIT licensed. It can be extended 
 
 ## Development
 
-[![CircleCI](https://circleci.com/gh/CoMakery/comakery-app/tree/master.svg?style=svg)](https://circleci.com/gh/CoMakery/comakery-app/tree/master)
+[![CircleCI](https://circleci.com/gh/CoMakery/comakery-ethereum/tree/master.svg?style=svg)](https://circleci.com/gh/CoMakery/comakery-ethereum/tree/master)
 
 ### Prerequisites
 
