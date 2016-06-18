@@ -54,6 +54,7 @@ contract TokenInterface {
 contract DynamicToken is TokenInterface {
   address public owner;
   address[] public accounts;
+  mapping (address => bool) public accountExists;
   uint256 public maxSupply;
 
   // Protects users by preventing the execution of method calls that
