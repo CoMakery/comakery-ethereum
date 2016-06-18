@@ -685,17 +685,8 @@ contract('DynamicToken', (accounts) => {
       return token.getAccounts({value: 1})
     })
 
-    contractIt('includes the owner address by default', (done) => {
-      Promise.resolve().then(() => {
-        return token.getAccounts.call()
-      }).then((tokenAccounts) => {
-        expect(tokenAccounts[0]).to.equal(accounts[0])
-        expect(tokenAccounts.length).to.equal(1)
-      }).then(done).catch(done)
-    })
-
     contractIt('includes accounts that are issued tokens without duplicates', (done) => {
-      let expected = [accounts[0], accounts[2]]
+      let expected = [accounts[2]]
 
       Promise.resolve().then(() => {
         return token.issue(accounts[2], 20)
@@ -721,7 +712,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return token.getAccounts.call()
       }).then((tokenAccounts) => {
-        expect(tokenAccounts).to.have.members(expected)
+        expect(expected).to.have.members(tokenAccounts)
         expect(tokenAccounts.length).to.equal(expected.length)
       }).then(done).catch(done)
     })

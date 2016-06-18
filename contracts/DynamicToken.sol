@@ -67,7 +67,6 @@ contract DynamicToken is TokenInterface {
     owner = msg.sender;     // contract owner is contract creator
     maxSupply = 10**7;
     totalSupply = 0;
-    accounts.push(msg.sender);
   }
 
   modifier onlyOwner {
@@ -146,9 +145,8 @@ contract DynamicToken is TokenInterface {
   }
 
   function _indexAccount(address _account) private {
-    for (uint32 i = 0;  i < accounts.length; i++) {
-      if (accounts[i] == _account) return ;
-    }
+    if (accountExists[_account]) return;
+    accountExists[_account] = true;
     accounts.push(_account);
   }
 
