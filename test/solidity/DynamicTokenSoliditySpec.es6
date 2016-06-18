@@ -614,7 +614,7 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        token.setMaxSupply(newTotalSupply, {from: users.alice.address})
+        return token.setMaxSupply(newTotalSupply, {from: users.alice.address})
       }).then(() => {
         return token.maxSupply()
       }).then((max) => {
@@ -623,8 +623,11 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractShouldThrow('should not allow maxSupply to be set less than total supply', () => {
-      token.issue(accounts[0], 10)
-      return token.setMaxSupply(1)
+      return Promise.resolve().then(() => {
+        return token.issue(accounts[0], 10)
+      }).then(() => {
+        return token.setMaxSupply(1)
+      })
     })
 
     contractIt('should forbid non-owner from setting maxSupply', (done) => {
@@ -654,7 +657,8 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((data) => {
         users = data
-        token.setOwner(users.bob.address, {from: users.alice.address})
+        return token.setOwner(users.bob.address, {from: users.alice.address})
+      }).then(() => {
         return token.owner()
       }).then((newOwner) => {
         expect(newOwner.toString()).to.equal(users.bob.address)
