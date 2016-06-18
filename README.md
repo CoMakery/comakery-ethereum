@@ -4,7 +4,7 @@ STATUS: This is BETA software. Use it with caution. Please send us feedback usin
 
 CoMakery Ethereum helps you create and administer collaborative token based projects. It consists of [Ethereum](https://www.ethereum.org/) Smart Contracts, blockchain deployment scripts, and a Node REST API server using the [Truffle](https://github.com/ConsenSys/truffle) Javascript framework. The smart contracts deployed can be used by talking to the CoMakery Ethereum node server, through an Ethereum Wallet, through your own software which communicates with an Ethereum node via RPC, or through the [CoMakery.com](http://www.comakery.com) site.
 
-The [DynamicToken](https://github.com/CoMakery/comakery-ethereum/blob/master/contracts/DynamicToken.sol) smart contract conforms to the Ethereum Solidity [ERC 20 Standard Token interface](https://github.com/ethereum/EIPs/issues/20) for easy integration with exchanges and other smart contracts. It's the same Token interface used by the [Standard DAO](https://github.com/slockit/DAO/blob/f640568e694a057aaeb64a0f1049fae27efe818b/Token.sol). 
+The [DynamicToken](https://github.com/CoMakery/comakery-ethereum/blob/master/contracts/DynamicToken.sol) smart contract conforms to the Ethereum Solidity [ERC 20 Standard Token interface](https://github.com/ethereum/EIPs/issues/20) for easy integration with exchanges and other smart contracts. It's the same Token interface used by the [Standard DAO](https://github.com/slockit/DAO/blob/f640568e694a057aaeb64a0f1049fae27efe818b/Token.sol).
 
 Each Dynamic Token issued increases the total supply of tokens. This is an alternative to pre-issuing all tokens to a single account.
 
@@ -23,7 +23,11 @@ Future features planned include:
 
 This software is released under an Open Source MIT licensed. It can be extended and used for commercial or non-commercial purposes.
 
-## Prerequisites
+## Development
+
+[![CircleCI](https://circleci.com/gh/CoMakery/comakery-app/tree/master.svg?style=svg)](https://circleci.com/gh/CoMakery/comakery-app/tree/master)
+
+### Prerequisites
 
 ```sh
 npm install
@@ -35,15 +39,13 @@ Recommended: run testrpc server for dev and test (fast):
 npm run testrpc  # run in separate window
 ```
 
-Get one of the Available Accounts
-
-## Run tests
+### Run tests
 
 ```sh
 npm test
 ```
 
-## Deploy
+### Deploy
 
 ```sh
 npm run truffle deploy [ -- -e testnet ]
@@ -51,7 +53,7 @@ npm run truffle deploy [ -- -e testnet ]
 
 This will tell you your contract address.
 
-## Dev server
+### Dev server
 
 This starts an express server which receives simple calls and executes contract calls:
 
