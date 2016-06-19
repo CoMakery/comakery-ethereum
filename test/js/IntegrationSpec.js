@@ -37,6 +37,7 @@ describe('API', () => {
         expect(maxSupply.toNumber()).to.eq(101)
         token.verify()
         token.restore()
+        return
       }).then(done).catch(done)
     })
 
@@ -67,6 +68,7 @@ describe('API', () => {
         expect(type(error.response)).to.equal('object', error.message)
         expect(error.response.status).to.equal(403)
         expect(error.response.text).to.match(/API key not found/)
+        return
       })
       .then(done).catch(done)
     })
@@ -90,6 +92,7 @@ describe('API', () => {
         return tokenContract.balanceOf.call(recipient)
       }).then((balanceOf) => {
         expect(balanceOf.toNumber()).to.eq(111)
+        return
       }).then(done).catch(done)
     })
 
@@ -114,6 +117,7 @@ describe('API', () => {
         return tokenContract.balanceOf.call(recipient)
       }).then((balanceOf) => {
         expect(balanceOf.toNumber()).to.eq(0)
+        return
       }).then(done).catch(done)
     })
   })

@@ -52,7 +52,8 @@ contract('DynamicToken', (accounts) => {
       bob.balance = balance.toNumber()
       return token.balanceOf.call(accounts[2])
     }).then((balance) => {
-      return charlie.balance = balance.toNumber()
+      charlie.balance = balance.toNumber()
+      return charlie.balance
     }).then(() => {
       // sometimes convenient to identify users by name, other times by role
       let manager = alice
@@ -86,6 +87,7 @@ contract('DynamicToken', (accounts) => {
       }).then(({alice, bob}) => {
         expect(alice.balance).to.equal(0)
         expect(bob.balance).to.equal(0)
+        return
       }).then(done).catch(done)
     })
 
@@ -105,6 +107,7 @@ contract('DynamicToken', (accounts) => {
         return token.allowance.call(alice.address, alice.address)
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(0)
+        return
       }).then(done).catch(done)
     })
   })
@@ -142,6 +145,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
         expect(ending.bob.balance).to.equal(amount * 2)
+        return
       }).then(done).catch(done)
     })
 
@@ -162,6 +166,7 @@ contract('DynamicToken', (accounts) => {
         return token.totalSupply.call()
       }).then((totalSupply) => {
         expect(totalSupply.toNumber()).to.equal(117)
+        return
       }).then(done).catch(done)
     })
 
@@ -179,6 +184,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
         expect(ending.bob.balance).to.equal(0)
+        return
       }).then(done).catch(done)
     })
 
@@ -215,6 +221,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(15)
         expect(ending.bob.balance).to.equal(5)
+        return
       }).then(done).catch(done)
     })
 
@@ -225,17 +232,18 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        token.issue(starting.alice.address, 20, {from: starting.alice.address})
+        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
       }).then(() => {
-        token.transfer(starting.bob.address, 5, {from: starting.alice.address})
+        return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
-        token.transfer(starting.charlie.address, 5, {from: starting.bob.address})
+        return token.transfer(starting.charlie.address, 5, {from: starting.bob.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(15)
         expect(ending.bob.balance).to.equal(0)
         expect(ending.charlie.balance).to.equal(5)
+        return
       }).then(done).catch(done)
     })
 
@@ -257,6 +265,7 @@ contract('DynamicToken', (accounts) => {
         expect(ending.alice.balance).to.equal(15)
         expect(ending.bob.balance).to.equal(0)
         expect(ending.charlie.balance).to.equal(5)
+        return
       }).then(done).catch(done)
     })
 
@@ -278,6 +287,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._to).to.equal(starting.bob.address)
         expect(log.args._amount.toNumber()).to.equal(5)
         done()
+        return
       })
     })
 
@@ -295,6 +305,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(starting.alice.balance)
         expect(ending.bob.balance).to.equal(starting.bob.balance)
+        return
       }).then(done).catch(done)
     })
 
@@ -312,6 +323,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(starting.alice.balance)
         expect(ending.bob.balance).to.equal(starting.bob.balance)
+        return
       }).then(done).catch(done)
     })
   })
@@ -341,10 +353,12 @@ contract('DynamicToken', (accounts) => {
         expect(ending.manager.balance).to.equal(160)
         expect(ending.spender.balance).to.equal(0)
         expect(ending.recipient.balance).to.equal(40)
+        return
       }).then(() => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(60)
+        return
       }).then(done).catch(done)
     })
 
@@ -366,10 +380,12 @@ contract('DynamicToken', (accounts) => {
         expect(ending.manager.balance).to.equal(200)
         expect(ending.spender.balance).to.equal(0)
         expect(ending.recipient.balance).to.equal(0)
+        return
       }).then(() => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(0)
+        return
       }).then(done).catch(done)
     })
 
@@ -395,6 +411,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._to).to.equal(recipient)
         expect(log.args._amount.toNumber()).to.equal(50)
         done()
+        return
       })
     })
 
@@ -421,6 +438,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._spender).to.equal(spender)
         expect(log.args._amount.toNumber()).to.equal(50)
         done()
+        return
       })
     })
 
@@ -444,10 +462,12 @@ contract('DynamicToken', (accounts) => {
         expect(ending.manager.balance).to.equal(200)
         expect(ending.spender.balance).to.equal(0)
         expect(ending.recipient.balance).to.equal(0)
+        return
       }).then(() => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
+        return
       }).then(done).catch(done)
     })
 
@@ -471,10 +491,12 @@ contract('DynamicToken', (accounts) => {
         expect(ending.manager.balance).to.equal(100)
         expect(ending.spender.balance).to.equal(0)
         expect(ending.recipient.balance).to.equal(0)
+        return
       }).then(() => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(300)
+        return
       }).then(done).catch(done)
     })
 
@@ -502,14 +524,17 @@ contract('DynamicToken', (accounts) => {
         expect(ending.manager.balance).to.equal(100)
         expect(ending.spender.balance).to.equal(0)
         expect(ending.recipient.balance).to.equal(100)
+        return
       }).then(() => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
+        return
       }).then(() => {
         return token.allowance.call(recipient, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
+        return
       }).then(done).catch(done)
     })
   })
@@ -532,6 +557,7 @@ contract('DynamicToken', (accounts) => {
         return token.allowance.call(manager, spender, {from: anyone})
       }).then((allowance) => {
         expect(allowance.toNumber()).to.equal(100)
+        return
       }).then(done).catch(done)
     })
 
@@ -552,6 +578,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._spender).to.equal(spender)
         expect(log.args._amount.toNumber()).to.equal(50)
         done()
+        return
       })
     })
   })
@@ -566,6 +593,7 @@ contract('DynamicToken', (accounts) => {
         return token.maxSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
+        return
       }).then(done).catch(done)
     })
 
@@ -586,6 +614,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
         expect(ending.bob.balance).to.equal(halfAmount)
+        return
       }).then(done).catch(done)
     })
 
@@ -603,6 +632,7 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
         expect(ending.bob.balance).to.equal(10e6)
+        return
       }).then(done).catch(done)
     })
   })
@@ -619,6 +649,7 @@ contract('DynamicToken', (accounts) => {
         return token.maxSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(117)
+        return
       }).then(done).catch(done)
     })
 
@@ -636,11 +667,12 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return getUsers(token)
       }).then((users) => {
-        token.setMaxSupply(newTotalSupply, {from: users.bob.address})
+        return token.setMaxSupply(newTotalSupply, {from: users.bob.address})
       }).then(() => {
         return token.maxSupply()
       }).then((max) => {
         expect(max.toNumber()).to.equal(10e6)
+        return
       }).then(done).catch(done)
     })
   })
@@ -662,6 +694,7 @@ contract('DynamicToken', (accounts) => {
         return token.owner()
       }).then((newOwner) => {
         expect(newOwner.toString()).to.equal(users.bob.address)
+        return
       }).then(done).catch(done)
     })
 
@@ -676,6 +709,7 @@ contract('DynamicToken', (accounts) => {
         return token.owner()
       }).then((newOwner) => {
         expect(newOwner.toString()).to.not.equal(users.bob.address)
+        return
       }).then(done).catch(done)
     })
   })
@@ -697,6 +731,7 @@ contract('DynamicToken', (accounts) => {
       }).then((tokenAccounts) => {
         expect(tokenAccounts.length).to.equal(expected.length)
         expect(tokenAccounts).to.have.members(expected)
+        return
       }).then(done).catch(done)
     })
 
@@ -714,6 +749,7 @@ contract('DynamicToken', (accounts) => {
       }).then((tokenAccounts) => {
         expect(expected).to.have.members(tokenAccounts)
         expect(tokenAccounts.length).to.equal(expected.length)
+        return
       }).then(done).catch(done)
     })
 
@@ -736,6 +772,7 @@ contract('DynamicToken', (accounts) => {
       }).then((tokenAccounts) => {
         let expected = [manager, recipient]
         expect(tokenAccounts).to.have.members(expected)
+        return
       }).then(done).catch(done)
     })
   })
@@ -756,12 +793,14 @@ contract('DynamicToken', (accounts) => {
         return token.owner()
       }).then((owner) => {
         expect(owner).to.equal(accounts[0])
+        return
       }).then(() => {
         return token.close()
       }).then(() => {
         return token.owner()
       }).then((owner) => {
         expect(owner).to.equal('0x')
+        return
       }).then(done).catch(done)
     })
   })
