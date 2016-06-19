@@ -1,5 +1,6 @@
 import {expect} from 'chai'
 import {d} from 'lightsaber'
+import Promise from 'bluebird'
 
 const contractIt = (name, func) => {
   contract('', () => {
