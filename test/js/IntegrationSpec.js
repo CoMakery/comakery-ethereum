@@ -104,9 +104,7 @@ describe('API', () => {
       .post('/token_issue')
       .send({ contractAddress, recipient, apiKey: 'aaa' })
       .then(() => {
-        throw new Error(
-          'hey no error was thrown and I thought it would be'
-        )
+        throw new Error('hey no error was thrown and I thought it would be')
       })
       .catch(function (res) {
         expect(res).to.have.status(500)
