@@ -785,8 +785,12 @@ contract('DynamicToken', (accounts) => {
 
   // This kills the server unless it runs last...
   describe('#close', () => {
+    contractShouldThrowIfEtherSent(() => {
+      return token.close({value: 1})
+    })
+
     contractShouldThrow('should throw an error if called by a non-owner', () => {
-      return token.close(accounts[1], {from: accounts[1]})
+      return token.close({from: accounts[1]})
     })
 
     contractIt('owner can self destruct the contract', (done) => {

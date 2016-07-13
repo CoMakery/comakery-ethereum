@@ -150,7 +150,7 @@ contract DynamicToken is TokenInterface {
     accounts.push(_account);
   }
 
-  function close() {
+  function close() noEther {
     if(msg.sender != owner) throw;
     selfdestruct(owner);
   }
