@@ -2,36 +2,40 @@ import {expect} from 'chai'
 import {d} from 'lightsaber'
 import Promise from 'bluebird'
 
-const contractIt = (name, func) => {
-  contract('', () => {
-    describe('Contract:', function () {
-      this.timeout(3000)
-      it(name, func)
-    })
-  })
-}
-
-const contractItOnly = (name, func) => {
-  contract('', () => {
-    describe('Contract:', function () {
-      this.timeout(3000)
-      it.only(name, func)
-    })
-  })
-}
-
-let contractShouldThrowIfEtherSent = (functionToCall) => {
+const contractShouldThrowIfEtherSent = (functionToCall) => {
   contractShouldThrow('should throw an error if ether is sent', functionToCall)
 }
 
-let contractShouldThrow = (description, functionToCall) => {
+const contractShouldThrowOnly = (description, functionToCall) => {
+  contractShouldThrow(description, functionToCall, {only: true})
+}
+
+const contractShouldThrow = (description, functionToCall, options) => {
   contractIt(description, (done) => {
     Promise.resolve().then(functionToCall
     ).then(function () {
       throw new Error('Expected solidity error to be thown from contract, but was not')
     }).catch(function (error) {
-      if (error.message.search('invalid JUMP') === -1) throw error
+      if (!error.message || error.message.search('invalid JUMP') < 0) throw error
     }).then(done).catch(done)
+  }, options)
+}
+
+const contractItOnly = (name, func) => {
+  contractIt(name, func, {only: true})
+}
+
+const contractIt = (name, func, options) => {
+  options = options || {}
+  contract('', () => {
+    describe('Contract:', function () {
+      this.timeout(3000)
+      if (options.only) {
+        it.only(name, func)
+      } else {
+        it(name, func)
+      }
+    })
   })
 }
 
@@ -127,10 +131,10 @@ contract('DynamicToken', (accounts) => {
 
   describe('#issue', () => {
     contractShouldThrowIfEtherSent(() => {
-      return token.issue(accounts[1], 10, {value: 1})
+      return token.issue(accounts[1], 10, 'proof1', {value: 1})
     })
 
-    contractIt('should issue tokens to a user and add tokens to their balance', (done) => {
+    contractIt('should issue tokens to a user, increasing their balance', (done) => {
       const amount = 10
       let starting
 
@@ -138,9 +142,9 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+        return token.issue(starting.bob.address, amount, 'proof1', {from: starting.alice.address})
       }).then(() => {
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+        return token.issue(starting.bob.address, amount, 'proof2', {from: starting.alice.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
@@ -150,19 +154,39 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractIt('should issue tokens only once for a given proof ID', (done) => {
+      const amount = 10
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, 'proof-not-unique', {from: starting.alice.address})
+      }).then(() => {
+        return token.issue(starting.bob.address, amount, 'proof-not-unique', {from: starting.alice.address})
+      }).then(() => {
+        return getUsers(token)
+      }).then((ending) => {
+        expect(ending.alice.balance).to.equal(0)
+        expect(ending.bob.balance).to.equal(amount)  // not amount x 2
+        return
+      }).then(done).catch(done)
+    })
+
     contractShouldThrow('should throw when value issued is a negative number', () => {
       return Promise.resolve().then(() => {
-        return token.issue(accounts[0], 10)
+        return token.issue(accounts[0], 1, 'proof1')
       }).then(() => {
-        return token.issue(accounts[0], -1)
+        return token.issue(accounts[0], -1, 'proof2')
       })
     })
 
     contractIt('should track totalSupply issued', (done) => {
       Promise.resolve().then(() => {
-        return token.issue(accounts[0], 17)
+        return token.issue(accounts[0], 17, 'proof1')
       }).then(() => {
-        return token.issue(accounts[1], 100)
+        return token.issue(accounts[1], 100, 'proof2')
       }).then(() => {
         return token.totalSupply.call()
       }).then((totalSupply) => {
@@ -179,7 +203,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.bob.address})
+        return token.issue(starting.bob.address, amount, 'proof1', {from: starting.bob.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
@@ -195,9 +219,9 @@ contract('DynamicToken', (accounts) => {
       return Promise.resolve().then(() => {
         return token.setMaxSupply(MAXISH)
       }).then(() => {
-        return token.issue(accounts[1], MAXISH)
+        return token.issue(accounts[1], MAXISH, 'proof1')
       }).then(() => {
-        return token.issue(accounts[1], MAXISH)
+        return token.issue(accounts[1], MAXISH, 'proof2')
       })
     })
   })
@@ -214,7 +238,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
+        return token.issue(starting.alice.address, 20, 'proof1', {from: starting.alice.address})
       }).then(() => {
         return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
@@ -233,7 +257,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
+        return token.issue(starting.alice.address, 20, 'proof1', {from: starting.alice.address})
       }).then(() => {
         return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
@@ -255,7 +279,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
+        return token.issue(starting.alice.address, 20, 'proof1', {from: starting.alice.address})
       }).then(() => {
         return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
@@ -278,7 +302,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.alice.address, 20, {from: starting.alice.address})
+        return token.issue(starting.alice.address, 20, 'proof1', {from: starting.alice.address})
       }).then(() => {
         return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
@@ -343,7 +367,7 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 200, {from: manager})
+        return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
@@ -372,7 +396,7 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 200, {from: manager})
+        return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
         return token.transferFrom(manager, recipient, 40, {from: spender})
       }).then(() => {
@@ -400,7 +424,7 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 200, {from: manager})
+        return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
@@ -426,7 +450,7 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 200, {from: manager})
+        return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
@@ -452,7 +476,7 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 200, {from: manager})
+        return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
@@ -481,9 +505,9 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 100, {from: manager})
+        return token.issue(manager, 100, 'proof1', {from: manager})
       }).then(() => {
-        return token.approve(spender, 300, {from: manager})
+        return token.approve(spender, 300, 'proof2', {from: manager})
       }).then(() => {
         return token.transferFrom(manager, recipient, 200, {from: spender})
       }).then(() => {
@@ -510,9 +534,9 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 100, {from: manager})
+        return token.issue(manager, 100, 'proof1', {from: manager})
       }).then(() => {
-        return token.issue(recipient, 100, {from: manager})
+        return token.issue(recipient, 100, 'proof2', {from: manager})
       }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
@@ -607,9 +631,9 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.bob.address, halfAmount, {from: starting.alice.address})
+        return token.issue(starting.bob.address, halfAmount, 'proof1', {from: starting.alice.address})
       }).then(() => {
-        return token.issue(starting.bob.address, halfAmount, {from: starting.alice.address})
+        return token.issue(starting.bob.address, halfAmount, 'proof2', {from: starting.alice.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
@@ -627,7 +651,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((users) => {
         starting = users
-        return token.issue(starting.bob.address, amount, {from: starting.alice.address})
+        return token.issue(starting.bob.address, amount, 'proof1', {from: starting.alice.address})
       }).then(() => {
         return getUsers(token)
       }).then((ending) => {
@@ -656,7 +680,7 @@ contract('DynamicToken', (accounts) => {
 
     contractShouldThrow('should not allow maxSupply to be set less than total supply', () => {
       return Promise.resolve().then(() => {
-        return token.issue(accounts[0], 10)
+        return token.issue(accounts[0], 10, 'proof1')
       }).then(() => {
         return token.setMaxSupply(1)
       })
@@ -724,9 +748,9 @@ contract('DynamicToken', (accounts) => {
       let expected = [accounts[2]]
 
       Promise.resolve().then(() => {
-        return token.issue(accounts[2], 20)
+        return token.issue(accounts[2], 20, 'proof1')
       }).then(() => {
-        return token.issue(accounts[2], 25)
+        return token.issue(accounts[2], 25, 'proof2')
       }).then(() => {
         return token.getAccounts.call()
       }).then((tokenAccounts) => {
@@ -740,7 +764,7 @@ contract('DynamicToken', (accounts) => {
       let expected = [accounts[0], accounts[2]]
 
       Promise.resolve().then(() => {
-        return token.issue(accounts[0], 2000)
+        return token.issue(accounts[0], 2000, 'proof1')
       }).then(() => {
         return token.transfer(accounts[2], 20)
       }).then(() => {
@@ -763,7 +787,7 @@ contract('DynamicToken', (accounts) => {
         manager = users.manager.address
         spender = users.spender.address
         recipient = users.recipient.address
-        return token.issue(manager, 200, {from: manager})
+        return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {

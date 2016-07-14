@@ -16,7 +16,7 @@
     "strict": [2, "safe"],
     "no-unused-vars": [2,
       {
-        "varsIgnorePattern": "^(contractItOnly|d)$"
+        "varsIgnorePattern": "^(contractItOnly|contractShouldThrowOnly|d)$"
       }
     ]
   }

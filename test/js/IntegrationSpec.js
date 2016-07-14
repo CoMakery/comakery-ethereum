@@ -81,7 +81,7 @@ describe('API', () => {
       chai
       .request(server)
       .post('/token_issue')
-      .send({ contractAddress, recipient, amount: 111, apiKey: 'aaa' })
+      .send({ contractAddress, recipient, amount: 111, apiKey: 'aaa', proofId: 'proof1' })
       .then(function (res) {
         expect(res).to.have.status(200)
         const {body} = res

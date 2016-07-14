@@ -81,7 +81,7 @@ class Token
       d "attempted to upload smart contract to #{url}"
       callback?(err, body)
 
-  @issue: (contractAddress, recipient, amount) ->
+  @issue: (contractAddress, recipient, amount, proofId) ->
     web3 = new Web3
     errors = {}
     unless web3.isAddress contractAddress
@@ -102,7 +102,7 @@ class Token
     .then (@recipientBalance) =>
       d {@recipientBalance}
       d { sender, recipient, amount }
-      tokenContract.issue recipient, amount, from: sender
+      tokenContract.issue recipient, amount, proofId, from: sender
     .then (@transactionId) =>
       d {@transactionId}
       tokenContract.balanceOf.call recipient

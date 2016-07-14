@@ -55,6 +55,8 @@ contract DynamicToken is TokenInterface {
   address public owner;
   address[] public accounts;
   mapping (address => bool) public accountExists;
+  string[] public proofIds;
+  mapping (string => bool) proofIdExists;
   uint256 public maxSupply;
 
   // Protects users by preventing the execution of method calls that
@@ -91,12 +93,14 @@ contract DynamicToken is TokenInterface {
 
   // mutators
 
-  function issue(address _to, uint256 _value) onlyOwner noEther {
+  function issue(address _to, uint256 _value, string _proofId) onlyOwner noEther {
+    if (proofIdExists[_proofId]) return;
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
     if (totalSupply + _value <= maxSupply) {
       balances[_to] += _value;
       totalSupply += _value;
       _indexAccount(_to);
+      _indexProofId(_proofId);
     }
   }
 
@@ -148,6 +152,12 @@ contract DynamicToken is TokenInterface {
     if (accountExists[_account]) return;
     accountExists[_account] = true;
     accounts.push(_account);
+  }
+
+  function _indexProofId(string _proofId) private {
+    if (proofIdExists[_proofId]) return;
+    proofIdExists[_proofId] = true;
+    proofIds.push(_proofId);
   }
 
   function close() noEther {

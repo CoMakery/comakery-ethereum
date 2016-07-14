@@ -49,10 +49,10 @@ app.post '/project', (request, response) ->
 
 # create a token issue transaction
 app.post '/token_issue', (request, response) ->
-  { contractAddress, recipient, amount } = request.body
-  d { contractAddress, recipient, amount }
+  { contractAddress, recipient, amount, proofId } = request.body
+  d { contractAddress, recipient, amount, proofId }
   Promise.try =>
-    Token.issue contractAddress, recipient, amount
+    Token.issue contractAddress, recipient, amount, proofId
   .then (transactionId) =>
     response.json {transactionId}
   .catch (error) =>
