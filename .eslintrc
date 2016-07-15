@@ -1,23 +1,24 @@
 {
-  "parser": "babel-eslint",
   "extends": [
     "standard"
   ],
+  "parser": "babel-eslint",
   "plugins": [
     "promise"
   ],
   "rules": {
-    "promise/always-return": 2,
-    "promise/catch-or-return": 1,
-    "promise/no-native": 2,
     "linebreak-style": [2, "unix"],
     "no-console": 1,
     "no-nested-ternary": 2,
-    "strict": [2, "safe"],
     "no-unused-vars": [2,
       {
         "varsIgnorePattern": "^(contractItOnly|contractShouldThrowOnly|d)$"
       }
-    ]
+    ],
+    "no-var": 2,
+    "promise/always-return": 2,
+    "promise/catch-or-return": 1,
+    "promise/no-native": 2,
+    "strict": [2, "safe"]
   }
 }
