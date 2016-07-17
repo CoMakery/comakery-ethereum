@@ -134,6 +134,18 @@ contract DynamicToken is TokenInterface {
     }
   }
 
+  function burn(address _from, uint256 _amount) noEther returns (bool success) {
+    if(msg.sender != owner) throw;
+
+    if (balances[_from] >= _amount) {
+      balances[_from] -= _amount;
+      totalSupply -= _amount;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   function _transfer(address _from, address _to, uint256 _amount) private returns (bool success) {
     if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
 

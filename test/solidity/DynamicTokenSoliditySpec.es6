@@ -807,6 +807,60 @@ contract('DynamicToken', (accounts) => {
     done()
   })
 
+  describe('#burn', () => {
+    contractShouldThrowIfEtherSent(() => {
+      return token.burn(accounts[1], 5, {from: accounts[0], value: 1})
+    })
+
+    contractShouldThrow('should throw an error if called by a non-owner', () => {
+      return token.burn(accounts[0], 10, {from: accounts[1]})
+    })
+
+    contractIt('burns tokens from an address', (done) => {
+      let bob = accounts[1]
+      Promise.resolve().then(() => {
+        return token.issue(bob, 11, 'proof1', {from: accounts[0]})
+      }).then(() => {
+        return token.balanceOf.call(bob)
+      }).then((balance) => {
+        expect(balance.toNumber()).to.equal(11)
+        return
+      }).then(() => {
+        return token.burn(bob, 10, {from: accounts[0]})
+      }).then(() => {
+        return token.balanceOf.call(bob)
+      }).then((balance) => {
+        expect(balance.toNumber()).to.equal(1)
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(1)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractIt('burns no tokens if amount is greater than the from address balance', (done) => {
+      let bob = accounts[1]
+      Promise.resolve().then(() => {
+        return token.issue(bob, 1, 'proof1', {from: accounts[0]})
+      }).then(() => {
+        return token.balanceOf.call(bob)
+      }).then((balance) => {
+        expect(balance.toNumber()).to.equal(1)
+        return
+      }).then(() => {
+        return token.burn(bob, 10, {from: accounts[0]})
+      }).then(() => {
+        return token.balanceOf.call(bob)
+      }).then((balance) => {
+        expect(balance.toNumber()).to.equal(1)
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(1)
+        return
+      }).then(done).catch(done)
+    })
+  })
+
   // This kills the server unless it runs last...
   describe('#close', () => {
     contractShouldThrowIfEtherSent(() => {
