@@ -821,9 +821,9 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return token.issue(bob, 11, 'proof1', {from: accounts[0]})
       }).then(() => {
-        return token.balanceOf.call(bob)
-      }).then((balance) => {
-        expect(balance.toNumber()).to.equal(11)
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(11)
         return
       }).then(() => {
         return token.burn(bob, 10, {from: accounts[0]})
@@ -843,10 +843,9 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return token.issue(bob, 1, 'proof1', {from: accounts[0]})
       }).then(() => {
-        return token.balanceOf.call(bob)
-      }).then((balance) => {
-        expect(balance.toNumber()).to.equal(1)
-        return
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        return expect(totalSupply.toNumber()).to.equal(1)
       }).then(() => {
         return token.burn(bob, 10, {from: accounts[0]})
       }).then(() => {
