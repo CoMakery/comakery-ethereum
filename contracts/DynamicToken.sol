@@ -58,6 +58,7 @@ contract DynamicToken is TokenInterface {
   string[] public proofIds;
   mapping (string => bool) proofIdExists;
   uint256 public maxSupply;
+  bool public closed;
 
   // Protects users by preventing the execution of method calls that
   // inadvertently also transferred ether
@@ -66,10 +67,11 @@ contract DynamicToken is TokenInterface {
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address _from, address _to, uint256 _value, string _proofId);
   event Burn(address _burnFrom, uint _amount, address _burner);
-  /*event Close();*/
+  event Close(address closer);
 
   function DynamicToken() {
     owner = msg.sender;     // contract owner is contract creator
+    /*closed = false;*/
     maxSupply = 10**7;
     totalSupply = 0;
   }
@@ -80,23 +82,28 @@ contract DynamicToken is TokenInterface {
     }
   }
 
+  modifier active {
+    if (closed) throw;
+    _
+  }
+
   // accessors
 
-  function getAccounts() noEther constant returns (address[] _accounts) {
+  function getAccounts() active noEther constant returns (address[] _accounts) {
     return accounts;
   }
 
-  function balanceOf(address _owner) noEther constant returns(uint256 balance) {
+  function balanceOf(address _owner) active noEther constant returns(uint256 balance) {
     return balances[_owner];
   }
 
-  function allowance(address _owner, address _spender) noEther constant returns (uint256 remaining) {
+  function allowance(address _owner, address _spender) active noEther constant returns (uint256 remaining) {
     return allowed[_owner][_spender];
   }
 
   // mutators
 
-  function issue(address _to, uint256 _value, string _proofId) onlyOwner noEther {
+  function issue(address _to, uint256 _value, string _proofId) active onlyOwner noEther {
     if (proofIdExists[_proofId]) return;
     if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
     if (totalSupply + _value <= maxSupply) {
@@ -108,26 +115,26 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function setMaxSupply(uint256 _maxSupply) onlyOwner noEther {
+  function setMaxSupply(uint256 _maxSupply) active onlyOwner noEther {
     if (_maxSupply < totalSupply) throw;
     maxSupply = _maxSupply;
   }
 
-  function setOwner(address _newOwner) onlyOwner noEther {
+  function setOwner(address _newOwner) active onlyOwner noEther {
     owner = _newOwner;
   }
 
-  function transfer(address _to, uint256 _amount) noEther returns (bool success) {
+  function transfer(address _to, uint256 _amount) active noEther returns (bool success) {
     return _transfer(msg.sender, _to, _amount);
   }
 
-  function approve(address _spender, uint256 _amount) noEther returns (bool success) {
+  function approve(address _spender, uint256 _amount) active noEther returns (bool success) {
     allowed[msg.sender][_spender] = _amount;
     Approval(msg.sender, _spender, _amount);
     return true;
   }
 
-  function transferFrom(address _from, address _to, uint256 _amount) noEther returns (bool success) {
+  function transferFrom(address _from, address _to, uint256 _amount) active noEther returns (bool success) {
     if (allowed[_from][msg.sender] >= _amount &&
       _transfer(_from, _to, _amount)) {
       allowed[_from][msg.sender] -= _amount;
@@ -138,7 +145,7 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function burn(address _burnFrom, uint256 _amount) noEther returns (bool success) {
+  function burn(address _burnFrom, uint256 _amount) active noEther returns (bool success) {
     if(msg.sender != owner) throw;
 
     if (balances[_burnFrom] >= _amount) {
@@ -150,6 +157,20 @@ contract DynamicToken is TokenInterface {
       return false;
     }
   }
+
+  /*function upgrade(address _replacementContract) onlyOwner noEther returns (bool success) {
+    supplantedBy = _replacementContract
+    close();
+    Upgrade(_replacementContract);
+  }*/
+
+  function close() active noEther returns (bool success) {
+    if(msg.sender != owner) throw;
+    closed = true;
+    Close(owner);
+  }
+
+  // private mutators
 
   function _transfer(address _from, address _to, uint256 _amount) private returns (bool success) {
     if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
@@ -175,11 +196,6 @@ contract DynamicToken is TokenInterface {
     if (proofIdExists[_proofId]) return;
     proofIdExists[_proofId] = true;
     proofIds.push(_proofId);
-  }
-
-  function close() noEther {
-    if(msg.sender != owner) throw;
-    selfdestruct(owner);
   }
 
   // throw on malformed calls

@@ -2,46 +2,56 @@ import {expect} from 'chai'
 import {d} from 'lightsaber'
 import Promise from 'bluebird'
 
-const contractShouldThrowIfEtherSent = (functionToCall) => {
-  contractShouldThrow('should throw an error if ether is sent', functionToCall)
-}
-
-const contractShouldThrowOnly = (description, functionToCall) => {
-  contractShouldThrow(description, functionToCall, {only: true})
-}
-
-const contractShouldThrow = (description, functionToCall, options) => {
-  contractIt(description, (done) => {
-    Promise.resolve().then(functionToCall
-    ).then(function () {
-      throw new Error('Expected solidity error to be thown from contract, but was not')
-    }).catch(function (error) {
-      if (!error.message || error.message.search('invalid JUMP') < 0) throw error
-    }).then(done).catch(done)
-  }, options)
-}
-
-const contractItOnly = (name, func) => {
-  contractIt(name, func, {only: true})
-}
-
-const contractIt = (name, func, options) => {
-  options = options || {}
-  contract('', () => {
-    describe('Contract:', function () {
-      this.timeout(3000)
-      if (options.only) {
-        it.only(name, func)
-      } else {
-        it(name, func)
-      }
-    })
-  })
-}
-
 contract('DynamicToken', (accounts) => {
   let anyone = accounts[9]
   let token
+
+  const contractShouldThrowIfClosedOnly = (functionToCall) => {
+    contractShouldThrowIfClosed(functionToCall, {only: true})
+  }
+
+  const contractShouldThrowIfClosed = (functionToCall, options) => {
+    contractShouldThrow('should throw an error if contract is closed', () => {
+      return token.close().then(functionToCall)
+    }, options)
+  }
+
+  const contractShouldThrowIfEtherSent = (functionToCall) => {
+    contractShouldThrow('should throw an error if ether is sent', functionToCall)
+  }
+
+  const contractShouldThrowOnly = (description, functionToCall) => {
+    contractShouldThrow(description, functionToCall, {only: true})
+  }
+
+  const contractShouldThrow = (description, functionToCall, options) => {
+    contractIt(description, (done) => {
+      Promise.resolve().then(functionToCall
+      ).then(function () {
+        throw new Error('Expected solidity error to be thown from contract, but was not')
+      }).catch(function (error) {
+        if (!error.message || error.message.search('invalid JUMP') < 0) throw error
+      }).then(done).catch(done)
+    }, options)
+  }
+
+  const contractItOnly = (name, func) => {
+    contractIt(name, func, {only: true})
+  }
+
+  const contractIt = (name, func, options) => {
+    options = options || {}
+    contract('', () => {
+      describe('Contract:', function () {
+        this.timeout(3000)
+        if (options.only) {
+          it.only(name, func)
+        } else {
+          it(name, func)
+        }
+      })
+    })
+  }
 
   let getUsers = (token) => {
     let alice = {address: accounts[0]}
@@ -69,12 +79,14 @@ contract('DynamicToken', (accounts) => {
     })
   }
 
-  let firstEvent = (events) => {
+  const firstEvent = (events) => {
     return new Promise((resolve, reject) => {
       events.watch((error, log) => {
         if (error) {
+          // d({error})
           reject(error)
         } else {
+          // d({log})
           resolve(log)
         }
       })
@@ -117,15 +129,63 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
+  describe('#close', () => {
+    // this must go first, for reasons unknown...
+    contractIt('should fire Close event', (done) => {
+      let events = token.Close()
+
+      Promise.resolve().then(() => {
+        return token.close()
+      }).then(() => {
+        return firstEvent(events)
+      }).then((log) => {
+        expect(log.args.closer).to.equal(accounts[0])
+        done()
+        return
+      }).catch(done)
+    })
+
+    contractShouldThrowIfEtherSent(() => {
+      return token.close({value: 1})
+    })
+
+    contractShouldThrow('should throw an error if called by a non-owner', () => {
+      return token.close(null, {from: accounts[1]})
+    })
+
+    contractIt('owner can close the contract', (done) => {
+      Promise.resolve().then(() => {
+        return token.close()
+      }).then(() => {
+        return token.closed.call()
+      }).then((closed) => {
+        expect(closed).to.equal(true)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.close()
+    })
+  })
+
   describe('#allowance', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.allowance(accounts[1], accounts[2], {value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.allowance(accounts[1], accounts[2])
     })
   })
 
   describe('#balanceOf', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.balanceOf(accounts[1], {value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.balanceOf(accounts[1])
     })
   })
 
@@ -245,6 +305,10 @@ contract('DynamicToken', (accounts) => {
         done()
         return
       })
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.issue(accounts[1], 1, 'proof1', {from: accounts[0]})
     })
   })
 
@@ -372,6 +436,10 @@ contract('DynamicToken', (accounts) => {
         expect(ending.bob.balance).to.equal(starting.bob.balance)
         return
       }).then(done).catch(done)
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.transfer(accounts[0], 1)
     })
   })
 
@@ -584,6 +652,10 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(done).catch(done)
     })
+
+    contractShouldThrowIfClosed(() => {
+      return token.transferFrom(accounts[0], accounts[1], 1)
+    })
   })
 
   describe('#approve', () => {
@@ -627,6 +699,10 @@ contract('DynamicToken', (accounts) => {
         done()
         return
       })
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.approve(accounts[0], 1)
     })
   })
 
@@ -722,6 +798,10 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(done).catch(done)
     })
+
+    contractShouldThrowIfClosed(() => {
+      return token.setMaxSupply(1)
+    })
   })
 
   describe('#setOwner', () => {
@@ -758,6 +838,10 @@ contract('DynamicToken', (accounts) => {
         expect(newOwner.toString()).to.not.equal(users.bob.address)
         return
       }).then(done).catch(done)
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.setOwner(accounts[1])
     })
   })
 
@@ -821,6 +905,10 @@ contract('DynamicToken', (accounts) => {
         expect(tokenAccounts).to.have.members(expected)
         return
       }).then(done).catch(done)
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.getAccounts()
     })
   })
 
@@ -902,32 +990,9 @@ contract('DynamicToken', (accounts) => {
         return
       })
     })
-  })
 
-  // This kills the server unless it runs last...
-  describe('#close', () => {
-    contractShouldThrowIfEtherSent(() => {
-      return token.close({value: 1})
-    })
-
-    contractShouldThrow('should throw an error if called by a non-owner', () => {
-      return token.close({from: accounts[1]})
-    })
-
-    contractIt('owner can self destruct the contract', (done) => {
-      Promise.resolve().then(() => {
-        return token.owner()
-      }).then((owner) => {
-        expect(owner).to.equal(accounts[0])
-        return
-      }).then(() => {
-        return token.close()
-      }).then(() => {
-        return token.owner()
-      }).then((owner) => {
-        expect(owner).to.equal('0x')
-        return
-      }).then(done).catch(done)
+    contractShouldThrowIfClosed(() => {
+      return token.burn(accounts[1], 1)
     })
   })
 })
