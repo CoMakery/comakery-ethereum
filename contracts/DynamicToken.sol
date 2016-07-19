@@ -65,7 +65,7 @@ contract DynamicToken is TokenInterface {
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address _from, address _to, uint256 _value, string _proofId);
-  /*event Burn();*/
+  event Burn(address _burnFrom, uint _amount, address _burner);
   /*event Close();*/
 
   function DynamicToken() {
@@ -138,12 +138,13 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function burn(address _from, uint256 _amount) noEther returns (bool success) {
+  function burn(address _burnFrom, uint256 _amount) noEther returns (bool success) {
     if(msg.sender != owner) throw;
 
-    if (balances[_from] >= _amount) {
-      balances[_from] -= _amount;
+    if (balances[_burnFrom] >= _amount) {
+      balances[_burnFrom] -= _amount;
       totalSupply -= _amount;
+      Burn(_burnFrom, _amount, owner);
       return true;
     } else {
       return false;

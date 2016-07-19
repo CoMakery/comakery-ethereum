@@ -225,7 +225,7 @@ contract('DynamicToken', (accounts) => {
       })
     })
 
-    contractIt('should fire an Issue on sucess', (done) => {
+    contractIt('should fire an Issue on success', (done) => {
       let events = token.Issue()
       const amount = 10
       let starting
@@ -879,6 +879,28 @@ contract('DynamicToken', (accounts) => {
         expect(totalSupply.toNumber()).to.equal(1)
         return
       }).then(done).catch(done)
+    })
+
+    contractIt('should fire Burn event on success', (done) => {
+      let events = token.Burn()
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, 11, 'proof1', {from: accounts[0]})
+      }).then(() => {
+        return token.burn(starting.bob.address, 10, {from: starting.alice.address})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((log) => {
+        expect(log.args._burnFrom).to.equal(starting.bob.address)
+        expect(log.args._amount.toNumber()).to.equal(10)
+        expect(log.args._burner).to.equal(starting.alice.address)
+        done()
+        return
+      })
     })
   })
 

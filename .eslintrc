@@ -17,7 +17,6 @@
     ],
     "no-var": 2,
     "promise/always-return": 2,
-    "promise/catch-or-return": 1,
     "promise/no-native": 2,
     "strict": [2, "safe"]
   }
