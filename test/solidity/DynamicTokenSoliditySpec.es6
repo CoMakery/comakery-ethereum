@@ -224,6 +224,28 @@ contract('DynamicToken', (accounts) => {
         return token.issue(accounts[1], MAXISH, 'proof2')
       })
     })
+
+    contractIt('should fire an Issue on sucess', (done) => {
+      let events = token.Issue()
+      const amount = 10
+      let starting
+
+      Promise.resolve().then(() => {
+        return getUsers(token)
+      }).then((users) => {
+        starting = users
+        return token.issue(starting.bob.address, amount, 'proof1', {from: starting.alice.address})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((log) => {
+        expect(log.args._from).to.equal(starting.alice.address)
+        expect(log.args._to).to.equal(starting.bob.address)
+        expect(log.args._proofId).to.equal('proof1')
+        expect(log.args._value.toNumber()).to.equal(amount)
+        done()
+        return
+      })
+    })
   })
 
   describe('#transfer', () => {

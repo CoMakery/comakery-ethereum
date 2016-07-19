@@ -64,6 +64,9 @@ contract DynamicToken is TokenInterface {
   modifier noEther() {if (msg.value > 0) throw; _}
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
+  event Issue(address _from, address _to, uint256 _value, string _proofId);
+  /*event Burn();*/
+  /*event Close();*/
 
   function DynamicToken() {
     owner = msg.sender;     // contract owner is contract creator
@@ -101,6 +104,7 @@ contract DynamicToken is TokenInterface {
       totalSupply += _value;
       _indexAccount(_to);
       _indexProofId(_proofId);
+      Issue(owner, _to, _value, _proofId);
     }
   }
 
