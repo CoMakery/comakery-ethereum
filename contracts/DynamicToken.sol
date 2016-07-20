@@ -61,10 +61,6 @@ contract DynamicToken is TokenInterface {
   bool public closed;
   address public upgradedContract;
 
-  // Protects users by preventing the execution of method calls that
-  // inadvertently also transferred ether
-  modifier noEther() {if (msg.value > 0) throw; _}
-
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address _from, address _to, uint256 _amount, string _proofId);
   event Burn(address _burnFrom, uint _amount, address _burner);
@@ -78,15 +74,20 @@ contract DynamicToken is TokenInterface {
     totalSupply = 0;
   }
 
+  // restrict usage to only the owner
   modifier onlyOwner {
     if (msg.sender != owner) throw;
     _
   }
 
+  // check if the contract has been closed
   modifier notClosed {
     if (closed) throw;
     _
   }
+
+  // no ether should be transfered to this contract
+  modifier noEther() {if (msg.value > 0) throw; _}
 
   // accessors
 
@@ -104,6 +105,7 @@ contract DynamicToken is TokenInterface {
 
   // mutators
 
+  // tokens are only issued in exchange for a unique proof of contribution
   function issue(address _to, uint256 _amount, string _proofId) notClosed onlyOwner noEther {
     if (proofIdExists[_proofId]) return;
     if (balances[_to] + _amount < balances[_to]) throw; // Check for overflows
