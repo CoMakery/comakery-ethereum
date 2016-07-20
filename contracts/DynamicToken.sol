@@ -65,7 +65,7 @@ contract DynamicToken is TokenInterface {
   modifier noEther() {if (msg.value > 0) throw; _}
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
-  event Issue(address _from, address _to, uint256 _value, string _proofId);
+  event Issue(address _from, address _to, uint256 _amount, string _proofId);
   event Burn(address _burnFrom, uint _amount, address _burner);
   event Close(address closer);
 
@@ -82,59 +82,59 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  modifier active {
+  modifier notClosed {
     if (closed) throw;
     _
   }
 
   // accessors
 
-  function getAccounts() active noEther constant returns (address[] _accounts) {
+  function getAccounts() notClosed noEther constant returns (address[] _accounts) {
     return accounts;
   }
 
-  function balanceOf(address _owner) active noEther constant returns(uint256 balance) {
+  function balanceOf(address _owner) notClosed noEther constant returns(uint256 balance) {
     return balances[_owner];
   }
 
-  function allowance(address _owner, address _spender) active noEther constant returns (uint256 remaining) {
+  function allowance(address _owner, address _spender) notClosed noEther constant returns (uint256 remaining) {
     return allowed[_owner][_spender];
   }
 
   // mutators
 
-  function issue(address _to, uint256 _value, string _proofId) active onlyOwner noEther {
+  function issue(address _to, uint256 _amount, string _proofId) notClosed onlyOwner noEther {
     if (proofIdExists[_proofId]) return;
-    if (balances[_to] + _value < balances[_to]) throw; // Check for overflows
-    if (totalSupply + _value <= maxSupply) {
-      balances[_to] += _value;
-      totalSupply += _value;
+    if (balances[_to] + _amount < balances[_to]) throw; // Check for overflows
+    if (totalSupply + _amount <= maxSupply) {
+      balances[_to] += _amount;
+      totalSupply += _amount;
       _indexAccount(_to);
       _indexProofId(_proofId);
-      Issue(owner, _to, _value, _proofId);
+      Issue(owner, _to, _amount, _proofId);
     }
   }
 
-  function setMaxSupply(uint256 _maxSupply) active onlyOwner noEther {
+  function setMaxSupply(uint256 _maxSupply) notClosed onlyOwner noEther {
     if (_maxSupply < totalSupply) throw;
     maxSupply = _maxSupply;
   }
 
-  function setOwner(address _newOwner) active onlyOwner noEther {
+  function setOwner(address _newOwner) notClosed onlyOwner noEther {
     owner = _newOwner;
   }
 
-  function transfer(address _to, uint256 _amount) active noEther returns (bool success) {
+  function transfer(address _to, uint256 _amount) notClosed noEther returns (bool success) {
     return _transfer(msg.sender, _to, _amount);
   }
 
-  function approve(address _spender, uint256 _amount) active noEther returns (bool success) {
+  function approve(address _spender, uint256 _amount) notClosed noEther returns (bool success) {
     allowed[msg.sender][_spender] = _amount;
     Approval(msg.sender, _spender, _amount);
     return true;
   }
 
-  function transferFrom(address _from, address _to, uint256 _amount) active noEther returns (bool success) {
+  function transferFrom(address _from, address _to, uint256 _amount) notClosed noEther returns (bool success) {
     if (allowed[_from][msg.sender] >= _amount &&
       _transfer(_from, _to, _amount)) {
       allowed[_from][msg.sender] -= _amount;
@@ -145,7 +145,7 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function burn(address _burnFrom, uint256 _amount) active noEther returns (bool success) {
+  function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
     if(msg.sender != owner) throw;
 
     if (balances[_burnFrom] >= _amount) {
@@ -164,7 +164,7 @@ contract DynamicToken is TokenInterface {
     Upgrade(_replacementContract);
   }*/
 
-  function close() active noEther returns (bool success) {
+  function close() notClosed noEther returns (bool success) {
     if(msg.sender != owner) throw;
     closed = true;
     Close(owner);

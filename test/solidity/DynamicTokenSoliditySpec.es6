@@ -301,7 +301,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._from).to.equal(starting.alice.address)
         expect(log.args._to).to.equal(starting.bob.address)
         expect(log.args._proofId).to.equal('proof1')
-        expect(log.args._value.toNumber()).to.equal(amount)
+        expect(log.args._amount.toNumber()).to.equal(amount)
         done()
         return
       })
