@@ -994,6 +994,33 @@ contract('DynamicToken', (accounts) => {
     contractShouldThrowIfClosed(() => {
       return token.burn(accounts[1], 1)
     })
+
+    // This kills the server unless it runs last...
+    describe('#destroyContract', () => {
+      contractShouldThrowIfEtherSent(() => {
+        return token.destroyContract({value: 1})
+      })
+
+      contractShouldThrow('should throw an error if called by a non-owner', () => {
+        return token.destroyContract({from: accounts[1]})
+      })
+
+      contractIt('owner can self destruct the contract', (done) => {
+        Promise.resolve().then(() => {
+          return token.owner()
+        }).then((owner) => {
+          expect(owner).to.equal(accounts[0])
+          return
+        }).then(() => {
+          return token.destroyContract()
+        }).then(() => {
+          return token.owner()
+        }).then((owner) => {
+          expect(owner).to.equal('0x')
+          return
+        }).then(done).catch(done)
+      })
+    })
   })
 })
 

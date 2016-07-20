@@ -198,6 +198,11 @@ contract DynamicToken is TokenInterface {
     proofIds.push(_proofId);
   }
 
+  function destroyContract() noEther {
+    if(msg.sender != owner) throw;
+    selfdestruct(owner);
+  }
+
   // throw on malformed calls
   function () {
     throw;
