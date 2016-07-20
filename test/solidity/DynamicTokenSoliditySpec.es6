@@ -943,11 +943,11 @@ contract('DynamicToken', (accounts) => {
       return token.burn(accounts[1], 1)
     })
 
-    contractShouldThrowForNonOwner(() => {
-      return token.burn(accounts[0], 10, {from: accounts[1]})
+    contractShouldThrow('should throw when not the contract owner or the account owner', () => {
+      return token.burn(accounts[0], 10, {from: accounts[2]})
     })
 
-    contractIt('burns tokens from an address', (done) => {
+    contractIt('contract owner can burn tokens from an address', (done) => {
       let bob = accounts[1]
       Promise.resolve().then(() => {
         return token.issue(bob, 11, 'proof1', {from: accounts[0]})
@@ -958,6 +958,28 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(() => {
         return token.burn(bob, 10, {from: accounts[0]})
+      }).then(() => {
+        return token.balanceOf.call(bob)
+      }).then((balance) => {
+        expect(balance.toNumber()).to.equal(1)
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(1)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractIt('account owner can burn tokens from an address', (done) => {
+      let bob = accounts[1]
+      Promise.resolve().then(() => {
+        return token.issue(bob, 11, 'proof1', {from: accounts[0]})
+      }).then(() => {
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(11)
+        return
+      }).then(() => {
+        return token.burn(bob, 10, {from: accounts[1]})
       }).then(() => {
         return token.balanceOf.call(bob)
       }).then((balance) => {

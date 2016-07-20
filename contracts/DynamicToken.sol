@@ -146,7 +146,9 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function burn(address _burnFrom, uint256 _amount) notClosed onlyOwner noEther returns (bool success) {
+  function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
+    if( !(msg.sender == _burnFrom || msg.sender == owner) ) throw;
+
     if (balances[_burnFrom] >= _amount) {
       balances[_burnFrom] -= _amount;
       totalSupply -= _amount;
