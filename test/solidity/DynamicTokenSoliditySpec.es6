@@ -163,7 +163,7 @@ contract('DynamicToken', (accounts) => {
       return token.close({value: 1})
     })
 
-    contractShouldThrow('should throw an error if called by a non-owner', () => {
+    contractShouldThrowForNonOwner(() => {
       return token.close(null, {from: accounts[1]})
     })
 
@@ -978,7 +978,7 @@ contract('DynamicToken', (accounts) => {
       return token.destroyContract({value: 1})
     })
 
-    contractShouldThrow('should throw an error if called by a non-owner', () => {
+    contractShouldThrowForNonOwner(() => {
       return token.destroyContract({from: accounts[1]})
     })
 

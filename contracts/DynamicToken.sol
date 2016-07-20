@@ -144,9 +144,7 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
-    if(msg.sender != owner) throw;
-
+  function burn(address _burnFrom, uint256 _amount) notClosed onlyOwner noEther returns (bool success) {
     if (balances[_burnFrom] >= _amount) {
       balances[_burnFrom] -= _amount;
       totalSupply -= _amount;
@@ -163,10 +161,14 @@ contract DynamicToken is TokenInterface {
     Upgrade(_replacementContract);
   }*/
 
-  function close() notClosed noEther returns (bool success) {
-    if(msg.sender != owner) throw;
+  function close() notClosed onlyOwner noEther returns (bool success) {
     closed = true;
     Close(owner);
+  }
+
+
+  function destroyContract() onlyOwner noEther {
+    selfdestruct(owner);
   }
 
   // private mutators
@@ -195,11 +197,6 @@ contract DynamicToken is TokenInterface {
     if (proofIdExists[_proofId]) return;
     proofIdExists[_proofId] = true;
     proofIds.push(_proofId);
-  }
-
-  function destroyContract() noEther {
-    if(msg.sender != owner) throw;
-    selfdestruct(owner);
   }
 
   // throw on malformed calls
