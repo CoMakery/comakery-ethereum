@@ -183,19 +183,11 @@ contract('DynamicToken', (accounts) => {
     contractShouldThrowIfEtherSent(() => {
       return token.allowance(accounts[1], accounts[2], {value: 1})
     })
-
-    contractShouldThrowIfClosed(() => {
-      return token.allowance(accounts[1], accounts[2])
-    })
   })
 
   describe('#balanceOf', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.balanceOf(accounts[1], {value: 1})
-    })
-
-    contractShouldThrowIfClosed(() => {
-      return token.balanceOf(accounts[1])
     })
   })
 
@@ -824,10 +816,6 @@ contract('DynamicToken', (accounts) => {
   describe('#getAccounts accessbile by everyone', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.getAccounts({value: 1})
-    })
-
-    contractShouldThrowIfClosed(() => {
-      return token.getAccounts()
     })
 
     contractIt('includes accounts that are issued tokens without duplicates', (done) => {

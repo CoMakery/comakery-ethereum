@@ -88,15 +88,15 @@ contract DynamicToken is TokenInterface {
 
   // accessors
 
-  function getAccounts() notClosed noEther constant returns (address[] _accounts) {
+  function getAccounts() noEther constant returns (address[] _accounts) {
     return accounts;
   }
 
-  function balanceOf(address _owner) notClosed noEther constant returns(uint256 balance) {
+  function balanceOf(address _owner) noEther constant returns(uint256 balance) {
     return balances[_owner];
   }
 
-  function allowance(address _owner, address _spender) notClosed noEther constant returns (uint256 remaining) {
+  function allowance(address _owner, address _spender) noEther constant returns (uint256 remaining) {
     return allowed[_owner][_spender];
   }
 
@@ -173,7 +173,7 @@ contract DynamicToken is TokenInterface {
 
   // private mutators
 
-  function _transfer(address _from, address _to, uint256 _amount) private returns (bool success) {
+  function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
     if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflows
 
     if (balances[_from] >= _amount) {
