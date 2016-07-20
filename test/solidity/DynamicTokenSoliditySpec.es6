@@ -149,7 +149,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return firstEvent(events)
       }).then((log) => {
-        expect(log.args.closer).to.equal(accounts[0])
+        expect(log.args._closedBy).to.equal(accounts[0])
         done()
         return
       }).catch(done)
