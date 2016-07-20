@@ -155,6 +155,10 @@ contract('DynamicToken', (accounts) => {
       }).catch(done)
     })
 
+    contractShouldThrowIfClosed(() => {
+      return token.close()
+    })
+
     contractShouldThrowIfEtherSent(() => {
       return token.close({value: 1})
     })
@@ -172,10 +176,6 @@ contract('DynamicToken', (accounts) => {
         expect(closed).to.equal(true)
         return
       }).then(done).catch(done)
-    })
-
-    contractShouldThrowIfClosed(() => {
-      return token.close()
     })
   })
 
@@ -202,6 +202,10 @@ contract('DynamicToken', (accounts) => {
   describe('#issue', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.issue(accounts[1], 10, 'proof1', {value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.issue(accounts[1], 1, 'proof1', {from: accounts[0]})
     })
 
     contractIt('should issue tokens to a user, increasing their balance', (done) => {
@@ -304,15 +308,15 @@ contract('DynamicToken', (accounts) => {
         return
       })
     })
-
-    contractShouldThrowIfClosed(() => {
-      return token.issue(accounts[1], 1, 'proof1', {from: accounts[0]})
-    })
   })
 
   describe('#transfer', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.transfer(accounts[0], 10, {value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.transfer(accounts[0], 1)
     })
 
     contractIt('should transfer tokens from contract owner to a receiver', (done) => {
@@ -435,15 +439,15 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(done).catch(done)
     })
-
-    contractShouldThrowIfClosed(() => {
-      return token.transfer(accounts[0], 1)
-    })
   })
 
   describe('#transferFrom', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.transferFrom(accounts[1], accounts[2], 3, {value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.transferFrom(accounts[0], accounts[1], 1)
     })
 
     contractIt('spender can spend within allowance set by manager', (done) => {
@@ -650,15 +654,15 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(done).catch(done)
     })
-
-    contractShouldThrowIfClosed(() => {
-      return token.transferFrom(accounts[0], accounts[1], 1)
-    })
   })
 
   describe('#approve', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.approve(accounts[1], 100, {value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.approve(accounts[0], 1)
     })
 
     contractIt('manager can approve allowance for spender to spend', (done) => {
@@ -697,10 +701,6 @@ contract('DynamicToken', (accounts) => {
         done()
         return
       })
-    })
-
-    contractShouldThrowIfClosed(() => {
-      return token.approve(accounts[0], 1)
     })
   })
 
@@ -759,6 +759,14 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#setMaxSupply', () => {
+    contractShouldThrowForNonOwner(() => {
+      return token.setMaxSupply(10000, {from: accounts[1]})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.setMaxSupply(1)
+    })
+
     contractIt('should allow owner to set maxSupply', (done) => {
       const newTotalSupply = 117
 
@@ -781,19 +789,19 @@ contract('DynamicToken', (accounts) => {
         return token.setMaxSupply(1)
       })
     })
-
-    contractShouldThrowForNonOwner(() => {
-      return token.setMaxSupply(10000, {from: accounts[1]})
-    })
-
-    contractShouldThrowIfClosed(() => {
-      return token.setMaxSupply(1)
-    })
   })
 
   describe('#setOwner', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.setOwner(accounts[1], {value: 1})
+    })
+
+    contractShouldThrowForNonOwner(() => {
+      return token.setOwner(accounts[1], {from: accounts[2]})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.setOwner(accounts[1])
     })
 
     contractIt('should allow the owner to set a new owner', (done) => {
@@ -811,19 +819,15 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(done).catch(done)
     })
-
-    contractShouldThrowForNonOwner(() => {
-      return token.setOwner(accounts[1], {from: accounts[2]})
-    })
-
-    contractShouldThrowIfClosed(() => {
-      return token.setOwner(accounts[1])
-    })
   })
 
   describe('#getAccounts accessbile by everyone', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.getAccounts({value: 1})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.getAccounts()
     })
 
     contractIt('includes accounts that are issued tokens without duplicates', (done) => {
@@ -882,10 +886,6 @@ contract('DynamicToken', (accounts) => {
         return
       }).then(done).catch(done)
     })
-
-    contractShouldThrowIfClosed(() => {
-      return token.getAccounts()
-    })
   })
 
   contractIt('#indexAccount should be private', (done) => {
@@ -898,7 +898,11 @@ contract('DynamicToken', (accounts) => {
       return token.burn(accounts[1], 5, {from: accounts[0], value: 1})
     })
 
-    contractShouldThrow('should throw an error if called by a non-owner', () => {
+    contractShouldThrowIfClosed(() => {
+      return token.burn(accounts[1], 1)
+    })
+
+    contractShouldThrowForNonOwner(() => {
       return token.burn(accounts[0], 10, {from: accounts[1]})
     })
 
@@ -966,36 +970,32 @@ contract('DynamicToken', (accounts) => {
         return
       })
     })
+  })
 
-    contractShouldThrowIfClosed(() => {
-      return token.burn(accounts[1], 1)
+  // This kills the server unless it runs last...
+  describe('#destroyContract', () => {
+    contractShouldThrowIfEtherSent(() => {
+      return token.destroyContract({value: 1})
     })
 
-    // This kills the server unless it runs last...
-    describe('#destroyContract', () => {
-      contractShouldThrowIfEtherSent(() => {
-        return token.destroyContract({value: 1})
-      })
+    contractShouldThrow('should throw an error if called by a non-owner', () => {
+      return token.destroyContract({from: accounts[1]})
+    })
 
-      contractShouldThrow('should throw an error if called by a non-owner', () => {
-        return token.destroyContract({from: accounts[1]})
-      })
-
-      contractIt('owner can self destruct the contract', (done) => {
-        Promise.resolve().then(() => {
-          return token.owner()
-        }).then((owner) => {
-          expect(owner).to.equal(accounts[0])
-          return
-        }).then(() => {
-          return token.destroyContract()
-        }).then(() => {
-          return token.owner()
-        }).then((owner) => {
-          expect(owner).to.equal('0x')
-          return
-        }).then(done).catch(done)
-      })
+    contractIt('owner can self destruct the contract', (done) => {
+      Promise.resolve().then(() => {
+        return token.owner()
+      }).then((owner) => {
+        expect(owner).to.equal(accounts[0])
+        return
+      }).then(() => {
+        return token.destroyContract()
+      }).then(() => {
+        return token.owner()
+      }).then((owner) => {
+        expect(owner).to.equal('0x')
+        return
+      }).then(done).catch(done)
     })
   })
 })
