@@ -787,17 +787,17 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('#setOwner', () => {
+  describe('#transferContractOwnership', () => {
     contractShouldThrowIfEtherSent(() => {
-      return token.setOwner(accounts[1], {value: 1})
+      return token.transferContractOwnership(accounts[1], {value: 1})
     })
 
     contractShouldThrowForNonOwner(() => {
-      return token.setOwner(accounts[1], {from: accounts[2]})
+      return token.transferContractOwnership(accounts[1], {from: accounts[2]})
     })
 
     contractShouldThrowIfClosed(() => {
-      return token.setOwner(accounts[1])
+      return token.transferContractOwnership(accounts[1])
     })
 
     contractIt('should allow the owner to set a new owner', (done) => {
@@ -807,7 +807,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((data) => {
         users = data
-        return token.setOwner(users.bob.address, {from: users.alice.address})
+        return token.transferContractOwnership(users.bob.address, {from: users.alice.address})
       }).then(() => {
         return token.owner()
       }).then((newOwner) => {

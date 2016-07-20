@@ -123,7 +123,7 @@ contract DynamicToken is TokenInterface {
     maxSupply = _maxSupply;
   }
 
-  function setOwner(address _newOwner) notClosed onlyOwner noEther {
+  function transferContractOwnership(address _newOwner) notClosed onlyOwner noEther {
     owner = _newOwner;
   }
 
