@@ -59,6 +59,7 @@ contract DynamicToken is TokenInterface {
   mapping (string => bool) proofIdExists;
   uint256 public maxSupply;
   bool public closed;
+  address public upgradedContract;
 
   // Protects users by preventing the execution of method calls that
   // inadvertently also transferred ether
@@ -68,6 +69,7 @@ contract DynamicToken is TokenInterface {
   event Issue(address _from, address _to, uint256 _amount, string _proofId);
   event Burn(address _burnFrom, uint _amount, address _burner);
   event Close(address _closedBy);
+  event Upgrade(address _upgradedContract);
 
   function DynamicToken() {
     owner = msg.sender;     // contract owner is contract creator
@@ -155,17 +157,17 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  /*function upgrade(address _replacementContract) onlyOwner noEther returns (bool success) {
-    supplantedBy = _replacementContract
+  function upgrade(address _upgradedContract) notClosed onlyOwner noEther returns (bool success) {
+    upgradedContract = _upgradedContract;
     close();
-    Upgrade(_replacementContract);
-  }*/
+    Upgrade(_upgradedContract);
+    return true;
+  }
 
   function close() notClosed onlyOwner noEther returns (bool success) {
     closed = true;
     Close(owner);
   }
-
 
   function destroyContract() onlyOwner noEther {
     selfdestruct(owner);

@@ -31,8 +31,12 @@ contract('DynamicToken', (accounts) => {
     contractShouldThrowIfClosed(functionToCall, {only: true})
   }
 
-  const contractShouldThrowIfEtherSent = (functionToCall) => {
-    contractShouldThrow('should throw an error if ether is sent', functionToCall)
+  const contractShouldThrowIfEtherSent = (functionToCall, opts) => {
+    contractShouldThrow('should throw an error if ether is sent', functionToCall, opts)
+  }
+
+  const contractShouldThrowIfEtherSentOnly = (functionToCall) => {
+    contractShouldThrowIfEtherSent(functionToCall, {only: true})
   }
 
   const contractShouldThrowForNonOwner = (functionToCall, opts) => {
@@ -879,6 +883,55 @@ contract('DynamicToken', (accounts) => {
   contractIt('#indexAccount should be private', (done) => {
     expect(token.indexAccount).to.equal(undefined)
     done()
+  })
+
+  describe('#upgrade', () => {
+    const upgradeAccount = '0x00000f31d5d8c3146ea6f5c31c7f571c00000000'
+
+    contractShouldThrowIfEtherSent(() => {
+      return token.upgrade(upgradeAccount, {value: 1})
+    })
+
+    contractShouldThrowForNonOwner(() => {
+      return token.upgrade(upgradeAccount, {from: accounts[1]})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.upgrade(upgradeAccount)
+    })
+
+    contractIt('emits a close event', (done) => {
+      const events = token.Upgrade()
+
+      Promise.resolve().then(() => {
+        return token.upgrade(upgradeAccount)
+      }).then(() => {
+        return firstEvent(events)
+      }).then((event) => {
+        expect(event.args._upgradedContract).to.equal(upgradeAccount)
+        return
+      }).then(done).catch(done)
+    })
+
+    describe('when closed', () => {
+      beforeEach(() => {
+        token.upgrade(upgradeAccount).then()
+      })
+
+      contractIt('toggles closed to true', (done) => {
+        token.closed().then((isClosed) => {
+          expect(isClosed).to.equal(true)
+          return
+        }).then(done).catch(done)
+      })
+
+      contractIt('stores the replacement contract address', (done) => {
+        token.upgradedContract().then((upgradedContract) => {
+          expect(upgradedContract).to.equal(upgradeAccount)
+          return
+        }).then(done).catch(done)
+      })
+    })
   })
 
   describe('#burn', () => {
