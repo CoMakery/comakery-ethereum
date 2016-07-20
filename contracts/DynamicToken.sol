@@ -71,7 +71,7 @@ contract DynamicToken is TokenInterface {
 
   function DynamicToken() {
     owner = msg.sender;     // contract owner is contract creator
-    /*closed = false;*/
+    closed = false;
     maxSupply = 10**7;
     totalSupply = 0;
   }
