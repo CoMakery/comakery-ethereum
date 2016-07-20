@@ -6,24 +6,6 @@ contract('DynamicToken', (accounts) => {
   let anyone = accounts[9]
   let token
 
-  const contractShouldThrowIfClosedOnly = (functionToCall) => {
-    contractShouldThrowIfClosed(functionToCall, {only: true})
-  }
-
-  const contractShouldThrowIfClosed = (functionToCall, options) => {
-    contractShouldThrow('should throw an error if contract is closed', () => {
-      return token.close().then(functionToCall)
-    }, options)
-  }
-
-  const contractShouldThrowIfEtherSent = (functionToCall) => {
-    contractShouldThrow('should throw an error if ether is sent', functionToCall)
-  }
-
-  const contractShouldThrowOnly = (description, functionToCall) => {
-    contractShouldThrow(description, functionToCall, {only: true})
-  }
-
   const contractShouldThrow = (description, functionToCall, options) => {
     contractIt(description, (done) => {
       Promise.resolve().then(functionToCall
@@ -33,6 +15,34 @@ contract('DynamicToken', (accounts) => {
         if (!error.message || error.message.search('invalid JUMP') < 0) throw error
       }).then(done).catch(done)
     }, options)
+  }
+
+  const contractShouldThrowOnly = (description, functionToCall) => {
+    contractShouldThrow(description, functionToCall, {only: true})
+  }
+
+  const contractShouldThrowIfClosed = (functionToCall, options) => {
+    contractShouldThrow('should throw an error if contract is closed', () => {
+      return token.close().then(functionToCall)
+    }, options)
+  }
+
+  const contractShouldThrowIfClosedOnly = (functionToCall) => {
+    contractShouldThrowIfClosed(functionToCall, {only: true})
+  }
+
+  const contractShouldThrowIfEtherSent = (functionToCall) => {
+    contractShouldThrow('should throw an error if ether is sent', functionToCall)
+  }
+
+  const contractShouldThrowForNonOwner = (functionToCall, opts) => {
+    contractShouldThrow('should throw an error for non-owner', () => {
+      return functionToCall()
+    }, opts)
+  }
+
+  const contractShouldThrowForNonOwnerOnly = (functionToCall) => {
+    contractShouldThrowForNonOwner(functionToCall, {only: true})
   }
 
   const contractItOnly = (name, func) => {
@@ -255,22 +265,10 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should only allow contract owner to issue new tokens', (done) => {
-      const amount = 10
-      let starting
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, amount, 'proof1', {from: starting.bob.address})
-      }).then(() => {
-        return getUsers(token)
-      }).then((ending) => {
-        expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(0)
-        return
-      }).then(done).catch(done)
+    contractShouldThrowForNonOwner(() => {
+      return Promise.resolve().then(() => {
+        return token.issue(accounts[1], 10, 'proof1', {from: accounts[1]})
+      })
     })
 
     contractShouldThrow('should throw an error if token balance overflows', () => {
@@ -784,19 +782,8 @@ contract('DynamicToken', (accounts) => {
       })
     })
 
-    contractIt('should forbid non-owner from setting maxSupply', (done) => {
-      const newTotalSupply = 117
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        return token.setMaxSupply(newTotalSupply, {from: users.bob.address})
-      }).then(() => {
-        return token.maxSupply()
-      }).then((max) => {
-        expect(max.toNumber()).to.equal(10e6)
-        return
-      }).then(done).catch(done)
+    contractShouldThrowForNonOwner(() => {
+      return token.setMaxSupply(10000, {from: accounts[1]})
     })
 
     contractShouldThrowIfClosed(() => {
@@ -825,19 +812,8 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should not allow other users to set a new owner', (done) => {
-      let users
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((data) => {
-        users = data
-        token.setOwner(users.bob.address, {from: users.charlie.address})
-        return token.owner()
-      }).then((newOwner) => {
-        expect(newOwner.toString()).to.not.equal(users.bob.address)
-        return
-      }).then(done).catch(done)
+    contractShouldThrowForNonOwner(() => {
+      return token.setOwner(accounts[1], {from: accounts[2]})
     })
 
     contractShouldThrowIfClosed(() => {
