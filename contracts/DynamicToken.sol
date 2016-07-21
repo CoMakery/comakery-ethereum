@@ -107,8 +107,9 @@ contract DynamicToken is TokenInterface {
 
   // tokens are only issued in exchange for a unique proof of contribution
   function issue(address _to, uint256 _amount, string _proofId) notClosed onlyContractOwner noEther returns (bool success) {
-    if (totalSupply + _amount < totalSupply) throw;     // Check for overflow
     if (balances[_to] + _amount < balances[_to]) throw; // Check for overflow
+    if (totalSupply + _amount < totalSupply) throw;     // Check for overflow  (this should never happen)
+
     if (proofIdExists[_proofId]) return false;
     if (totalSupply + _amount > maxSupply) return false;
 
@@ -122,6 +123,7 @@ contract DynamicToken is TokenInterface {
 
   function setMaxSupply(uint256 _maxSupply) notClosed onlyContractOwner noEther returns (bool success) {
     if (_maxSupply < totalSupply) throw;
+
     maxSupply = _maxSupply;
     return true;
   }
