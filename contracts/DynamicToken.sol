@@ -145,17 +145,21 @@ contract DynamicToken is TokenInterface {
 
   function transferFrom(address _from, address _to, uint256 _amount) notClosed noEther returns (bool success) {
     if (_amount > allowed[_from][msg.sender]) return false;
-    if (!_transfer(_from, _to, _amount)) return false;
 
-    allowed[_from][msg.sender] -= _amount;
-    TransferFrom(_from, _to, msg.sender, _amount);
-    return true;
+    if (_transfer(_from, _to, _amount)) {
+      allowed[_from][msg.sender] -= _amount;
+      TransferFrom(_from, _to, msg.sender, _amount);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
     if( !(msg.sender == _burnFrom || msg.sender == contractOwner) ) throw;
-    if (_amount > totalSupply) return false;  // check for underflow
+
     if (_amount > balances[_burnFrom]) return false;
+    if (_amount > totalSupply) return false;          // should never happen
 
     balances[_burnFrom] -= _amount;
     totalSupply -= _amount;
