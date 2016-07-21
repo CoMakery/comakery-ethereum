@@ -107,8 +107,8 @@ contract DynamicToken is TokenInterface {
 
   // tokens are only issued in exchange for a unique proof of contribution
   function issue(address _to, uint256 _amount, string _proofId) notClosed onlyContractOwner noEther returns (bool success) {
-    if (balances[_to] + _amount < balances[_to]) throw; // Check for overflow
-    if (totalSupply + _amount < totalSupply) throw;     // Check for overflow  (this should never happen)
+    if (balances[_to] + _amount < balances[_to]) throw; // Guard against overflow
+    if (totalSupply + _amount < totalSupply) throw;     // Guard against overflow  (this should never happen)
 
     if (proofIdExists[_proofId]) return false;
     if (totalSupply + _amount > maxSupply) return false;
@@ -146,6 +146,8 @@ contract DynamicToken is TokenInterface {
   function transferFrom(address _from, address _to, uint256 _amount) notClosed noEther returns (bool success) {
     if (_amount > allowed[_from][msg.sender]) return false;
 
+    if (allowed[_from][msg.sender] - _amount > allowed[_from][msg.sender]) throw;  // Guard against underflow
+
     if (_transfer(_from, _to, _amount)) {
       allowed[_from][msg.sender] -= _amount;
       TransferFrom(_from, _to, msg.sender, _amount);
@@ -156,10 +158,12 @@ contract DynamicToken is TokenInterface {
   }
 
   function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
-    if( !(msg.sender == _burnFrom || msg.sender == contractOwner) ) throw;
-
     if (_amount > balances[_burnFrom]) return false;
-    if (_amount > totalSupply) return false;          // should never happen
+
+    if (_amount > totalSupply) throw;
+    if (!(msg.sender == _burnFrom || msg.sender == contractOwner)) throw;
+    if (balances[_burnFrom] - _amount > balances[_burnFrom]) throw;     // Guard against underflow
+    if (totalSupply - _amount > totalSupply) throw;                     // Guard against underflow
 
     balances[_burnFrom] -= _amount;
     totalSupply -= _amount;
@@ -187,7 +191,8 @@ contract DynamicToken is TokenInterface {
   // private mutators
 
   function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
-    if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflow
+    if (balances[_to] + _amount < balances[_to]) throw;      // Guard against overflow
+    if (balances[_from] - _amount > balances[_from]) throw;  // Guard against underflow
     if (_amount > balances[_from]) return false;
 
     balances[_to] += _amount;
