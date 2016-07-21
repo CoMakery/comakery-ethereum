@@ -106,7 +106,7 @@ contract DynamicToken is TokenInterface {
   // mutators
 
   // tokens are only issued in exchange for a unique proof of contribution
-  function issue(address _to, uint256 _amount, string _proofId) notClosed onlyOwner noEther {
+  function issue(address _to, uint256 _amount, string _proofId) notClosed onlyOwner noEther returns (bool success) {
     if (proofIdExists[_proofId]) return;
     if (balances[_to] + _amount < balances[_to]) throw; // Check for overflows
     if (totalSupply + _amount <= maxSupply) {
@@ -115,6 +115,9 @@ contract DynamicToken is TokenInterface {
       _indexAccount(_to);
       _indexProofId(_proofId);
       Issue(msg.sender, _to, _amount, _proofId);
+      return true;
+    } else {
+      return false;
     }
   }
 

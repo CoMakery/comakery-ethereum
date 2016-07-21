@@ -265,6 +265,25 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
+    contractIt('should not issue tokens such that totalSupply exceeds maxSupply', (done) => {
+      Promise.resolve().then(() => {
+        return token.setMaxSupply(10)
+      }).then(() => {
+        return token.issue(accounts[0], 10, 'proof1')
+      }).then(() => {
+        return token.issue(accounts[0], 1, 'proof2')
+      }).then(() => {
+        expect(success.toBool()).to.equal(false)
+        return token.totalSupply.call()
+      }).then((totalSupply) => {
+        expect(totalSupply.toNumber()).to.equal(10)
+        return token.balanceOf(accounts[0])
+      }).then((accountBalance) => {
+        expect(accountBalance.toNumber()).to.equal(10)
+        return
+      }).then(done).catch(done)
+    })
+
     contractShouldThrowForNonOwner(() => {
       return Promise.resolve().then(() => {
         return token.issue(accounts[1], 10, 'proof1', {from: accounts[1]})
