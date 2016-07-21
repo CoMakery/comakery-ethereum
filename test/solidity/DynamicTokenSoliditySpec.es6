@@ -283,7 +283,7 @@ contract('DynamicToken', (accounts) => {
       })
     })
 
-    contractIt('should fire an Issue on success', (done) => {
+    contractIt('should fire an Issue event on success', (done) => {
       let events = token.Issue()
       const amount = 10
       let starting
