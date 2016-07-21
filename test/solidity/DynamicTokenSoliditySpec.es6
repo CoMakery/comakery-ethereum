@@ -273,7 +273,6 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return token.issue(accounts[0], 1, 'proof2')
       }).then(() => {
-        expect(success.toBool()).to.equal(false)
         return token.totalSupply.call()
       }).then((totalSupply) => {
         expect(totalSupply.toNumber()).to.equal(10)
