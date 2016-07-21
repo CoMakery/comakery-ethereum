@@ -809,7 +809,7 @@ contract('DynamicToken', (accounts) => {
         users = data
         return token.transferContractOwnership(users.bob.address, {from: users.alice.address})
       }).then(() => {
-        return token.owner()
+        return token.contractOwner()
       }).then((newOwner) => {
         expect(newOwner.toString()).to.equal(users.bob.address)
         return
@@ -1047,14 +1047,14 @@ contract('DynamicToken', (accounts) => {
 
     contractIt('owner can self destruct the contract', (done) => {
       Promise.resolve().then(() => {
-        return token.owner()
+        return token.contractOwner()
       }).then((owner) => {
         expect(owner).to.equal(accounts[0])
         return
       }).then(() => {
         return token.destroyContract()
       }).then(() => {
-        return token.owner()
+        return token.contractOwner()
       }).then((owner) => {
         expect(owner).to.equal('0x')
         return

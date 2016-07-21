@@ -52,7 +52,7 @@ contract TokenInterface {
 }
 
 contract DynamicToken is TokenInterface {
-  address public owner;
+  address public contractOwner;
   address[] public accounts;
   mapping (address => bool) public accountExists;
   string[] public proofIds;
@@ -68,7 +68,7 @@ contract DynamicToken is TokenInterface {
   event Upgrade(address _upgradedContract);
 
   function DynamicToken() {
-    owner = msg.sender;     // contract owner is contract creator
+    contractOwner = msg.sender;     // contract owner is contract creator
     closed = false;
     maxSupply = 10**7;
     totalSupply = 0;
@@ -76,7 +76,7 @@ contract DynamicToken is TokenInterface {
 
   // restrict usage to only the owner
   modifier onlyOwner {
-    if (msg.sender != owner) throw;
+    if (msg.sender != contractOwner) throw;
     _
   }
 
@@ -124,7 +124,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function transferContractOwnership(address _newOwner) notClosed onlyOwner noEther {
-    owner = _newOwner;
+    contractOwner = _newOwner;
   }
 
   function transfer(address _to, uint256 _amount) notClosed noEther returns (bool success) {
@@ -149,12 +149,12 @@ contract DynamicToken is TokenInterface {
   }
 
   function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
-    if( !(msg.sender == _burnFrom || msg.sender == owner) ) throw;
+    if( !(msg.sender == _burnFrom || msg.sender == contractOwner) ) throw;
 
     if (balances[_burnFrom] >= _amount) {
       balances[_burnFrom] -= _amount;
       totalSupply -= _amount;
-      Burn(_burnFrom, _amount, owner);  // msg.sender TODO
+      Burn(_burnFrom, _amount, contractOwner);  // msg.sender TODO
       return true;
     } else {
       return false;
@@ -174,7 +174,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function destroyContract() onlyOwner noEther {
-    selfdestruct(owner);
+    selfdestruct(contractOwner);
   }
 
   // private mutators
