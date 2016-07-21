@@ -75,7 +75,7 @@ contract DynamicToken is TokenInterface {
   }
 
   // restrict usage to only the owner
-  modifier onlyOwner {
+  modifier onlyContractOwner {
     if (msg.sender != contractOwner) throw;
     _
   }
@@ -106,7 +106,7 @@ contract DynamicToken is TokenInterface {
   // mutators
 
   // tokens are only issued in exchange for a unique proof of contribution
-  function issue(address _to, uint256 _amount, string _proofId) notClosed onlyOwner noEther returns (bool success) {
+  function issue(address _to, uint256 _amount, string _proofId) notClosed onlyContractOwner noEther returns (bool success) {
     if (totalSupply + _amount < totalSupply) throw;     // Check for overflow
     if (balances[_to] + _amount < balances[_to]) throw; // Check for overflow
     if (proofIdExists[_proofId]) return false;
@@ -120,13 +120,13 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  function setMaxSupply(uint256 _maxSupply) notClosed onlyOwner noEther returns (bool success) {
+  function setMaxSupply(uint256 _maxSupply) notClosed onlyContractOwner noEther returns (bool success) {
     if (_maxSupply < totalSupply) throw;
     maxSupply = _maxSupply;
     return true;
   }
 
-  function transferContractOwnership(address _newOwner) notClosed onlyOwner noEther returns (bool success) {
+  function transferContractOwnership(address _newOwner) notClosed onlyContractOwner noEther returns (bool success) {
     contractOwner = _newOwner;
     return true;
   }
@@ -161,20 +161,20 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  function upgrade(address _upgradedContract) notClosed onlyOwner noEther returns (bool success) {
+  function upgrade(address _upgradedContract) notClosed onlyContractOwner noEther returns (bool success) {
     upgradedContract = _upgradedContract;
     close();
     Upgrade(_upgradedContract);
     return true;
   }
 
-  function close() notClosed onlyOwner noEther returns (bool success) {
+  function close() notClosed onlyContractOwner noEther returns (bool success) {
     closed = true;
     Close(msg.sender);
     return true;
   }
 
-  function destroyContract() onlyOwner noEther {
+  function destroyContract() onlyContractOwner noEther {
     selfdestruct(contractOwner);
   }
 
