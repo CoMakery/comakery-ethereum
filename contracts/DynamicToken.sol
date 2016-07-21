@@ -180,7 +180,7 @@ contract DynamicToken is TokenInterface {
 
   // private mutators
 
-  function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
+  function _transfer(address _from, address _to, uint256 _amount) private returns (bool success) {
     if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflow
     if (_amount > balances[_from]) return false;
 
