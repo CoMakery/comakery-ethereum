@@ -182,7 +182,7 @@ contract DynamicToken is TokenInterface {
 
   // private mutators
 
-  function _transfer(address _from, address _to, uint256 _amount) private returns (bool success) {
+  function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
     if (balances[_to] + _amount < balances[_to]) throw;  // Check for overflow
     if (_amount > balances[_from]) return false;
 
@@ -193,13 +193,13 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  function _indexAccount(address _account) private {
+  function _indexAccount(address _account) notClosed private {
     if (accountExists[_account]) return;
     accountExists[_account] = true;
     accounts.push(_account);
   }
 
-  function _indexProofId(string _proofId) private {
+  function _indexProofId(string _proofId) notClosed private {
     if (proofIdExists[_proofId]) return;
     proofIdExists[_proofId] = true;
     proofIds.push(_proofId);
