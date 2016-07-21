@@ -154,7 +154,7 @@ contract DynamicToken is TokenInterface {
     if (balances[_burnFrom] >= _amount) {
       balances[_burnFrom] -= _amount;
       totalSupply -= _amount;
-      Burn(_burnFrom, _amount, contractOwner);  // msg.sender TODO
+      Burn(_burnFrom, _amount, msg.sender);
       return true;
     } else {
       return false;
