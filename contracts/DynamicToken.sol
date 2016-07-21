@@ -63,7 +63,7 @@ contract DynamicToken is TokenInterface {
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address _from, address _to, uint256 _amount, string _proofId);
-  event Burn(address _burnFrom, uint _amount, address _burner);
+  event Burn(address _burnFrom, uint256 _amount, address _burner);
   event Close(address _closedBy);
   event Upgrade(address _upgradedContract);
 
