@@ -114,7 +114,7 @@ contract DynamicToken is TokenInterface {
       totalSupply += _amount;
       _indexAccount(_to);
       _indexProofId(_proofId);
-      Issue(owner, _to, _amount, _proofId);
+      Issue(msg.sender, _to, _amount, _proofId);
     }
   }
 
@@ -154,7 +154,7 @@ contract DynamicToken is TokenInterface {
     if (balances[_burnFrom] >= _amount) {
       balances[_burnFrom] -= _amount;
       totalSupply -= _amount;
-      Burn(_burnFrom, _amount, owner);
+      Burn(_burnFrom, _amount, owner);  // msg.sender TODO
       return true;
     } else {
       return false;
@@ -170,7 +170,7 @@ contract DynamicToken is TokenInterface {
 
   function close() notClosed onlyOwner noEther returns (bool success) {
     closed = true;
-    Close(owner);
+    Close(msg.sender);
   }
 
   function destroyContract() onlyOwner noEther {
