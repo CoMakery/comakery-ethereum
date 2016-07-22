@@ -59,6 +59,7 @@ contract DynamicToken is TokenInterface {
   mapping (string => bool) proofIdExists;
   uint256 public maxSupply;
   bool public closed;
+  bool public maxSupplyLocked;
   address public upgradedContract;
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
@@ -70,6 +71,7 @@ contract DynamicToken is TokenInterface {
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
     closed = false;
+    maxSupplyLocked = false;
     maxSupply = 10**7;
     totalSupply = 0;
   }
@@ -123,8 +125,16 @@ contract DynamicToken is TokenInterface {
 
   function setMaxSupply(uint256 _maxSupply) notClosed onlyContractOwner noEther returns (bool success) {
     if (_maxSupply < totalSupply) throw;
+    if (maxSupplyLocked) return false;
 
     maxSupply = _maxSupply;
+
+    return true;
+  }
+
+  // lock the maxSupply to its current value forever
+  function lockMaxSupply() notClosed onlyContractOwner noEther returns(bool success) {
+    maxSupplyLocked = true;
     return true;
   }
 

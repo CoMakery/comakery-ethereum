@@ -805,6 +805,46 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
+  describe('#lockMaxSupply', () => {
+    contractShouldThrowForNonOwner(() => {
+      return token.lockMaxSupply({from: accounts[1]})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.lockMaxSupply({from: accounts[0]})
+    })
+
+    contractShouldThrowIfEtherSent(() => {
+      return token.lockMaxSupply({from: accounts[0], value: 1})
+    })
+
+    contractIt('should begin unlocked', (done) => {
+      token.maxSupplyLocked.call().then((locked) => {
+        expect(locked).to.equal(false)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractIt('should allow owner to lock the maxSupply', (done) => {
+      var startingMaxSupply = 199
+
+      Promise.resolve().then(() => {
+        return token.setMaxSupply(startingMaxSupply, {from: accounts[0]})
+      }).then(() => {
+        return token.lockMaxSupply({from: accounts[0]})
+      }).then(() => {
+        return token.maxSupplyLocked.call()
+      }).then((locked) => {
+        expect(locked).to.equal(true)
+        return token.setMaxSupply(54321, {from: accounts[0]})
+      }).then(() => {
+        return token.maxSupply.call()
+      }).then((newMaxSupply) => {
+        expect(newMaxSupply.toNumber()).to.equal(startingMaxSupply)
+      }).then(done).catch(done)
+    })
+  })
+
   describe('#transferContractOwnership', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.transferContractOwnership(accounts[1], {value: 1})
