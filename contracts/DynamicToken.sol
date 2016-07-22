@@ -63,7 +63,7 @@ contract DynamicToken is TokenInterface {
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address _from, address _to, uint256 _amount, string _proofId);
-  event Burn(address _burnFrom, uint256 _amount, address _burner);
+  event Burn(address _burnFrom, uint256 _amount);
   event Close(address _closedBy);
   event Upgrade(address _upgradedContract);
 
@@ -157,17 +157,16 @@ contract DynamicToken is TokenInterface {
     }
   }
 
-  function burn(address _burnFrom, uint256 _amount) notClosed noEther returns (bool success) {
-    if (_amount > balances[_burnFrom]) return false;
+  function burn(uint256 _amount) notClosed noEther returns (bool success) {
+    if (_amount > balances[msg.sender]) return false;
 
     if (_amount > totalSupply) throw;
-    if (!(msg.sender == _burnFrom || msg.sender == contractOwner)) throw;
-    if (balances[_burnFrom] - _amount > balances[_burnFrom]) throw;     // Guard against underflow
+    if (balances[msg.sender] - _amount > balances[msg.sender]) throw;     // Guard against underflow
     if (totalSupply - _amount > totalSupply) throw;                     // Guard against underflow
 
-    balances[_burnFrom] -= _amount;
+    balances[msg.sender] -= _amount;
     totalSupply -= _amount;
-    Burn(_burnFrom, _amount, msg.sender);
+    Burn(msg.sender, _amount);
     return true;
   }
 
@@ -191,9 +190,10 @@ contract DynamicToken is TokenInterface {
   // private mutators
 
   function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
+    if (_amount > balances[_from]) return false;
+
     if (balances[_to] + _amount < balances[_to]) throw;      // Guard against overflow
     if (balances[_from] - _amount > balances[_from]) throw;  // Guard against underflow
-    if (_amount > balances[_from]) return false;
 
     balances[_to] += _amount;
     balances[_from] -= _amount;

@@ -954,18 +954,14 @@ contract('DynamicToken', (accounts) => {
 
   describe('#burn', () => {
     contractShouldThrowIfEtherSent(() => {
-      return token.burn(accounts[1], 5, {from: accounts[0], value: 1})
+      return token.burn(5, {from: accounts[0], value: 1})
     })
 
     contractShouldThrowIfClosed(() => {
-      return token.burn(accounts[1], 1)
+      return token.burn(1)
     })
 
-    contractShouldThrow('should throw when not the contract owner or the account owner', () => {
-      return token.burn(accounts[0], 10, {from: accounts[2]})
-    })
-
-    contractIt('contract owner can burn tokens from an address', (done) => {
+    contractIt('account owner can burn their tokens', (done) => {
       let bob = accounts[1]
       Promise.resolve().then(() => {
         return token.issue(bob, 11, 'proof1', {from: accounts[0]})
@@ -975,7 +971,7 @@ contract('DynamicToken', (accounts) => {
         expect(totalSupply.toNumber()).to.equal(11)
         return
       }).then(() => {
-        return token.burn(bob, 10, {from: accounts[0]})
+        return token.burn(10, {from: bob})
       }).then(() => {
         return token.balanceOf.call(bob)
       }).then((balance) => {
@@ -987,29 +983,7 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('account owner can burn tokens from an address', (done) => {
-      let bob = accounts[1]
-      Promise.resolve().then(() => {
-        return token.issue(bob, 11, 'proof1', {from: accounts[0]})
-      }).then(() => {
-        return token.totalSupply.call()
-      }).then((totalSupply) => {
-        expect(totalSupply.toNumber()).to.equal(11)
-        return
-      }).then(() => {
-        return token.burn(bob, 10, {from: accounts[1]})
-      }).then(() => {
-        return token.balanceOf.call(bob)
-      }).then((balance) => {
-        expect(balance.toNumber()).to.equal(1)
-        return token.totalSupply.call()
-      }).then((totalSupply) => {
-        expect(totalSupply.toNumber()).to.equal(1)
-        return
-      }).then(done).catch(done)
-    })
-
-    contractIt('burns no tokens if amount is greater than the from address balance', (done) => {
+    contractIt('burns no tokens if amount is greater than tokens available', (done) => {
       let bob = accounts[1]
       Promise.resolve().then(() => {
         return token.issue(bob, 1, 'proof1', {from: accounts[0]})
@@ -1018,7 +992,7 @@ contract('DynamicToken', (accounts) => {
       }).then((totalSupply) => {
         return expect(totalSupply.toNumber()).to.equal(1)
       }).then(() => {
-        return token.burn(bob, 10, {from: accounts[0]})
+        return token.burn(10, {from: bob})
       }).then(() => {
         return token.balanceOf.call(bob)
       }).then((balance) => {
@@ -1030,7 +1004,7 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should fire Burn event when #burn triggered by contract owner', (done) => {
+    contractIt('should fire Burn event when #burn triggered', (done) => {
       let events = token.Burn()
       let starting
 
@@ -1040,35 +1014,12 @@ contract('DynamicToken', (accounts) => {
         starting = users
         return token.issue(starting.bob.address, 11, 'proof1', {from: accounts[0]})
       }).then(() => {
-        return token.burn(starting.bob.address, 10, {from: starting.alice.address})
+        return token.burn(10, {from: starting.bob.address})
       }).then(() => {
         return firstEvent(events)
       }).then((log) => {
         expect(log.args._burnFrom).to.equal(starting.bob.address)
         expect(log.args._amount.toNumber()).to.equal(10)
-        expect(log.args._burner).to.equal(starting.alice.address)
-        done()
-        return
-      })
-    })
-
-    contractIt('should fire Burn event when #burn triggered by account owner', (done) => {
-      let events = token.Burn()
-      let starting
-
-      Promise.resolve().then(() => {
-        return getUsers(token)
-      }).then((users) => {
-        starting = users
-        return token.issue(starting.bob.address, 11, 'proof1', {from: accounts[0]})
-      }).then(() => {
-        return token.burn(starting.bob.address, 10, {from: starting.bob.address})
-      }).then(() => {
-        return firstEvent(events)
-      }).then((log) => {
-        expect(log.args._burnFrom).to.equal(starting.bob.address)
-        expect(log.args._amount.toNumber()).to.equal(10)
-        expect(log.args._burner).to.equal(starting.bob.address)
         done()
         return
       })
