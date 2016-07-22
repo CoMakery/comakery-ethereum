@@ -826,7 +826,7 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractIt('should allow owner to lock the maxSupply', (done) => {
-      var startingMaxSupply = 199
+      const startingMaxSupply = 199
 
       Promise.resolve().then(() => {
         return token.setMaxSupply(startingMaxSupply, {from: accounts[0]})
@@ -841,6 +841,7 @@ contract('DynamicToken', (accounts) => {
         return token.maxSupply.call()
       }).then((newMaxSupply) => {
         expect(newMaxSupply.toNumber()).to.equal(startingMaxSupply)
+        return
       }).then(done).catch(done)
     })
   })
