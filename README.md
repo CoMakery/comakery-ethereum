@@ -60,3 +60,11 @@ This starts an express server which receives simple calls and executes contract 
 ```sh
 npm run dev:server  # run in separate window
 ```
+
+### Design Decisions
+
+When to throw, and when to return success -> false?
+
+- throw if the user does not have access to a function, or other "security violation"
+- throw on [integer overflow / underflow](http://ethereum.stackexchange.com/questions/7293/is-it-possible-to-overflow-uints)
+- return false for other failures (normal control flow)
