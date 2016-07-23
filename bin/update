@@ -1,12 +1,16 @@
-#!/usr/bin/env coffee
+#!/usr/bin/env node
 
-{ run } = require 'lightsaber'
+const run = require('lightsaber').run
 
-run "which pm2"
-run "git fetch"
-run "git reset --hard origin/master"
-run "git clean -fd"
-run "npm install"
-run "npm prune"
-run "npm install pm2@latest -g"
-run "pm2 update"
+run("which pm2")
+run("git status")
+run("git add .")
+run("git diff HEAD")
+run("git fetch")
+run("git reset --hard origin/master")
+run("git clean -fd")
+run("time npm install")
+run("npm prune")
+run("time npm run build")
+run("npm install pm2@latest -g")
+run("pm2 update")
