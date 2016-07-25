@@ -60,6 +60,7 @@ contract DynamicToken is TokenInterface {
   uint256 public maxSupply;
   bool public closed;
   bool public maxSupplyLocked;
+  bool public isLockedOpen;
   address public upgradedContract;
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
@@ -67,11 +68,13 @@ contract DynamicToken is TokenInterface {
   event Burn(address indexed _burnFrom, uint256 _amount);
   event Close(address indexed _closedBy);
   event Upgrade(address indexed _upgradedContract);
+  event LockOpen(address indexed _by);
 
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
     closed = false;
     maxSupplyLocked = false;
+    isLockedOpen = false;
     maxSupply = 10**7;
     totalSupply = 0;
   }
@@ -85,6 +88,11 @@ contract DynamicToken is TokenInterface {
   // check if the contract has been closed
   modifier notClosed {
     if (closed) throw;
+    _
+  }
+
+  modifier notLockedOpen {
+    if (isLockedOpen) throw;
     _
   }
 
@@ -105,7 +113,7 @@ contract DynamicToken is TokenInterface {
     return allowed[_owner][_spender];
   }
 
-  // mutators
+  // TOKEN MUTATORS
 
   // tokens are only issued in exchange for a unique proof of contribution
   function issue(address _to, uint256 _amount, string _proofId) notClosed onlyContractOwner noEther returns (bool success) {
@@ -180,24 +188,32 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  function upgrade(address _upgradedContract) notClosed onlyContractOwner noEther returns (bool success) {
+  // CONTRACT MUTATOR METHODS
+
+  // Block the contract from being upgraded, closed, or destroyed
+  function lockOpen() notClosed onlyContractOwner noEther {
+    isLockedOpen = true;
+    LockOpen(msg.sender);
+  }
+
+  function upgrade(address _upgradedContract) notLockedOpen notClosed onlyContractOwner noEther returns (bool success) {
     upgradedContract = _upgradedContract;
     close();
     Upgrade(_upgradedContract);
     return true;
   }
 
-  function close() notClosed onlyContractOwner noEther returns (bool success) {
+  function close() notLockedOpen notClosed onlyContractOwner noEther returns (bool success) {
     closed = true;
     Close(msg.sender);
     return true;
   }
 
-  function destroyContract() onlyContractOwner noEther {
+  function destroyContract() notLockedOpen onlyContractOwner noEther {
     selfdestruct(contractOwner);
   }
 
-  // private mutators
+  // PRIVATE MUTATORS
 
   function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
     if (_amount > balances[_from]) return false;

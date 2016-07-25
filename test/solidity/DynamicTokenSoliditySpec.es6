@@ -854,6 +854,65 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
+  describe('#lockOpen', () => {
+    contractShouldThrowForNonOwner(() => {
+      return token.lockOpen({from: accounts[1]})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.lockOpen({from: accounts[0]})
+    })
+
+    contractShouldThrowIfEtherSent(() => {
+      return token.lockOpen({from: accounts[0], value: 1})
+    })
+
+    contractIt('should begin unlocked', (done) => {
+      token.isLockedOpen.call().then((locked) => {
+        expect(locked).to.equal(false)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractIt('emits a LockedOpen event', (done) => {
+      const events = token.LockOpen()
+
+      Promise.resolve().then(() => {
+        return token.lockOpen({from: accounts[0]})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((event) => {
+        expect(event.args._by).to.equal(accounts[0])
+        return
+      }).then(done).catch(done)
+    })
+
+    describe('when closed by owner', () => {
+      beforeEach(() => {
+        token.lockOpen({from: accounts[0]})
+      })
+
+      contractIt('should have lockedOPen set to true', (done) => {
+        token.isLockedOpen.call().then((locked) => {
+          expect(locked).to.equal(true)
+          return
+        }).then(done).catch(done)
+      })
+
+      contractShouldThrow('should throw on upgrade', () => {
+        return token.upgrade('0x00000f31d5d8c3146ea6f5c31c7f571c00000000')
+      })
+
+      contractShouldThrow('should throw on close', () => {
+        return token.close()
+      })
+
+      contractShouldThrow('should throw on destroyContract', () => {
+        return token.destroyContract()
+      })
+    })
+  })
+
   describe('#transferContractOwnership', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.transferContractOwnership(accounts[1], {value: 1})
