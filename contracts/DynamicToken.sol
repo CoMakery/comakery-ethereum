@@ -73,6 +73,7 @@ contract DynamicToken is TokenInterface {
   event Close(address indexed _closedBy);
   event Upgrade(address indexed _upgradedContract);
   event LockOpen(address indexed _by);
+  event NewContractOwner(address indexed _by, address indexed _to);
 
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
@@ -191,6 +192,7 @@ contract DynamicToken is TokenInterface {
 
   function transferContractOwnership(address _newOwner) notClosed onlyContractOwner noEther returns (bool success) {
     contractOwner = _newOwner;
+    NewContractOwner(msg.sender, _newOwner);
     return true;
   }
 
