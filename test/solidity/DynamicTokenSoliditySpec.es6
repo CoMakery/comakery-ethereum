@@ -892,7 +892,7 @@ contract('DynamicToken', (accounts) => {
         token.lockOpen({from: accounts[0]})
       })
 
-      contractIt('should have lockedOPen set to true', (done) => {
+      contractIt('should have lockedOpen set to true', (done) => {
         token.isLockedOpen.call().then((locked) => {
           expect(locked).to.equal(true)
           return
