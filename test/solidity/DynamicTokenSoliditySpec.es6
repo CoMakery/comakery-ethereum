@@ -876,9 +876,9 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
-  describe('#getAccounts accessbile by everyone', () => {
+  describe('#getAllAccounts accessbile by everyone', () => {
     contractShouldThrowIfEtherSent(() => {
-      return token.getAccounts({value: 1})
+      return token.getAllAccounts({value: 1})
     })
 
     contractIt('includes accounts that are issued tokens without duplicates', (done) => {
@@ -889,7 +889,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return token.issue(accounts[2], 25, 'proof2')
       }).then(() => {
-        return token.getAccounts.call()
+        return token.getAllAccounts.call()
       }).then((tokenAccounts) => {
         expect(tokenAccounts.length).to.equal(expected.length)
         expect(tokenAccounts).to.have.members(expected)
@@ -907,7 +907,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return token.transfer(accounts[2], 25)
       }).then(() => {
-        return token.getAccounts.call()
+        return token.getAllAccounts.call()
       }).then((tokenAccounts) => {
         expect(expected).to.have.members(tokenAccounts)
         expect(tokenAccounts.length).to.equal(expected.length)
@@ -930,7 +930,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return token.transferFrom(manager, recipient, 50, {from: spender})
       }).then(() => {
-        return token.getAccounts.call()
+        return token.getAllAccounts.call()
       }).then((tokenAccounts) => {
         let expected = [manager, recipient]
         expect(tokenAccounts).to.have.members(expected)

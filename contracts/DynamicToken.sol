@@ -93,7 +93,7 @@ contract DynamicToken is TokenInterface {
 
   // accessors
 
-  function getAccounts() noEther constant returns (address[] _accounts) {
+  function getAllAccounts() noEther constant returns (address[] _accounts) {
     return accounts;
   }
 
