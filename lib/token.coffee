@@ -24,7 +24,7 @@ class Token
 
   @deployContract: ->
     quiet = nodeEnv is 'test'
-    {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv}", {quiet}
+    {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv} --verbose-rpc", {quiet}
     pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
     contractAddress = pattern.exec(output)?[1]
     unless contractAddress
