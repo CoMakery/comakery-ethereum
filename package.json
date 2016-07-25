@@ -13,7 +13,7 @@
     "truffle": "truffle",
     "testrpc": "testrpc -p 7777 --account='0x0000000000000000000000000000000000000000000000000000000000000001,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000002,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000003,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000004,10000000000000000000000'",
     "fulltest": "npm-run-all --silent test lint check-yaml",
-    "tdd": "npm-run-all --silent test eslint",
+    "tdd": "npm-run-all --silent test:truffle eslint",
     "test:mocha": "mocha --opts test/js/mocha.opts test/js",
     "test:truffle": "bin/truffle-test",
     "test": "npm-run-all --silent test:mocha test:truffle",
