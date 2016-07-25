@@ -914,6 +914,21 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#transferContractOwnership', () => {
+    contractIt('emits an event', (done) => {
+      let events = token.TransferContractOwnership()
+
+      Promise.resolve().then(() => {
+        return token.transferContractOwnership(accounts[1], {from: accounts[0]})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((event) => {
+        expect(event.args._by).to.equal(accounts[0])
+        expect(event.args._to).to.equal(accounts[1])
+        done()
+        return
+      })
+    })
+
     contractShouldThrowIfEtherSent(() => {
       return token.transferContractOwnership(accounts[1], {value: 1})
     })
@@ -938,20 +953,6 @@ contract('DynamicToken', (accounts) => {
         return token.contractOwner()
       }).then((newOwner) => {
         expect(newOwner.toString()).to.equal(users.bob.address)
-        return
-      }).then(done).catch(done)
-    })
-
-    contractIt('emits an event', (done) => {
-      const events = token.NewContractOwner()
-
-      Promise.resolve().then(() => {
-        return token.transferContractOwnership(accounts[1], {from: accounts[0]})
-      }).then(() => {
-        return firstEvent(events)
-      }).then((event) => {
-        expect(event.args._by).to.equal(accounts[0])
-        expect(event.args._to).to.equal(accounts[1])
         return
       }).then(done).catch(done)
     })

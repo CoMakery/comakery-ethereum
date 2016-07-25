@@ -73,7 +73,7 @@ contract DynamicToken is TokenInterface {
   event Close(address indexed _closedBy);
   event Upgrade(address indexed _upgradedContract);
   event LockOpen(address indexed _by);
-  event NewContractOwner(address indexed _by, address indexed _to);
+  event TransferContractOwnership(address indexed _by, address indexed _to);
 
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
@@ -192,14 +192,15 @@ contract DynamicToken is TokenInterface {
 
   function transferContractOwnership(address _newOwner) notClosed onlyContractOwner noEther returns (bool success) {
     contractOwner = _newOwner;
-    NewContractOwner(msg.sender, _newOwner);
+    TransferContractOwnership(msg.sender, _newOwner);
     return true;
   }
 
   // Block the contract from being upgraded, closed, or destroyed
-  function lockOpen() notClosed onlyContractOwner noEther {
+  function lockOpen() notClosed onlyContractOwner noEther returns (bool success) {
     isLockedOpen = true;
     LockOpen(msg.sender);
+    return true;
   }
 
   function upgrade(address _upgradedContract) notLockedOpen notClosed onlyContractOwner noEther returns (bool success) {
@@ -234,16 +235,18 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  function _indexAccount(address _account) notClosed private {
+  function _indexAccount(address _account) notClosed private returns (bool success) {
     if (accountExists[_account]) return;
     accountExists[_account] = true;
     accounts.push(_account);
+    return true;
   }
 
-  function _indexProofId(string _proofId) notClosed private {
+  function _indexProofId(string _proofId) notClosed private returns (bool success) {
     if (proofIdExists[_proofId]) return;
     proofIdExists[_proofId] = true;
     proofIds.push(_proofId);
+    return true;
   }
 
   // throw on malformed calls
