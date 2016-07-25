@@ -74,6 +74,7 @@ contract DynamicToken is TokenInterface {
   event Upgrade(address indexed _upgradedContract);
   event LockOpen(address indexed _by);
   event TransferContractOwnership(address indexed _by, address indexed _to);
+  event MaxSupply(address indexed _by, uint256 _newMaxSupply, bool _isMaxSupplyLocked);
 
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
@@ -141,13 +142,14 @@ contract DynamicToken is TokenInterface {
     if (isMaxSupplyLocked) return false;
 
     maxSupply = _maxSupply;
-
+    MaxSupply(msg.sender, _maxSupply, isMaxSupplyLocked);
     return true;
   }
 
   // lock the maxSupply to its current value forever
   function lockMaxSupply() notClosed onlyContractOwner noEther returns(bool success) {
     isMaxSupplyLocked = true;
+    MaxSupply(msg.sender, maxSupply, isMaxSupplyLocked);
     return true;
   }
 

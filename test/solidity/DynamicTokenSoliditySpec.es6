@@ -781,6 +781,23 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#setMaxSupply', () => {
+    contractIt('emits an event', (done) => {
+      let events = token.MaxSupply()
+      let newMaxSupply = 987654321
+
+      Promise.resolve().then(() => {
+        return token.setMaxSupply(newMaxSupply, {from: accounts[0]})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((event) => {
+        expect(event.args._by).to.equal(accounts[0])
+        expect(event.args._newMaxSupply.toNumber()).to.equal(newMaxSupply)
+        expect(event.args._isMaxSupplyLocked).to.equal(false)
+        done()
+        return
+      })
+    })
+
     contractShouldThrowForNonOwner(() => {
       return token.setMaxSupply(10000, {from: accounts[1]})
     })
@@ -814,6 +831,22 @@ contract('DynamicToken', (accounts) => {
   })
 
   describe('#lockMaxSupply', () => {
+    contractIt('emits an event', (done) => {
+      let events = token.MaxSupply()
+
+      Promise.resolve().then(() => {
+        return token.lockMaxSupply({from: accounts[0]})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((event) => {
+        expect(event.args._by).to.equal(accounts[0])
+        expect(event.args._newMaxSupply.toNumber()).to.equal(1e7)
+        expect(event.args._isMaxSupplyLocked).to.equal(true)
+        done()
+        return
+      })
+    })
+
     contractShouldThrowForNonOwner(() => {
       return token.lockMaxSupply({from: accounts[1]})
     })
