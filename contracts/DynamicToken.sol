@@ -63,10 +63,10 @@ contract DynamicToken is TokenInterface {
   address public upgradedContract;
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
-  event Issue(address _from, address _to, uint256 _amount, string _proofId);
-  event Burn(address _burnFrom, uint256 _amount);
-  event Close(address _closedBy);
-  event Upgrade(address _upgradedContract);
+  event Issue(address indexed _from, address indexed _to, uint256 _amount, string _proofId);
+  event Burn(address indexed _burnFrom, uint256 _amount);
+  event Close(address indexed _closedBy);
+  event Upgrade(address indexed _upgradedContract);
 
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
