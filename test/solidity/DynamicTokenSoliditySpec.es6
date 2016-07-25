@@ -240,6 +240,14 @@ contract('DynamicToken', (accounts) => {
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
         expect(ending.bob.balance).to.equal(amount)  // not amount x 2
+        return token.proofIds.call(0)
+      }).then((proofId) => {
+        expect(proofId).to.equal('proof-not-unique')
+        return token.proofIds.call(1)
+      }).then(function () {
+        throw new Error('Expected solidity error to be thown from contract, but was not')
+      }).catch(function (error) {
+        if (!error.message || error.message.search('invalid JUMP') < 0) throw error
         return
       }).then(done).catch(done)
     })
