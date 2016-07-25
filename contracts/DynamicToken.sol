@@ -52,16 +52,20 @@ contract TokenInterface {
 }
 
 contract DynamicToken is TokenInterface {
+  bool public isClosed;
+  bool public isMaxSupplyLocked;
+  bool public isLockedOpen;
+
+  uint256 public maxSupply;
+
+  address public upgradedContract;
   address public contractOwner;
   address[] public accounts;
-  mapping (address => bool) public accountExists;
+
   string[] public proofIds;
+
+  mapping (address => bool) public accountExists;
   mapping (string => bool) proofIdExists;
-  uint256 public maxSupply;
-  bool public closed;
-  bool public maxSupplyLocked;
-  bool public isLockedOpen;
-  address public upgradedContract;
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address indexed _from, address indexed _to, uint256 _amount, string _proofId);
@@ -72,8 +76,8 @@ contract DynamicToken is TokenInterface {
 
   function DynamicToken() {
     contractOwner = msg.sender;     // contract owner is contract creator
-    closed = false;
-    maxSupplyLocked = false;
+    isClosed = false;
+    isMaxSupplyLocked = false;
     isLockedOpen = false;
     maxSupply = 10**7;
     totalSupply = 0;
@@ -87,7 +91,7 @@ contract DynamicToken is TokenInterface {
 
   // check if the contract has been closed
   modifier notClosed {
-    if (closed) throw;
+    if (isClosed) throw;
     _
   }
 
@@ -133,7 +137,7 @@ contract DynamicToken is TokenInterface {
 
   function setMaxSupply(uint256 _maxSupply) notClosed onlyContractOwner noEther returns (bool success) {
     if (_maxSupply < totalSupply) throw;
-    if (maxSupplyLocked) return false;
+    if (isMaxSupplyLocked) return false;
 
     maxSupply = _maxSupply;
 
@@ -142,12 +146,7 @@ contract DynamicToken is TokenInterface {
 
   // lock the maxSupply to its current value forever
   function lockMaxSupply() notClosed onlyContractOwner noEther returns(bool success) {
-    maxSupplyLocked = true;
-    return true;
-  }
-
-  function transferContractOwnership(address _newOwner) notClosed onlyContractOwner noEther returns (bool success) {
-    contractOwner = _newOwner;
+    isMaxSupplyLocked = true;
     return true;
   }
 
@@ -188,7 +187,12 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  // CONTRACT MUTATOR METHODS
+  // CONTRACT MUTATORS
+
+  function transferContractOwnership(address _newOwner) notClosed onlyContractOwner noEther returns (bool success) {
+    contractOwner = _newOwner;
+    return true;
+  }
 
   // Block the contract from being upgraded, closed, or destroyed
   function lockOpen() notClosed onlyContractOwner noEther {
@@ -204,7 +208,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function close() notLockedOpen notClosed onlyContractOwner noEther returns (bool success) {
-    closed = true;
+    isClosed = true;
     Close(msg.sender);
     return true;
   }

@@ -175,9 +175,9 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return token.close()
       }).then(() => {
-        return token.closed.call()
-      }).then((closed) => {
-        expect(closed).to.equal(true)
+        return token.isClosed.call()
+      }).then((isClosed) => {
+        expect(isClosed).to.equal(true)
         return
       }).then(done).catch(done)
     })
@@ -827,7 +827,7 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractIt('should begin unlocked', (done) => {
-      token.maxSupplyLocked.call().then((locked) => {
+      token.isMaxSupplyLocked.call().then((locked) => {
         expect(locked).to.equal(false)
         return
       }).then(done).catch(done)
@@ -841,7 +841,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         return token.lockMaxSupply({from: accounts[0]})
       }).then(() => {
-        return token.maxSupplyLocked.call()
+        return token.isMaxSupplyLocked.call()
       }).then((locked) => {
         expect(locked).to.equal(true)
         return token.setMaxSupply(54321, {from: accounts[0]})
@@ -887,7 +887,7 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    describe('when closed by owner', () => {
+    describe('when lockedOpen by owner', () => {
       beforeEach(() => {
         token.lockOpen({from: accounts[0]})
       })
@@ -1045,7 +1045,7 @@ contract('DynamicToken', (accounts) => {
       })
 
       contractIt('toggles closed to true', (done) => {
-        token.closed().then((isClosed) => {
+        token.isClosed().then((isClosed) => {
           expect(isClosed).to.equal(true)
           return
         }).then(done).catch(done)
