@@ -11,7 +11,7 @@ module.exports = {
       network_id: 2, // morden
       host: 'localhost',
       port: 8888,
-      from: '0x5edb0f31d5d8c3146ea6f5c31c7f571c0aeb8fc2',
+      from: '0x5ba73b2e02a554cd73d2db7d461ca5e91b0e9afc',
       'ethercamp-subdomain': 'morden-state'
     },
     'test': {
