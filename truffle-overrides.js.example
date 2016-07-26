@@ -1,0 +1,10 @@
+module.exports = {
+  networks: {
+    'production': {
+      from: '0x... ETH ADDRESS'
+    },
+    'morden': {
+      from: '0x... ETH ADDRESS'
+    }
+  }
+}

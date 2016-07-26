@@ -18,7 +18,7 @@
     "test:truffle": "bin/truffle-test",
     "test": "npm-run-all --silent test:truffle test:mocha",
     "lint": "coffeelint --quiet bin lib && npm-run-all --silent eslint",
-    "eslint": "eslint --ext js,es6 test migrations truffle.js",
+    "eslint": "eslint --ext js,es6 test migrations truffle.js truffle-overrides.js truffle-overrides.js.example",
     "check-yaml": "js-yaml circle.yml > /dev/null",
     "shipit": "npm-run-all --silent pre-push && git push --tags origin head",
     "pre-push": "npm-run-all --silent check-clean check-for-only fulltest",

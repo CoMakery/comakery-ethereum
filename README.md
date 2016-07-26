@@ -30,6 +30,7 @@ This software is released under an Open Source MIT licensed. It can be extended 
 ### Prerequisites
 
 ```sh
+cp truffle-overrides.js.example truffle-overrides.js  # edit as desired
 npm install
 ```
 
