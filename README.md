@@ -49,7 +49,7 @@ npm test
 ### Deploy
 
 ```sh
-npm run truffle deploy [ -- -e testnet ]
+npm run truffle migrate -- --network development
 ```
 
 This will tell you your contract address.
