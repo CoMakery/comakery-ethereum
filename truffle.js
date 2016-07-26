@@ -1,6 +1,6 @@
-import {d} from 'lightsaber'
 const _ = require('lodash')
-const overrides = require('./truffle-overrides')
+let overrides = {}
+try { overrides = require('./truffle-overrides') } catch(e) {}
 
 const defaults = {
   networks: {
@@ -39,5 +39,4 @@ const defaults = {
 }
 
 const config = _.defaultsDeep(overrides, defaults)
-
 module.exports = config
