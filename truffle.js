@@ -7,7 +7,7 @@ module.exports = {
       from: '0x03b3536e825a484f796b094e63011027620bc2a7',
       'ethercamp-subdomain': 'live'
     },
-    'testnet': {
+    'morden': {
       network_id: 2, // morden
       host: 'localhost',
       port: 8888,
