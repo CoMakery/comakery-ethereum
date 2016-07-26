@@ -1,8 +1,0 @@
-{
-  "rpc": {
-    "host": "localhost",
-    "port": 9999,
-    "from": "0x03b3536e825a484f796b094e63011027620bc2a7"
-  },
-  "ethercamp-subdomain": "live"
-}

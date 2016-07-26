@@ -8,7 +8,7 @@
   ],
   "scripts": {
     "start": "nodemon --ignore . bin/server",
-    "dev:server": "DEBUG=config,dev,server,token nodemon --watch lib --watch environments bin/server",
+    "dev:server": "DEBUG=config,dev,server,token nodemon --watch lib --watch truffle.js bin/server",
     "dev": "DEBUG=config,dev,server,token bin/dev",
     "truffle": "truffle",
     "testrpc": "testrpc -p 7777 --account='0x0000000000000000000000000000000000000000000000000000000000000001,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000002,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000003,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000004,10000000000000000000000'",
@@ -18,7 +18,7 @@
     "test:truffle": "bin/truffle-test",
     "test": "npm-run-all --silent test:mocha test:truffle",
     "lint": "coffeelint --quiet bin lib && npm-run-all --silent eslint",
-    "eslint": "eslint --ext js,es6 test",
+    "eslint": "eslint --ext js,es6 test migrations truffle.js",
     "check-yaml": "js-yaml circle.yml > /dev/null",
     "shipit": "npm-run-all --silent pre-push && git push --tags origin head",
     "pre-push": "npm-run-all --silent check-clean check-for-only fulltest",

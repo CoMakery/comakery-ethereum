@@ -1,8 +1,0 @@
-{
-  "deploy": [
-    "DynamicToken"
-  ],
-  "mocha": {
-    "useColors": true
-  }
-}

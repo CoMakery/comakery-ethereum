@@ -9,8 +9,7 @@ debug = require('debug')('token')
 Web3 = require 'web3'
 Pudding = require "ether-pudding"
 
-envDir = path.resolve __dirname, "../environments/#{nodeEnv}"
-config = require path.join(envDir, "config.json")
+config = require('../truffle').networks[nodeEnv]
 
 d = (args...) -> debug pjson args...
 
@@ -24,8 +23,8 @@ class Token
 
   @deployContract: ->
     quiet = nodeEnv is 'test'
-    {output} = run "node_modules/.bin/truffle deploy -e #{nodeEnv} --verbose-rpc", {quiet}
-    pattern = /Deployed.+to address.+(0x[0-9a-f]{40})/
+    {output} = run "node_modules/.bin/truffle migrate --network #{nodeEnv} --reset --verbose-rpc", {quiet}
+    pattern = ///#{CONTRACT_NAME}:\s(0x[0-9a-f]{40})///
     contractAddress = pattern.exec(output)?[1]
     unless contractAddress
       throw Promise.OperationalError "No contract address found in
@@ -34,13 +33,10 @@ class Token
     contractAddress
 
   @loadContract: (contractAddress) ->
-    TokenContract = require path.join(envDir, "contracts/#{CONTRACT_NAME}.sol.js")
-    web3 = new Web3
-    rpcUrl = "http://#{config.rpc.host}:#{config.rpc.port}"
+    TokenContract = require "../build/contracts/#{CONTRACT_NAME}.sol.js"
+    rpcUrl = "http://#{config.host}:#{config.port}"
     d { rpcUrl }
-    web3.setProvider new Web3.providers.HttpProvider rpcUrl
-    Pudding.setWeb3 web3
-    TokenContract.load Pudding
+    TokenContract.setProvider new Web3.providers.HttpProvider rpcUrl
     TokenContract.at contractAddress
 
   @create: (newMaxSupply) ->
@@ -52,7 +48,7 @@ class Token
       tokenContract.maxSupply.call()
     .then (maxSupply) =>
       d {maxSupply, newMaxSupply}
-      tokenContract.setMaxSupply newMaxSupply, from: config.rpc.from
+      tokenContract.setMaxSupply newMaxSupply, from: config.from
     .then =>
       tokenContract.maxSupply.call()
     .then (maxSupply) =>
@@ -93,8 +89,8 @@ class Token
     throw Promise.OperationalError(json errors) unless isEmpty errors
 
     tokenContract = @loadContract contractAddress
-    sender = config.rpc.from or throw new Error(
-      "please set `rpc.from` property: #{envDir}/config.json")
+    sender = config.from or throw new Error(
+      "please set `networks.#{envDir}.from` property in truffle.js")
 
     Promise.resolve()
     .then =>

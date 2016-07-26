@@ -97,10 +97,9 @@ contract('DynamicToken', (accounts) => {
     return new Promise((resolve, reject) => {
       events.watch((error, log) => {
         if (error) {
-          // d({error})
           reject(error)
         } else {
-          // d({log})
+          events.stopWatching()
           resolve(log)
         }
       })

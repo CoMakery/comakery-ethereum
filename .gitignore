@@ -2,10 +2,6 @@
 /.tags[0-9]*
 /.env
 /.node-xmlhttprequest-sync-*
-/environments/*/build/*
-/environments/*/contracts/*.sol.js
-!/environments/production/contracts/*.sol.js
-!/environments/testnet/contracts/*.sol.js
 /node_modules/
 /npm-debug.log
 /scratch.md
