@@ -16,7 +16,7 @@
     "tdd": "npm-run-all --silent test:truffle eslint",
     "test:mocha": "mocha --opts test/js/mocha.opts test/js",
     "test:truffle": "bin/truffle-test",
-    "test": "npm-run-all --silent test:mocha test:truffle",
+    "test": "npm-run-all --silent test:truffle test:mocha",
     "lint": "coffeelint --quiet bin lib && npm-run-all --silent eslint",
     "eslint": "eslint --ext js,es6 test migrations truffle.js",
     "check-yaml": "js-yaml circle.yml > /dev/null",
