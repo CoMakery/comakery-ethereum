@@ -16,7 +16,7 @@ d = (args...) -> debug pjson args...
 # This Token class is a high level wrapper
 # which loads the Pudding contract, which:
 # 1) is created by Truffle, and
-# 2) under the hood uses web3 to make JSON RPC calls to geth
+# 2) under the hood uses web3 to make JSON RPC calls to an ethereum node
 
 class Token
   CONTRACT_NAME = 'DynamicToken'
