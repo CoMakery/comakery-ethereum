@@ -57,13 +57,13 @@ describe('API', () => {
       .catch(done)
     })
 
-    it('should return 404 if security token not in whitelist', (done) => {
+    it('should return 403 if security token not in whitelist', (done) => {
       chai
       .request(server)
       .post('/project')
       .send({ maxSupply: 101, apiKey: 'not a key in our whitelist' })
       .then(() => {
-        throw new Error('expected server 404 error, but none was thrown')
+        throw new Error('expected server 403 error, but none was thrown')
       }).catch(function (error) {
         expect(type(error.response)).to.equal('object', error.message)
         expect(error.response.status).to.equal(403)
