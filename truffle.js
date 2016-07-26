@@ -1,6 +1,6 @@
 module.exports = {
   networks: {
-    'live': {
+    'production': {
       network_id: 1, // Ethereum public network
       host: 'localhost',
       port: 9999,
