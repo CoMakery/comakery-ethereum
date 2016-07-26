@@ -887,6 +887,58 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
+  describe('#lockContractOwner', () => {
+    contractIt('emits an event', (done) => {
+      let events = token.LockContractOwner()
+
+      Promise.resolve().then(() => {
+        return token.lockContractOwner({from: accounts[0]})
+      }).then(() => {
+        return firstEvent(events)
+      }).then((event) => {
+        expect(event.args._by).to.equal(accounts[0])
+        done()
+        return
+      })
+    })
+
+    contractShouldThrowForNonOwner(() => {
+      return token.lockContractOwner({from: accounts[1]})
+    })
+
+    contractShouldThrowIfClosed(() => {
+      return token.lockContractOwner({from: accounts[0]})
+    })
+
+    contractShouldThrowIfEtherSent(() => {
+      return token.lockContractOwner({from: accounts[0], value: 1})
+    })
+
+    contractIt('should begin unlocked', (done) => {
+      token.isContractOwnerLocked.call().then((locked) => {
+        expect(locked).to.equal(false)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractIt('should allow owner to set isContractOwnerLocked', (done) => {
+      Promise.resolve().then(() => {
+        return token.lockContractOwner({from: accounts[0]})
+      }).then(() => {
+        return token.isContractOwnerLocked.call()
+      }).then((locked) => {
+        expect(locked).to.equal(true)
+        return
+      }).then(done).catch(done)
+    })
+
+    contractShouldThrow('when owner tries to transferContractOwnership if isContractOwnerLocked', () => {
+      return token.lockContractOwner({from: accounts[0]}).then(() => {
+        return token.transferContractOwnership(accounts[1], {from: accounts[0]})
+      })
+    })
+  })
+
   describe('#lockOpen', () => {
     contractShouldThrowForNonOwner(() => {
       return token.lockOpen({from: accounts[1]})
