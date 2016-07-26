@@ -10,7 +10,9 @@ const Token = require('../../lib/token')
 
 chai.use(chaiHttp)
 
-describe('API', () => {
+describe('API', function () {
+  this.timeout(30e3)
+
   beforeEach('', () => {
     process.env.API_KEY_WHITELIST = 'aaa,bbb'
   })
