@@ -1,9 +1,9 @@
 module.exports = {
   networks: {
-    'production': {
+    production: {
       from: '0x... ETH ADDRESS'
     },
-    'morden': {
+    morden: {
       from: '0x... ETH ADDRESS'
     }
   }
