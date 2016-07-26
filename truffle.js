@@ -1,5 +1,5 @@
-const _ = require('lodash')
-let overrides = {}
+var _ = require('lodash')
+var overrides = {}
 try { overrides = require('./truffle-overrides') } catch(e) {}
 
 const defaults = {
@@ -38,5 +38,5 @@ const defaults = {
   }
 }
 
-const config = _.defaultsDeep(overrides, defaults)
+var config = _.defaultsDeep(overrides, defaults)
 module.exports = config
