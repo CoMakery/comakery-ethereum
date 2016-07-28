@@ -4,6 +4,9 @@ var overrides = {}
 try { overrides = require('./truffle-overrides') } catch (e) {}
 
 const defaults = {
+  rpc: {
+    gas: 3141592  // default = 4712388
+  },
   networks: {
     production: {
       network_id: 1, // Ethereum public network
