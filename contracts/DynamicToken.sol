@@ -106,7 +106,7 @@ contract DynamicToken is TokenInterface {
     _
   }
 
-  // no ether should be transfered to this contract
+  // no ether should be transferred to this contract
   modifier noEther() {if (msg.value > 0) throw; _}
 
   // accessors
