@@ -42,6 +42,7 @@ app.post '/project', (request, response) ->
     d { maxSupply }
     Token.create(maxSupply)
   .then (contractAddress) =>
+    d 'sending response:', json {contractAddress}
     response.json {contractAddress}
   .catch (error) =>
     reportError error
