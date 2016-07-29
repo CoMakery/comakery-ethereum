@@ -5,7 +5,7 @@ import chaiHttp from 'chai-http'
 import {d, type} from 'lightsaber'
 import sinon from 'sinon'
 
-const server = require('../../lib/server')
+const server = require('../../lib/server').app
 const Token = require('../../lib/token')
 
 chai.use(chaiHttp)

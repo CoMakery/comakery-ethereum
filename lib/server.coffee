@@ -4,9 +4,11 @@ debug = require('debug')('server')
 { includes, isEmpty } = require 'lodash'
 express = require 'express'
 bodyParser = require 'body-parser'
-timeout = require('connect-timeout')
+timeout = require 'connect-timeout'
 
 Token = require './token'
+
+TIMEOUT_MINUTES = 10
 
 d = (args...) -> debug pjson args...
 
@@ -26,11 +28,11 @@ requireApiKey = (req, res, next) ->
   else
     res.status(403).json { error: 'API key not found'}
 
-app.use(timeout('600s'))  # 10 min
-app.use(bodyParser.json())
-app.use(haltOnTimedout)
-app.use(requireApiKey)
-app.use(haltOnTimedout)
+app.use timeout "#{TIMEOUT_MINUTES*60}s"
+app.use bodyParser.json()
+app.use haltOnTimedout
+app.use requireApiKey
+app.use haltOnTimedout
 
 # create new contract for a project
 app.post '/project', (request, response) ->
@@ -60,4 +62,4 @@ app.post '/token_issue', (request, response) ->
     reportError error
     response.status(500).json { error: (error.message or error.stack) }
 
-module.exports = app
+module.exports = {app, TIMEOUT_MINUTES}
