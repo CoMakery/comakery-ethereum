@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('dotenv').config()
 const run = require('lightsaber').run
 
 run("which pm2")
@@ -11,4 +12,5 @@ run("git reset --hard origin/master")
 run("git clean -fd")
 run("time npm install")
 run("npm prune")
+run("node_modules/.bin/truffle compile --compile-all --network " + process.env.NODE_ENV)
 run("pm2 gracefulReload server")
