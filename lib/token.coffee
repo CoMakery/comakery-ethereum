@@ -59,7 +59,7 @@ class Token
   @uploadSource: (contractAddress, callback) ->
     return if nodeEnv is 'development'
     contractAddress = contractAddress.replace /^0x/, ''
-    subdomain = config['ethercamp-subdomain']
+    subdomain = config.ethercampApiSubdomain
     url = "https://#{subdomain}.ether.camp/api/v1/accounts/#{contractAddress}/contract"
     d { url }
     formData =
