@@ -17,10 +17,6 @@ export const contractShouldThrowOnly = (description, functionToCall) => {
   contractShouldThrow(description, functionToCall, {only: true})
 }
 
-export const contractShouldThrowIfClosedOnly = (functionToCall) => {
-  contractShouldThrowIfClosed(functionToCall, {only: true})
-}
-
 export const contractShouldThrowIfEtherSent = (functionToCall, opts) => {
   contractShouldThrow('should throw an error if ether is sent', functionToCall, opts)
 }
@@ -60,3 +56,4 @@ export const contractIt = (name, func, options) => {
 /* Declare global variables for eslint to ignore: */
 /* global contract */
 /* global it */
+/* global describe */

@@ -18,6 +18,10 @@ contract('DynamicToken', (accounts) => {
   let anyone = accounts[9]
   let token
 
+  const contractShouldThrowIfClosedOnly = (functionToCall) => {
+    contractShouldThrowIfClosed(functionToCall, {only: true})
+  }
+
   const contractShouldThrowIfClosed = (functionToCall, options) => {
     contractShouldThrow('should throw an error if contract is closed', () => {
       return token.close().then(functionToCall)
@@ -1219,6 +1223,7 @@ contract('DynamicToken', (accounts) => {
 })
 
 /* Declare global variables for eslint to ignore: */
+/* global Promise */
 /* global beforeEach */
 /* global contract */
 /* global describe */
