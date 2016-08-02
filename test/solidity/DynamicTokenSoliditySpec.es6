@@ -1,70 +1,27 @@
 import {expect} from 'chai'
 import {d} from 'lightsaber'
-import Promise from 'bluebird'
+
+import {
+  contractIt,
+  contractItOnly,
+  contractShouldThrow,
+  contractShouldThrowForNonOwner,
+  contractShouldThrowForNonOwnerOnly,
+  contractShouldThrowIfClosed,
+  contractShouldThrowIfClosedOnly,
+  contractShouldThrowIfEtherSent,
+  contractShouldThrowIfEtherSentOnly,
+  contractShouldThrowOnly
+} from './testHelper'
 
 contract('DynamicToken', (accounts) => {
   let anyone = accounts[9]
   let token
 
-  const contractShouldThrow = (description, functionToCall, options) => {
-    contractIt(description, (done) => {
-      Promise.resolve().then(functionToCall
-      ).then(function () {
-        throw new Error('Expected solidity error to be thown from contract, but was not')
-      }).catch(function (error) {
-        if (!error.message || error.message.search('invalid JUMP') < 0) throw error
-      }).then(done).catch(done)
-    }, options)
-  }
-
-  const contractShouldThrowOnly = (description, functionToCall) => {
-    contractShouldThrow(description, functionToCall, {only: true})
-  }
-
   const contractShouldThrowIfClosed = (functionToCall, options) => {
     contractShouldThrow('should throw an error if contract is closed', () => {
       return token.close().then(functionToCall)
     }, options)
-  }
-
-  const contractShouldThrowIfClosedOnly = (functionToCall) => {
-    contractShouldThrowIfClosed(functionToCall, {only: true})
-  }
-
-  const contractShouldThrowIfEtherSent = (functionToCall, opts) => {
-    contractShouldThrow('should throw an error if ether is sent', functionToCall, opts)
-  }
-
-  const contractShouldThrowIfEtherSentOnly = (functionToCall) => {
-    contractShouldThrowIfEtherSent(functionToCall, {only: true})
-  }
-
-  const contractShouldThrowForNonOwner = (functionToCall, opts) => {
-    contractShouldThrow('should throw an error for non-owner', () => {
-      return functionToCall()
-    }, opts)
-  }
-
-  const contractShouldThrowForNonOwnerOnly = (functionToCall) => {
-    contractShouldThrowForNonOwner(functionToCall, {only: true})
-  }
-
-  const contractItOnly = (name, func) => {
-    contractIt(name, func, {only: true})
-  }
-
-  const contractIt = (name, func, options) => {
-    options = options || {}
-    contract('', () => {
-      describe('Contract:', function () {
-        this.timeout(3000)
-        if (options.only) {
-          it.only(name, func)
-        } else {
-          it(name, func)
-        }
-      })
-    })
   }
 
   let getUsers = (token) => {
@@ -1265,5 +1222,4 @@ contract('DynamicToken', (accounts) => {
 /* global beforeEach */
 /* global contract */
 /* global describe */
-/* global it */
 /* global DynamicToken */

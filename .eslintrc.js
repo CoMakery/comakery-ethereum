@@ -1,4 +1,4 @@
-{
+module.exports = {
   "extends": [
     "standard"
   ],
@@ -12,7 +12,7 @@
     "no-nested-ternary": 2,
     "no-unused-vars": [2,
       {
-        "varsIgnorePattern": "^(contractItOnly|contractShouldThrowOnly|contractShouldThrowIfClosedOnly|contractShouldThrowIfEtherSentOnly|contractShouldThrowForNonOwnerOnly|d)$"
+        "varsIgnorePattern": "^(contractItOnly|contractShouldThrowOnly|contractShouldThrowIfClosedOnly|contractShouldThrowIfEtherSentOnly|contractShouldThrowForNonOwnerOnly|Promise|d)$"
       }
     ],
     "no-var": 2,
