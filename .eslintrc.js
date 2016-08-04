@@ -20,14 +20,10 @@ const config = {
     'linebreak-style': [2, 'unix'],
     'no-console': 1,
     'no-nested-ternary': 2,
-    'no-unused-vars': [2,
-      {
-        'varsIgnorePattern': '^(' + unusedVars.join('|') + ')$'
-      }
-    ],
+    'no-unused-vars': [2, { 'varsIgnorePattern': '^(' + unusedVars.join('|') + ')$' }],
     'no-var': 2,
     'promise/always-return': 2,
-    strict: [2, 'safe']
+    'strict': [2, 'safe']
   }
 }
 
