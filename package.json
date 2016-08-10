@@ -46,7 +46,7 @@
     "lightsaber": "^0.6.5",
     "lodash": "^4.14.0",
     "request": "^2.74.0",
-    "truffle": "^2.0.4"
+    "truffle": "^2.0.7"
   },
   "devDependencies": {
     "babel-eslint": "^6.1.2",
