@@ -22,15 +22,16 @@ class Token
   CONTRACT_NAME = 'DynamicToken'
 
   @deployContract: ->
-    quiet = nodeEnv is 'test'
-    {output} = run "node_modules/.bin/truffle migrate --network #{nodeEnv} --reset --verbose-rpc", {quiet}
+    {output} = run "node_modules/.bin/truffle migrate --network #{nodeEnv}
+      --reset --verbose-rpc", relaxed: true, quiet: nodeEnv is 'test'
     pattern = ///#{CONTRACT_NAME}:\s(0x[0-9a-f]{40})///
     contractAddress = pattern.exec(output)?[1]
-    unless contractAddress
-      throw Promise.OperationalError "No contract address found in
-        output [[ #{output} ]] -- searched with pattern [[ #{pattern} ]]"
-    d {contractAddress}
-    contractAddress
+    return contractAddress if contractAddress
+    if output.search /Error: Insufficient funds/
+      throw Promise.OperationalError "Insufficient funds in account
+        #{config.from} -- full output: [[ #{output} ]]"
+    throw Promise.OperationalError "No contract address
+      pattern [[ #{pattern} ]] found in output [[ #{output} ]]"
 
   @loadContract: (contractAddress) ->
     TokenContract = require "../build/contracts/#{CONTRACT_NAME}.sol.js"
