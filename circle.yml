@@ -1,9 +1,6 @@
-dependencies:
-  pre:
-    # - rm -rf node_modules
-    - nvm install 5
-    - nvm alias default 5
-    - nvm use default
+machine:
+  node:
+    version: 5
 
 test:
   pre:
