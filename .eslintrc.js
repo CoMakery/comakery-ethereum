@@ -28,6 +28,7 @@ const config = {
     'no-nested-ternary': 2,
     'no-unused-vars': [2, { 'varsIgnorePattern': '^(' + unusedVars.join('|') + ')$' }],
     'no-var': 2,
+    'object-property-newline': 0, // disable "standard" rule
     'promise/always-return': 2,
     'strict': [2, 'safe']
   }
