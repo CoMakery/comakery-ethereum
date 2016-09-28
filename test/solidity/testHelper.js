@@ -46,6 +46,8 @@ export const contractIt = (name, func, options) => {
       this.timeout(3000)
       if (options.only) {
         it.only(name, func)
+      } else if (options.pending) {
+        xit(name, func)
       } else {
         it(name, func)
       }

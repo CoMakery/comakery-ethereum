@@ -1097,7 +1097,7 @@ contract('DynamicToken', (accounts) => {
         expect(event.args._upgradedContract).to.equal(upgradeAccount)
         return
       }).then(done).catch(done)
-    })
+    }, {pending: true})
 
     describe('when closed', () => {
       beforeEach(() => {

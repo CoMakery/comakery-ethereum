@@ -12,6 +12,12 @@ const config = {
   extends: [
     'standard'
   ],
+  env: {
+    node: true
+  },
+  globals: {
+    xit: true
+  },
   parser: 'babel-eslint',
   plugins: [
     'promise'
