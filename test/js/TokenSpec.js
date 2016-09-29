@@ -24,8 +24,3 @@ describe('Token', () => {
     })
   })
 })
-
-/* Declare global variables for eslint to ignore: */
-/* global describe */
-/* global it */
-/* global beforeEach */

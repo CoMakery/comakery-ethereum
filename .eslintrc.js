@@ -16,6 +16,12 @@ const config = {
     node: true
   },
   globals: {
+    beforeEach: true,
+    contract: true,
+    describe: true,
+    DynamicToken: true,
+    it: true,
+    Promise: true,
     xit: true
   },
   parser: 'babel-eslint',

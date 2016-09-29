@@ -54,8 +54,3 @@ export const contractIt = (name, func, options) => {
     })
   })
 }
-
-/* Declare global variables for eslint to ignore: */
-/* global contract */
-/* global it */
-/* global describe */

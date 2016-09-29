@@ -1222,10 +1222,3 @@ contract('DynamicToken', (accounts) => {
     })
   })
 })
-
-/* Declare global variables for eslint to ignore: */
-/* global Promise */
-/* global beforeEach */
-/* global contract */
-/* global describe */
-/* global DynamicToken */
