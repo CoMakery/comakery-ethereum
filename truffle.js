@@ -5,7 +5,7 @@ try { overrides = require('./truffle-overrides') } catch (e) {}
 
 const defaults = {
   rpc: {
-    gas: 3141592  // default = 4712388
+    gas: 4712388
   },
   networks: {
     production: {
