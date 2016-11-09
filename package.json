@@ -46,7 +46,7 @@
     "lightsaber": "0.6.5",
     "lodash": "^4.16.2",
     "request": "^2.75.0",
-    "truffle": "^2.0.8"
+    "truffle": "^2.1.1"
   },
   "devDependencies": {
     "babel-eslint": "^7.0.0",
@@ -60,7 +60,7 @@
     "eslint-config-standard": "^6.1.0",
     "eslint-plugin-promise": "^2.0.1",
     "eslint-plugin-standard": "^2.0.1",
-    "ethereumjs-testrpc": "~2.1.0",
+    "ethereumjs-testrpc": "^3.0.0",
     "js-yaml": "^3.6.1",
     "nock": "^8.0.0",
     "nodemon": "^1.10.2",

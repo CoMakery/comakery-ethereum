@@ -2,6 +2,8 @@
 // From: https://github.com/slockit/DAO/blob/f640568e694a057aaeb64a0f1049fae27efe818b/Token.sol
 // See also https://github.com/ethereum/wiki/wiki/Standardized_Contract_APIs
 
+pragma solidity ^0.4.4;
+
 contract TokenInterface {
     mapping (address => uint256) balances;
     mapping (address => mapping (address => uint256)) allowed;
@@ -92,22 +94,22 @@ contract DynamicToken is TokenInterface {
   // restrict usage to only the owner
   modifier onlyContractOwner {
     if (msg.sender != contractOwner) throw;
-    _
+    _;
   }
 
   // check if the contract has been closed
   modifier notClosed {
     if (isClosed) throw;
-    _
+    _;
   }
 
   modifier notLockedOpen {
     if (isLockedOpen) throw;
-    _
+    _;
   }
 
   // no ether should be transferred to this contract
-  modifier noEther() {if (msg.value > 0) throw; _}
+  modifier noEther() {if (msg.value > 0) throw; _;}
 
   // accessors
 
