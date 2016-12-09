@@ -28,7 +28,7 @@ class Token
     pattern = ///#{CONTRACT_NAME}:\s(0x[0-9a-f]{40})///
     contractAddress = pattern.exec(output)?[1]
     return contractAddress if contractAddress
-    if output.search /Error: Insufficient funds/ >= 0
+    if output.search(/Error: Insufficient funds/) >= 0
       throw Promise.OperationalError "Insufficient funds in account
         #{config.from} -- full output: [[ #{output} ]]"
     throw Promise.OperationalError "No contract address
