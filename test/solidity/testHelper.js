@@ -5,9 +5,9 @@ global.Promise = Promise
 export const contractShouldThrow = (description, functionToCall, options) => {
   contractIt(description, (done) => {
     Promise.resolve().then(functionToCall
-    ).then(function () {
+    ).then(() => {
       throw new Error('Expected solidity error to be thown from contract, but was not')
-    }).catch(function (error) {
+    }).catch((error) => {
       if (!error.message || error.message.search('invalid JUMP') < 0) throw error
     }).then(done).catch(done)
   }, options)
@@ -42,7 +42,7 @@ export const contractItOnly = (name, func) => {
 export const contractIt = (name, func, options) => {
   options = options || {}
   contract('', () => {
-    describe('Contract:', function () {
+    describe('Contract:', function() {
       this.timeout(3000)
       if (options.only) {
         it.only(name, func)

@@ -1,7 +1,11 @@
 /* eslint-disable no-var */
 var _ = require('lodash')
-var overrides = {}
-try { overrides = require('./truffle-overrides') } catch (e) {}
+var overrides
+try {
+  overrides = require('./truffle-overrides')
+} catch (e) {
+  overrides = {}
+}
 
 const defaults = {
   rpc: {

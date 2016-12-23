@@ -49,8 +49,10 @@ contract('DynamicToken', (accounts) => {
       let manager = alice
       let spender = bob
       let recipient = charlie
-      return {alice, bob, charlie,
-        manager, spender, recipient}
+      return {
+        alice, bob, charlie,
+        manager, spender, recipient
+      }
     })
   }
 
@@ -204,9 +206,9 @@ contract('DynamicToken', (accounts) => {
       }).then((proofId) => {
         expect(proofId).to.equal('proof-not-unique')
         return token.proofIds.call(1)
-      }).then(function () {
+      }).then(() => {
         throw new Error('Expected solidity error to be thown from contract, but was not')
-      }).catch(function (error) {
+      }).catch((error) => {
         if (!error.message || error.message.search('invalid JUMP') < 0) throw error
         return
       }).then(done).catch(done)
@@ -288,7 +290,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._amount.toNumber()).to.equal(amount)
         done()
         return
-      })
+      }).catch(done)
     })
   })
 
@@ -383,7 +385,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._amount.toNumber()).to.equal(5)
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractIt('should do nothing if sender does not have enough tokens', (done) => {
@@ -511,7 +513,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._amount.toNumber()).to.equal(50)
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractIt('should fire a TransferFrom event when a tranfer is sucessful', (done) => {
@@ -539,7 +541,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._amount.toNumber()).to.equal(50)
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractIt('spender cannot spend more than allowance set by manager', (done) => {
@@ -683,7 +685,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._amount.toNumber()).to.equal(50)
         done()
         return
-      })
+      }).catch(done)
     })
   })
 
@@ -756,7 +758,7 @@ contract('DynamicToken', (accounts) => {
         expect(event.args._isMaxSupplyLocked).to.equal(false)
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractShouldThrowForNonOwner(() => {
@@ -805,7 +807,7 @@ contract('DynamicToken', (accounts) => {
         expect(event.args._isMaxSupplyLocked).to.equal(true)
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractShouldThrowForNonOwner(() => {
@@ -860,7 +862,7 @@ contract('DynamicToken', (accounts) => {
         expect(event.args._by).to.equal(accounts[0])
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractShouldThrowForNonOwner(() => {
@@ -972,7 +974,7 @@ contract('DynamicToken', (accounts) => {
         expect(event.args._to).to.equal(accounts[1])
         done()
         return
-      })
+      }).catch(done)
     })
 
     contractShouldThrowIfEtherSent(() => {
@@ -1102,7 +1104,7 @@ contract('DynamicToken', (accounts) => {
 
     describe('when closed', () => {
       beforeEach(() => {
-        token.upgrade(upgradeAccount).then()
+        return token.upgrade(upgradeAccount)
       })
 
       contractIt('toggles closed to true', (done) => {
@@ -1191,7 +1193,7 @@ contract('DynamicToken', (accounts) => {
         expect(log.args._amount.toNumber()).to.equal(10)
         done()
         return
-      })
+      }).catch(done)
     })
   })
 

@@ -10,7 +10,7 @@ const Token = require('../../lib/token')
 
 chai.use(chaiHttp)
 
-describe('API', function () {
+describe('API', function() {
   this.timeout(30e3)
 
   beforeEach('', () => {
@@ -26,7 +26,7 @@ describe('API', function () {
       .request(server)
       .post('/project')
       .send({ maxSupply: 101, apiKey: 'aaa' })
-      .then(function (res) {
+      .then((res) => {
         expect(res).to.have.status(200)
         const {body} = res
         expect(keys(body)).to.deep.equal(['contractAddress'])
@@ -50,7 +50,7 @@ describe('API', function () {
       .send({ apiKey: 'aaa' })
       .then(() => {
         throw new Error('expected server 500 error, but none was thrown')
-      }).catch(function (error) {
+      }).catch((error) => {
         expect(type(error.response)).to.equal('object', error.message)
         expect(error.response.status).to.equal(500)
         expect(error.response.text).to.match(/maxSupply required but not found/)
@@ -66,7 +66,7 @@ describe('API', function () {
       .send({ maxSupply: 101, apiKey: 'not a key in our whitelist' })
       .then(() => {
         throw new Error('expected server 403 error, but none was thrown')
-      }).catch(function (error) {
+      }).catch((error) => {
         expect(type(error.response)).to.equal('object', error.message)
         expect(error.response.status).to.equal(403)
         expect(error.response.text).to.match(/API key not found/)
@@ -84,7 +84,7 @@ describe('API', function () {
       .request(server)
       .post('/token_issue')
       .send({ contractAddress, recipient, amount: 111, apiKey: 'aaa', proofId: 'proof1' })
-      .then(function (res) {
+      .then((res) => {
         expect(res).to.have.status(200)
         const {body} = res
         expect(keys(body)).to.deep.equal(['transactionId'])
@@ -108,7 +108,7 @@ describe('API', function () {
       .then(() => {
         throw new Error('hey no error was thrown and I thought it would be')
       })
-      .catch(function (res) {
+      .catch((res) => {
         expect(res).to.have.status(500)
         const {response: {text}} = res
         expect(text).to.match(/amount.*is not a positive integer/)
