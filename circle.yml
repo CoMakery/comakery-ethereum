@@ -7,4 +7,4 @@ test:
     - npm run testrpc:
         background: true
   override:
-    - npm run fulltest
+    - npm run checks:ci
