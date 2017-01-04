@@ -38,15 +38,15 @@
   "homepage": "https://github.com/comakery/comakery-ethereum#readme",
   "dependencies": {
     "airbrake": "^1.2.0",
-    "bluebird": "^3.4.1",
+    "bluebird": "^3.4.7",
     "body-parser": "^1.15.2",
     "coffee-script": "^1.12.2",
     "connect-timeout": "^1.8.0",
-    "debug": "^2.5.1",
+    "debug": "^2.6.0",
     "dotenv": "^2.0.0",
     "express": "^4.14.0",
     "lightsaber": "^0.6.8",
-    "lodash": "^4.17.2",
+    "lodash": "^4.17.4",
     "request": "^2.79.0",
     "truffle": "^2.1.1"
   },
@@ -62,10 +62,11 @@
     "eslint-config-comakery": "^0.0.4",
     "ethereumjs-testrpc": "^3.0.3",
     "js-yaml": "^3.7.0",
+    "mocha": "^3.2.0",
     "nock": "^9.0.2",
     "nodemon": "^1.11.0",
-    "npm-run-all": "^3.1.2",
-    "sinon": "^1.17.6"
+    "npm-run-all": "^4.0.0",
+    "sinon": "^1.17.7"
   },
   "engines": {
     "node": ">=6.9.1"
