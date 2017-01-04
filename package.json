@@ -38,6 +38,7 @@
   "homepage": "https://github.com/comakery/comakery-ethereum#readme",
   "dependencies": {
     "airbrake": "^1.2.0",
+    "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
     "coffee-script": "^1.12.2",
     "connect-timeout": "^1.8.0",
