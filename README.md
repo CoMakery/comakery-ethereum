@@ -31,7 +31,8 @@ This software is released under an Open Source MIT licensed. It can be extended 
 
 ```sh
 cp truffle-overrides.js.example truffle-overrides.js  # edit as desired
-npm install
+# install yarn: https://yarnpkg.com
+yarn install
 ```
 
 Recommended: run testrpc server for dev and test (fast):
