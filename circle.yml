@@ -11,6 +11,9 @@ dependencies:
       && sudo apt-get install -y -qq yarn
   override:
     - yarn install
+  cache_directories:
+    - ~/.yarn
+    - ~/.cache/yarn
 
 test:
   pre:
