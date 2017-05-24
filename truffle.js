@@ -18,11 +18,11 @@ const defaults = {
       port: 9999,
       ethercampApiSubdomain: 'state'
     },
-    morden: {
-      network_id: 2, // morden
+    ropsten: {
+      network_id: 3,
       host: 'localhost',
       port: 8888,
-      ethercampApiSubdomain: 'morden-state'
+      ethercampApiSubdomain: 'ropsten-state'
     },
     test: {
       network_id: 'default',

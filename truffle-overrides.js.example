@@ -3,7 +3,7 @@ module.exports = {
     production: {
       from: '0x... ETH ADDRESS'
     },
-    morden: {
+    ropsten: {
       from: '0x... ETH ADDRESS'
     }
   }
