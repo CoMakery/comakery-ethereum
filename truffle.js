@@ -16,7 +16,8 @@ const defaults = {
       network_id: 1, // Ethereum public network
       host: 'localhost',
       port: 9999,
-      gasPrice: 2e9,
+      gasPrice: 3e9,
+      gas: 220674,
       ethercampApiSubdomain: 'state'
     },
     ropsten: {
