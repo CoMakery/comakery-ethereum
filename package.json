@@ -50,7 +50,7 @@
     "lightsaber": "^0.6.8",
     "lodash": "^4.17.4",
     "request": "^2.79.0",
-    "truffle": "^2.1.1"
+    "truffle": "2.1.2"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
