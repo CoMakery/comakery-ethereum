@@ -1,4 +1,4 @@
-import './testHelper'
+import '../../testHelper'
 import {expect} from 'chai'
 import {d} from 'lightsaber'
 import nock from 'nock'

@@ -8,7 +8,7 @@ print = (text, logger) ->
   text = text.replace(/\u001b\[0m      \s*Contract:\s*\u001b\[0m/, '')
   logger(text) if text.trim()
 
-command = "truffle test test/solidity/*.es6 --compile-all --network test"
+command = "truffle test test/js/*.js --network test"
 testRun = exec(command, {async: true, silent: true})
 testRun.stdout.on 'data', (data) -> print(data, console.log)
 testRun.stderr.on 'data', (data) -> print(data, console.error)
