@@ -5,7 +5,7 @@ import chaiHttp from 'chai-http'
 import {d, type} from 'lightsaber'
 import sinon from 'sinon'
 
-const DynamicToken = artifacts.require("DynamicToken.sol")
+const DynamicToken = artifacts.require('DynamicToken.sol')
 const server = require('../../lib/server').app
 const Token = require('../../lib/token')
 

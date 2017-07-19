@@ -1,6 +1,8 @@
 import {expect} from 'chai'
 import {d} from 'lightsaber'
 
+const DynamicToken = artifacts.require('../../contracts/DynamicToken.sol')
+
 import {
   contractIt,
   contractItOnly,
