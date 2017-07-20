@@ -2,6 +2,10 @@ require('babel-register')
 require('babel-polyfill')
 
 /* eslint-disable no-var */
+
+require('babel-core/register')
+require('babel-polyfill')
+
 var _ = require('lodash')
 var overrides
 try {

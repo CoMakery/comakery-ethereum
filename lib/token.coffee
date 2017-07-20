@@ -35,7 +35,7 @@ class Token
       pattern [[ #{pattern} ]] found in output [[ #{output} ]]"
 
   @loadContract: (contractAddress) ->
-    TokenContract = require "../build/contracts/#{CONTRACT_NAME}.sol.js"
+    TokenContract = require "../build/contracts/#{CONTRACT_NAME}.json"
     rpcUrl = "http://#{config.host}:#{config.port}"
     d { rpcUrl }
     TokenContract.setProvider new Web3.providers.HttpProvider rpcUrl
@@ -67,7 +67,7 @@ class Token
     formData =
       name: CONTRACT_NAME
       contracts:
-        value: fs.createReadStream(path.resolve(__dirname, "../contracts/#{CONTRACT_NAME}.sol"))
+        value: fs.createReadStream(path.resolve(__dirname, "../build/contracts/#{CONTRACT_NAME}.json"))
         options:
           name: 'contracts'
           filename: "#{CONTRACT_NAME}.sol"

@@ -1,5 +1,4 @@
 #!/usr/bin/env coffee
-
 { d } = require 'lightsaber'
 { exec } = require 'shelljs'
 
