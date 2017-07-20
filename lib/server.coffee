@@ -5,6 +5,7 @@ debug = require('debug')('server')
 express = require 'express'
 bodyParser = require 'body-parser'
 timeout = require 'connect-timeout'
+Promise = require 'bluebird'
 
 Token = require './token'
 

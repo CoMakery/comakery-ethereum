@@ -1,14 +1,17 @@
 import Promise from 'bluebird'
+require('coffee-script/register')
+process.env.NODE_ENV = 'test'
 
 global.Promise = Promise
 
-export const contractShouldThrow = (description, functionToCall, options) => {
+export const contractShouldThrow = (description, functionToCall, options, expectedErrorMessage = null) => {
   contractIt(description, (done) => {
     Promise.resolve().then(functionToCall
     ).then(() => {
       throw new Error('Expected solidity error to be thown from contract, but was not')
     }).catch((error) => {
-      if (!error.message || error.message.search('invalid JUMP') < 0) throw error
+      expectedErrorMessage = expectedErrorMessage || 'VM Exception while processing transaction: invalid opcode'
+      if (!error.message || error.message.search(expectedErrorMessage) < 0) throw error
     }).then(done).catch(done)
   }, options)
 }
@@ -18,7 +21,8 @@ export const contractShouldThrowOnly = (description, functionToCall) => {
 }
 
 export const contractShouldThrowIfEtherSent = (functionToCall, opts) => {
-  contractShouldThrow('should throw an error if ether is sent', functionToCall, opts)
+  contractShouldThrow('should throw an error if ether is sent', functionToCall, opts,
+    /Cannot send value to non-payable function|VM Exception while executing eth_call: invalid opcode/)
 }
 
 export const contractShouldThrowIfEtherSentOnly = (functionToCall) => {

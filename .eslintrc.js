@@ -12,6 +12,7 @@ const config = {
   'extends': 'comakery',
 
   'globals': {
+    'artifacts': false,
     'beforeEach': false,
     'contract': false,
     'describe': false,
@@ -22,6 +23,7 @@ const config = {
   },
 
   'rules': {
+    'complexity': [2, 5],
     'no-unused-vars': [2, { 'varsIgnorePattern': '^(' + unusedVars.join('|') + ')$' }],
   },
 }
