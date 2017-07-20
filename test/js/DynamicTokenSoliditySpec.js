@@ -71,8 +71,11 @@ contract('DynamicToken', (accounts) => {
     })
   }
 
-  beforeEach(() => {
-    token = DynamicToken.deployed()
+  beforeEach((done) => {
+    DynamicToken.deployed().then((_token) => {
+      token = _token
+      done()
+    })
   })
 
   describe('expected test conditions', () => {
