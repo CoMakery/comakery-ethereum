@@ -4,7 +4,7 @@ process.env.NODE_ENV = 'test'
 
 global.Promise = Promise
 
-export const contractShouldThrow = (description, functionToCall, options, expectedErrorMessage=null) => {
+export const contractShouldThrow = (description, functionToCall, options, expectedErrorMessage = null) => {
   contractIt(description, (done) => {
     Promise.resolve().then(functionToCall
     ).then(() => {
@@ -22,7 +22,7 @@ export const contractShouldThrowOnly = (description, functionToCall) => {
 
 export const contractShouldThrowIfEtherSent = (functionToCall, opts) => {
   contractShouldThrow('should throw an error if ether is sent', functionToCall, opts,
-    /Cannot send value to non\-payable function|VM Exception while executing eth_call: invalid opcode/)
+    /Cannot send value to non-payable function|VM Exception while executing eth_call: invalid opcode/)
 }
 
 export const contractShouldThrowIfEtherSentOnly = (functionToCall) => {

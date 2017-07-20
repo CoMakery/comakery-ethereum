@@ -12,6 +12,7 @@ const config = {
   'extends': 'comakery',
 
   'globals': {
+    'artifacts': false,
     'beforeEach': false,
     'contract': false,
     'describe': false,

@@ -71,10 +71,10 @@ contract('DynamicToken', (accounts) => {
     })
   }
 
-  beforeEach((done) => {
+  beforeEach(() => {
     DynamicToken.deployed().then((_token) => {
       token = _token
-      done()
+      return
     })
   })
 
