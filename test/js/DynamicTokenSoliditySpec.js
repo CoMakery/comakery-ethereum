@@ -214,7 +214,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         throw new Error('Expected solidity error to be thown from contract, but was not')
       }).catch((error) => {
-        if (!error.message || error.message.search('invalid JUMP') < 0) throw error
+        if (!error.message || error.message.search('VM Exception') < 0) throw error
         return
       }).then(done).catch(done)
     })
