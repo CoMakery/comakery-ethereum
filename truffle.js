@@ -31,14 +31,14 @@ const defaults = {
       ethercampApiSubdomain: 'ropsten-state'
     },
     test: {
-      network_id: 'default',
+      network_id: "*",
       host: 'localhost',
       port: 7777,
       from: '0x7e5f4552091a69125d5dfcb7b8c2659029395bdf',
       ethercampApiSubdomain: 'not-really'
     },
     development: {
-      network_id: 'default',
+      network_id: "*",
       host: 'localhost',
       port: 7777,
       from: '0x7e5f4552091a69125d5dfcb7b8c2659029395bdf'
