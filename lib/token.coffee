@@ -7,7 +7,8 @@ fs = require 'fs'
 request = require 'request'
 debug = require('debug')('token')
 Web3 = require 'web3'
-Pudding = require "ether-pudding"
+Promise = require 'bluebird'
+truffleContract = require 'truffle-contract'
 
 config = require('../truffle').networks[nodeEnv]
 
@@ -35,7 +36,7 @@ class Token
       pattern [[ #{pattern} ]] found in output [[ #{output} ]]"
 
   @loadContract: (contractAddress) ->
-    TokenContract = require "../build/contracts/#{CONTRACT_NAME}.sol.js"
+    TokenContract = truffleContract require "../build/contracts/#{CONTRACT_NAME}.json"
     rpcUrl = "http://#{config.host}:#{config.port}"
     d { rpcUrl }
     TokenContract.setProvider new Web3.providers.HttpProvider rpcUrl

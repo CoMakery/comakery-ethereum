@@ -1,6 +1,8 @@
 import {expect} from 'chai'
 import {d} from 'lightsaber'
 
+const DynamicToken = artifacts.require('../../contracts/DynamicToken.sol')
+
 import {
   contractIt,
   contractItOnly,
@@ -69,8 +71,11 @@ contract('DynamicToken', (accounts) => {
     })
   }
 
-  beforeEach(() => {
-    token = DynamicToken.deployed()
+  beforeEach((done) => {
+    DynamicToken.deployed().then((_token) => {
+      token = _token
+      return done()
+    }).catch(done)
   })
 
   describe('expected test conditions', () => {
@@ -201,7 +206,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(amount)  // not amount x 2
+        expect(ending.bob.balance).to.equal(amount) // not amount x 2
         return token.proofIds.call(0)
       }).then((proofId) => {
         expect(proofId).to.equal('proof-not-unique')
@@ -209,7 +214,7 @@ contract('DynamicToken', (accounts) => {
       }).then(() => {
         throw new Error('Expected solidity error to be thown from contract, but was not')
       }).catch((error) => {
-        if (!error.message || error.message.search('invalid JUMP') < 0) throw error
+        if (!error.message || error.message.search('VM Exception') < 0) throw error
         return
       }).then(done).catch(done)
     })
@@ -260,7 +265,7 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractShouldThrow('should throw an error if token balance overflows', () => {
-      let MAXISH = 1e77  // max value of a uint256 is ~ 1.157920892373162e+77
+      let MAXISH = 1e77 // max value of a uint256 is ~ 1.157920892373162e+77
 
       return Promise.resolve().then(() => {
         return token.setMaxSupply(MAXISH)
