@@ -14,8 +14,8 @@ describe('Token', () => {
     it('should upload contract to ether camp', (done) => {
       const contractAddress = Token.deployContract().replace(/^0x/, '')
       const scope = nock('https://not-really.ether.camp')
-      .post(`/api/v1/accounts/${contractAddress}/contract`)
-      .reply(200, {success: true})
+        .post(`/api/v1/accounts/${contractAddress}/contract`)
+        .reply(200, {success: true})
 
       Token.uploadSource(contractAddress, () => {
         expect(scope.isDone()).to.equal(true)

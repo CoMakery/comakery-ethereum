@@ -206,7 +206,7 @@ contract('DynamicToken', (accounts) => {
         return getUsers(token)
       }).then((ending) => {
         expect(ending.alice.balance).to.equal(0)
-        expect(ending.bob.balance).to.equal(amount)  // not amount x 2
+        expect(ending.bob.balance).to.equal(amount) // not amount x 2
         return token.proofIds.call(0)
       }).then((proofId) => {
         expect(proofId).to.equal('proof-not-unique')
@@ -265,7 +265,7 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractShouldThrow('should throw an error if token balance overflows', () => {
-      let MAXISH = 1e77  // max value of a uint256 is ~ 1.157920892373162e+77
+      let MAXISH = 1e77 // max value of a uint256 is ~ 1.157920892373162e+77
 
       return Promise.resolve().then(() => {
         return token.setMaxSupply(MAXISH)
