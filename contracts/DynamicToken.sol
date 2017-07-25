@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.13;
 
 contract TokenInterface {
     mapping (address => uint256) balances;
