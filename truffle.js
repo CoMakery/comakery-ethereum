@@ -7,7 +7,11 @@ var overrides
 try {
   overrides = require('./truffle-overrides')
 } catch (e) {
-  overrides = {}
+  if (e.message === "Cannot find module './truffle-overrides'") {
+    overrides = {}
+  } else {
+    throw e
+  }
 }
 
 const defaults = {
@@ -45,5 +49,7 @@ const defaults = {
   }
 }
 
+// console.log(JSON.stringify({overrides: overrides}, null, 4))
 var config = _.defaultsDeep(overrides, defaults)
+// console.log(JSON.stringify({config: config}, null, 4))
 module.exports = config
