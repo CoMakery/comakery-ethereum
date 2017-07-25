@@ -44,7 +44,6 @@ class Token
 
   @create: (newMaxSupply) ->
     contractAddress = @deployContract()
-    @uploadSource contractAddress
     tokenContract = @loadContract contractAddress
     Promise.resolve()
     .then =>
@@ -58,27 +57,6 @@ class Token
       d {maxSupply}
       d {contractAddress}
       contractAddress
-
-  @uploadSource: (contractAddress, callback) ->
-    return if nodeEnv is 'development'
-    contractAddress = contractAddress.replace /^0x/, ''
-    subdomain = config.ethercampApiSubdomain
-    url = "https://#{subdomain}.ether.camp/api/v1/accounts/#{contractAddress}/contract"
-    d { url }
-    formData =
-      name: CONTRACT_NAME
-      contracts:
-        value: fs.createReadStream(path.resolve(__dirname, "../contracts/#{CONTRACT_NAME}.sol"))
-        options:
-          name: 'contracts'
-          filename: "#{CONTRACT_NAME}.sol"
-    headers = "rejectUnauthorized": false
-    NODE_TLS_REJECT_UNAUTHORIZED = process.env.NODE_TLS_REJECT_UNAUTHORIZED
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
-    request.post {url, formData, headers}, (err, httpResponse, body) ->
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = NODE_TLS_REJECT_UNAUTHORIZED
-      d "attempted to upload smart contract to #{url}"
-      callback?(err, body)
 
   @issue: (contractAddress, recipient, amount, proofId) ->
     web3 = new Web3

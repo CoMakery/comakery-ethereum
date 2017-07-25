@@ -20,7 +20,6 @@ describe('API', function() {
   describe('POST /project', () => {
     it('should return a contract address', (done) => {
       let token = sinon.mock(Token)
-      token.expects('uploadSource').once()
 
       chai
         .request(server)
