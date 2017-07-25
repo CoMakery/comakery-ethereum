@@ -135,7 +135,7 @@ contract('DynamicToken', (accounts) => {
     })
 
     contractShouldThrowForNonOwner(() => {
-      return token.close(null, {from: accounts[1]})
+      return token.close({from: accounts[1]})
     })
 
     contractIt('owner can close the contract', (done) => {
@@ -589,7 +589,7 @@ contract('DynamicToken', (accounts) => {
         recipient = users.recipient.address
         return token.issue(manager, 100, 'proof1', {from: manager})
       }).then(() => {
-        return token.approve(spender, 300, 'proof2', {from: manager})
+        return token.approve(spender, 300, {from: manager})
       }).then(() => {
         return token.transferFrom(manager, recipient, 200, {from: spender})
       }).then(() => {
