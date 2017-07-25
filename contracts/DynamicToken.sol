@@ -61,23 +61,23 @@ contract DynamicToken is TokenInterface {
 
   // restrict usage to only the owner
   modifier onlyContractOwner {
-    if (msg.sender != contractOwner) throw;
+    if (msg.sender != contractOwner) revert();
     _;
   }
 
   // check if the contract has been closed
   modifier notClosed {
-    if (isClosed) throw;
+    if (isClosed) revert();
     _;
   }
 
   modifier notLockedOpen {
-    if (isLockedOpen) throw;
+    if (isLockedOpen) revert();
     _;
   }
 
   // no ether should be transferred to this contract
-  modifier noEther() {if (msg.value > 0) throw; _;}
+  modifier noEther() {if (msg.value > 0) revert(); _;}
 
   // accessors
 
@@ -97,8 +97,8 @@ contract DynamicToken is TokenInterface {
 
   // tokens are only issued in exchange for a unique proof of contribution
   function issue(address _to, uint256 _amount, string _proofId) notClosed onlyContractOwner noEther returns (bool success) {
-    if (balances[_to] + _amount < balances[_to]) throw; // Guard against overflow
-    if (totalSupply + _amount < totalSupply) throw;     // Guard against overflow  (this should never happen)
+    if (balances[_to] + _amount < balances[_to]) revert(); // Guard against overflow
+    if (totalSupply + _amount < totalSupply) revert();     // Guard against overflow  (this should never happen)
 
     if (proofIdExists[_proofId]) return false;
     if (totalSupply + _amount > maxSupply) return false;
@@ -112,7 +112,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function setMaxSupply(uint256 _maxSupply) notClosed onlyContractOwner noEther returns (bool success) {
-    if (_maxSupply < totalSupply) throw;
+    if (_maxSupply < totalSupply) revert();
     if (isMaxSupplyLocked) return false;
 
     maxSupply = _maxSupply;
@@ -140,7 +140,7 @@ contract DynamicToken is TokenInterface {
   function transferFrom(address _from, address _to, uint256 _amount) notClosed noEther returns (bool success) {
     if (_amount > allowed[_from][msg.sender]) return false;
 
-    if (allowed[_from][msg.sender] - _amount > allowed[_from][msg.sender]) throw;  // Guard against underflow
+    if (allowed[_from][msg.sender] - _amount > allowed[_from][msg.sender]) revert();  // Guard against underflow
 
     if (_transfer(_from, _to, _amount)) {
       allowed[_from][msg.sender] -= _amount;
@@ -154,9 +154,9 @@ contract DynamicToken is TokenInterface {
   function burn(uint256 _amount) notClosed noEther returns (bool success) {
     if (_amount > balances[msg.sender]) return false;
 
-    if (_amount > totalSupply) throw;
-    if (balances[msg.sender] - _amount > balances[msg.sender]) throw;     // Guard against underflow
-    if (totalSupply - _amount > totalSupply) throw;                     // Guard against underflow
+    if (_amount > totalSupply) revert();
+    if (balances[msg.sender] - _amount > balances[msg.sender]) revert();     // Guard against underflow
+    if (totalSupply - _amount > totalSupply) revert();                     // Guard against underflow
 
     balances[msg.sender] -= _amount;
     totalSupply -= _amount;
@@ -174,7 +174,7 @@ contract DynamicToken is TokenInterface {
   }
 
   function transferContractOwnership(address _newOwner) notClosed onlyContractOwner noEther returns (bool success) {
-    if(isContractOwnerLocked) throw;
+    if(isContractOwnerLocked) revert();
 
     contractOwner = _newOwner;
     TransferContractOwnership(msg.sender, _newOwner);
@@ -210,8 +210,8 @@ contract DynamicToken is TokenInterface {
   function _transfer(address _from, address _to, uint256 _amount) notClosed private returns (bool success) {
     if (_amount > balances[_from]) return false;
 
-    if (balances[_to] + _amount < balances[_to]) throw;      // Guard against overflow
-    if (balances[_from] - _amount > balances[_from]) throw;  // Guard against underflow
+    if (balances[_to] + _amount < balances[_to]) revert();      // Guard against overflow
+    if (balances[_from] - _amount > balances[_from]) revert();  // Guard against underflow
 
     balances[_to] += _amount;
     balances[_from] -= _amount;
@@ -234,8 +234,8 @@ contract DynamicToken is TokenInterface {
     return true;
   }
 
-  // throw on malformed calls
+  // revert() on malformed calls
   function () {
-    throw;
+    revert();
   }
 }
