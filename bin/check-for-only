@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ $(grep -r 'Only(' test) ]]; then
+  echo '*** Only( *** found in test, please remove' && exit 1
+fi

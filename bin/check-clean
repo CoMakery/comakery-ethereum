@@ -1,0 +1,5 @@
+#!/bin/bash
+
+if [[ $(git status --porcelain) ]]; then
+  echo '*** Please stash or commit changes first ***\n' && exit 1
+fi
