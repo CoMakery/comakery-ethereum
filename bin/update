@@ -1,17 +1,16 @@
-#!/usr/bin/env node
+#!/usr/bin/env bash
 
-require('dotenv').config()
-const run = require('lightsaber').run
+set -ex
 
-run('which pm2')
-run('npm i -g yarn@latest')
-run('git status')
-run('git add .')
-run('git diff HEAD')
-run('git fetch')
-run('git checkout --force master')
-run('git reset --hard origin/master')
-run('git clean -fd')
-run('time yarn')
-run('yarn run truffle -- compile --compile-all --network ' + process.env.NODE_ENV)
-run('pm2 gracefulReload server')
+which pm2
+npm i -g yarn@latest
+git status
+git add .
+git diff HEAD
+git fetch
+git checkout --force master
+git reset --hard origin/master
+git clean -fd
+time yarn
+env `cat .env` yarn run truffle -- compile --compile-all --network $NODE_ENV
+pm2 gracefulReload server
