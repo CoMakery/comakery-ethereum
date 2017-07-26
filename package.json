@@ -18,7 +18,7 @@
     "dev": "DEBUG=config,dev,server,token bin/dev",
     "env": "env",
     "eslint:fix": "npm run eslint -- --fix",
-    "eslint": "eslint --ext js,es6 --ignore-pattern '!.eslintrc.js' .eslintrc.js bin/update migrations test truffle.js truffle-overrides.js truffle-overrides.js.example",
+    "eslint": "eslint --ext js,es6 --ignore-pattern '!.eslintrc.js' .eslintrc.js migrations test truffle.js truffle-overrides.js truffle-overrides.js.example",
     "pre-push": "npm-run-all --silent eslint:fix check-clean coffeelint check-yaml test check-for-only check-yarn",
     "shipit": "npm-run-all --silent pre-push && git push --tags origin head",
     "start": "nodemon --ignore . bin/server",
@@ -72,8 +72,8 @@
     "mocha": "^3.4.2",
     "nock": "^9.0.14",
     "nodemon": "^1.11.0",
-    "sinon": "^2.3.8",
-    "yarn-run-all": "^3.1.1"
+    "npm-run-all": "^3.1.1",
+    "sinon": "^2.3.8"
   },
   "engines": {
     "node": ">=6.9.1"
