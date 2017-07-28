@@ -4,7 +4,8 @@ machine:
 
 dependencies:
   override:
-    - yarn install
+    - npm i -g yarn@latest
+    - yarn
   cache_directories:
     - ~/.yarn
     - ~/.cache/yarn
