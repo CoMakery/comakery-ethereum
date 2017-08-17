@@ -38,30 +38,49 @@ yarn install
 Recommended: run testrpc server for dev and test (fast):
 
 ```sh
-npm run testrpc  # run in separate window
+yarn testrpc  # run in separate window
 ```
 
 ### Run tests
 
 ```sh
-npm test
+yarn test
 ```
 
 ### Deploy
 
-```sh
-npm run truffle migrate -- --network development
-```
+Test migrations
 
-This will tell you your contract address.
+```sh
+yarn truffle migrate -- --network development
+```
 
 ### Dev server
 
 This starts an express server which receives simple calls and executes contract calls:
 
 ```sh
-npm run dev:server  # run in separate window
+yarn dev:server  # run in separate window
 ```
+
+### Test Server Contract Deployment With Curl
+Add a local api key to your `.env` file
+
+```sh
+API_KEY_WHITELIST='aaa'
+```
+
+Start the server with
+```sh
+bin/server
+```
+
+Post contract with parameters
+```sh
+curl -H "Content-Type: application/json" -X POST -d '{"maxSupply": 101, "apiKey": "aaa" }' http://localhost:3906/project
+```
+
+Returns the `{"contractAddress":"0x..."}`
 
 ### Design Decisions
 
