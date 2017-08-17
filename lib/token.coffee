@@ -24,7 +24,7 @@ class Token
 
   @deployContract: ->
     output = run "node_modules/.bin/truffle migrate --network #{nodeEnv}
-      --reset --verbose-rpc", relaxed: true, quiet: nodeEnv
+      --reset --verbose-rpc", relaxed: true, quiet: nodeEnv is 'test'
 
     pattern = ///#{CONTRACT_NAME}:\s(0x[0-9a-f]{40})///
     contractAddress = pattern.exec(output)?[1]
