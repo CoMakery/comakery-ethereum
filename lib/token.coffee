@@ -79,7 +79,7 @@ class Token
     .then (@recipientBalance) =>
       d {@recipientBalance}
       d { sender, recipient, amount }
-      tokenContract.issue recipient, amount, proofId, from: sender, gas: 2e5
+      tokenContract.issue recipient, amount, proofId, from: sender, gas: 712388, gasPrice: 2e9
     .then (@transactionId) =>
       d {@transactionId}
       tokenContract.balanceOf.call recipient
