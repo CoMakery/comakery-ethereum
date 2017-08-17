@@ -21,7 +21,6 @@ const defaults = {
       host: 'localhost',
       port: 9999,
       gasPrice: 3e9,
-      gas: 220674,
       ethercampApiSubdomain: 'state'
     },
     ropsten: {
