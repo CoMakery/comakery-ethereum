@@ -86,7 +86,7 @@ describe('API', function() {
         .then((res) => {
           expect(res).to.have.status(200)
           const {body} = res
-          expect(body.transactionId).to.match(/^0x[0-9a-f]{64}$/)
+          expect(body.tx).to.match(/^0x[0-9a-f]{64}$/)
 
           const tokenContract = Token.loadContract(contractAddress)
           return tokenContract.balanceOf.call(recipient)
