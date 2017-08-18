@@ -58,7 +58,7 @@ app.post '/token_issue', (request, response) ->
   Promise.try =>
     Token.issue contractAddress, recipient, amount, proofId
   .then (transactionId) =>
-    response.json {transactionId}
+    response.json {transactionId: transactionId.tx}
   .catch (error) =>
     reportError error
     response.status(500).json { error: (error.message or error.stack) }
