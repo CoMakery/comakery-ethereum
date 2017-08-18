@@ -181,7 +181,7 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return token.name.call()
       }).then((decimals) => {
-        expect(decimals).to.equal("Generic CoMakery DynamicToken")
+        expect(decimals).to.equal('Generic CoMakery DynamicToken')
         return
       }).then(done).catch(done)
     })
@@ -192,7 +192,7 @@ contract('DynamicToken', (accounts) => {
       Promise.resolve().then(() => {
         return token.symbol.call()
       }).then((decimals) => {
-        expect(decimals).to.equal("GCMD")
+        expect(decimals).to.equal('GCMD')
         return
       }).then(done).catch(done)
     })
