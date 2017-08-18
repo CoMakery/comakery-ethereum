@@ -38,6 +38,10 @@ contract DynamicToken is TokenInterface {
   mapping (address => bool) public accountExists;
   mapping (string => bool) proofIdExists;
 
+  string public name;
+  string public symbol;
+  uint8 public constant decimals = 0;
+
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
   event Issue(address indexed _from, address indexed _to, uint256 _amount, string _proofId);
   event Burn(address indexed _burnFrom, uint256 _amount);
@@ -57,6 +61,8 @@ contract DynamicToken is TokenInterface {
     isMaxSupplyLocked = false;
     isLockedOpen = false;
     isContractOwnerLocked = false;
+    name = "Generic CoMakery DynamicToken";
+    symbol = "GCMD";
   }
 
   // restrict usage to only the owner

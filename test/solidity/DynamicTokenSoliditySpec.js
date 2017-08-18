@@ -162,6 +162,42 @@ contract('DynamicToken', (accounts) => {
     })
   })
 
+  describe('#decimals', () => {
+    contractShouldThrowIfEtherSent(() => {
+      return token.decimals({value: 1})
+    })
+    contractIt('should return the number of decimals for the contract', (done) => {
+      Promise.resolve().then(() => {
+        return token.decimals.call()
+      }).then((decimals) => {
+        expect(decimals.toNumber()).to.equal(0)
+        return
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('#name', () => {
+    contractIt('should return the name for the contract', (done) => {
+      Promise.resolve().then(() => {
+        return token.name.call()
+      }).then((decimals) => {
+        expect(decimals).to.equal("Generic CoMakery DynamicToken")
+        return
+      }).then(done).catch(done)
+    })
+  })
+
+  describe('#symbol', () => {
+    contractIt('should return the symbol for the contract', (done) => {
+      Promise.resolve().then(() => {
+        return token.symbol.call()
+      }).then((decimals) => {
+        expect(decimals).to.equal("GCMD")
+        return
+      }).then(done).catch(done)
+    })
+  })
+
   describe('#issue', () => {
     contractShouldThrowIfEtherSent(() => {
       return token.issue(accounts[1], 10, 'proof1', {value: 1})
