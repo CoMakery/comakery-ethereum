@@ -60,8 +60,8 @@ contract DynamicToken is TokenInterface {
     isMaxSupplyLocked = false;
     isLockedOpen = false;
     isContractOwnerLocked = false;
-    name = "Generic CoMakery DynamicToken";
-    symbol = "GCMD";
+    name = "Vevue Pre";
+    symbol = "VEVP";
   }
 
   // restrict usage to only the owner
