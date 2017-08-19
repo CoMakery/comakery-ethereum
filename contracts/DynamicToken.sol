@@ -43,7 +43,6 @@ contract DynamicToken is TokenInterface {
   uint8 public constant decimals = 0;
 
   event TransferFrom(address indexed _from, address indexed _to,  address indexed _spender, uint256 _amount);
-  event Issue(address indexed _from, address indexed _to, uint256 _amount, string _proofId);
   event Burn(address indexed _burnFrom, uint256 _amount);
   event Close(address indexed _closedBy);
   event Upgrade(address indexed _upgradedContract);
@@ -113,7 +112,7 @@ contract DynamicToken is TokenInterface {
     totalSupply += _amount;
     _indexAccount(_to);
     _indexProofId(_proofId);
-    Issue(msg.sender, _to, _amount, _proofId);
+    Transfer(msg.sender, _to, _amount);
     return true;
   }
 

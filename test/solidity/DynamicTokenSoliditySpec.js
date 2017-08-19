@@ -312,8 +312,7 @@ contract('DynamicToken', (accounts) => {
       })
     })
 
-    contractIt('should fire an Issue event on success', (done) => {
-      let events = token.Issue()
+    contractIt('should fire a Transfer event when issue is called succesfully', (done) => {
       const amount = 10
       let starting
 
@@ -322,12 +321,11 @@ contract('DynamicToken', (accounts) => {
       }).then((users) => {
         starting = users
         return token.issue(starting.bob.address, amount, 'proof1', {from: starting.alice.address})
-      }).then(() => {
-        return firstEvent(events)
+      }).then((issue) => {
+        return firstEvent(token.Transfer())
       }).then((log) => {
         expect(log.args._from).to.equal(starting.alice.address)
         expect(log.args._to).to.equal(starting.bob.address)
-        expect(log.args._proofId).to.equal('proof1')
         expect(log.args._amount.toNumber()).to.equal(amount)
         done()
         return
@@ -407,8 +405,7 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
-      let events = token.Transfer()
+    contractIt('should fire a Transfer event when a transfer is sucessful', (done) => {
       let starting
 
       Promise.resolve().then(() => {
@@ -417,9 +414,11 @@ contract('DynamicToken', (accounts) => {
         starting = users
         return token.issue(starting.alice.address, 20, 'proof1', {from: starting.alice.address})
       }).then(() => {
+        return firstEvent(token.Transfer())
+      }).then(() => {
         return token.transfer(starting.bob.address, 5, {from: starting.alice.address})
       }).then(() => {
-        return firstEvent(events)
+        return firstEvent(token.Transfer())
       }).then((log) => {
         expect(log.args._from).to.equal(starting.alice.address)
         expect(log.args._to).to.equal(starting.bob.address)
@@ -531,8 +530,7 @@ contract('DynamicToken', (accounts) => {
       }).then(done).catch(done)
     })
 
-    contractIt('should fire a Transfer event when a tranfer is sucessful', (done) => {
-      let events = token.Transfer()
+    contractIt('should fire a Transfer event when a transfer is sucessful', (done) => {
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -543,11 +541,13 @@ contract('DynamicToken', (accounts) => {
         recipient = users.recipient.address
         return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
+        return firstEvent(token.Transfer())
+      }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
         return token.transferFrom(manager, recipient, 50, {from: spender})
       }).then(() => {
-        return firstEvent(events)
+        return firstEvent(token.Transfer())
       }).then((log) => {
         expect(log.args._from).to.equal(manager)
         expect(log.args._to).to.equal(recipient)
@@ -557,8 +557,7 @@ contract('DynamicToken', (accounts) => {
       }).catch(done)
     })
 
-    contractIt('should fire a TransferFrom event when a tranfer is sucessful', (done) => {
-      let events = token.TransferFrom()
+    contractIt('should fire a TransferFrom event when a transfer is sucessful', (done) => {
       let manager, spender, recipient
 
       Promise.resolve().then(() => {
@@ -569,11 +568,13 @@ contract('DynamicToken', (accounts) => {
         recipient = users.recipient.address
         return token.issue(manager, 200, 'proof1', {from: manager})
       }).then(() => {
+        return firstEvent(token.Transfer())
+      }).then(() => {
         return token.approve(spender, 100, {from: manager})
       }).then(() => {
         return token.transferFrom(manager, recipient, 50, {from: spender})
       }).then(() => {
-        return firstEvent(events)
+        return firstEvent(token.TransferFrom())
       }).then((log) => {
         expect(log.args._from).to.equal(manager)
         expect(log.args._to).to.equal(recipient)
