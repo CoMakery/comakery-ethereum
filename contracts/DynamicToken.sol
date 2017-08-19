@@ -108,11 +108,12 @@ contract DynamicToken is TokenInterface {
     if (proofIdExists[_proofId]) return false;
     if (totalSupply + _amount > maxSupply) return false;
 
-    balances[_to] += _amount;
+    balances[msg.sender] += _amount;
     totalSupply += _amount;
+
+    transfer(_to, _amount);
     _indexAccount(_to);
     _indexProofId(_proofId);
-    Transfer(msg.sender, _to, _amount);
     return true;
   }
 
