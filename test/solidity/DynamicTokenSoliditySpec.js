@@ -321,7 +321,7 @@ contract('DynamicToken', (accounts) => {
       }).then((users) => {
         starting = users
         return token.issue(starting.bob.address, amount, 'proof1', {from: starting.alice.address})
-      }).then((issue) => {
+      }).then(() => {
         return firstEvent(token.Transfer())
       }).then((log) => {
         expect(log.args._from).to.equal(starting.alice.address)
