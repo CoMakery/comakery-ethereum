@@ -1,4 +1,0 @@
---compilers coffee:coffee-script/register
---compilers js:babel-core/register
---recursive
---timeout 10000
