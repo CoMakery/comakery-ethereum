@@ -23,7 +23,6 @@
     "truffle:compile": "truffle compile --compile-all --network $NODE_ENV",
     "truffle": "truffle"
   },
-  "keywords": [],
   "dependencies": {
     "babel-cli": "^6.26.0",
     "chai": "^4.1.2",
@@ -45,5 +44,11 @@
     "ethereumjs-testrpc": "^6.0.3",
     "js-yaml": "^3.10.0",
     "mocha": "^4.0.1"
+  },
+  "license": "MIT",
+  "babel": {
+    "compact": false,
+    "presets": ["es2015", "stage-2"],
+    "plugins": ["transform-es2015-destructuring"]
   }
 }
