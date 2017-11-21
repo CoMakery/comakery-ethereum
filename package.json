@@ -17,10 +17,8 @@
     "lint:ci": "eslint --ignore-pattern '!.eslintrc.js' .eslintrc.js bin/truffle-test test truffle.js truffle-overrides.js*",
     "pre-push": "yarn lint && yarn check-clean && yarn check-yaml && yarn test && yarn check-for-only && yarn check",
     "shipit": "yarn pre-push && git push --tags origin head",
-    "tdd": "yarn test:truffle && yarn lint && yarn check-yaml",
-    "test:mocha": "mocha --opts test/js/mocha.opts test/js",
-    "test:truffle": "bin/truffle-test",
-    "test": "yarn test:truffle && yarn test:mocha",
+    "tdd": "yarn test && yarn lint && yarn check-yaml",
+    "test": "bin/truffle-test",
     "testrpc": "testrpc -p 7777 --account='0x0000000000000000000000000000000000000000000000000000000000000001,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000002,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000003,10000000000000000000000' --account='0x0000000000000000000000000000000000000000000000000000000000000004,10000000000000000000000'",
     "truffle:compile": "truffle compile --compile-all --network $NODE_ENV",
     "truffle": "truffle"
