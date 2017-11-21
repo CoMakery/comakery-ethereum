@@ -7,4 +7,4 @@ module.exports = {
       from: '0x... ETH ADDRESS'
     }
   }
-};
+}

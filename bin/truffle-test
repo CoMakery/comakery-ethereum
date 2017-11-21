@@ -1,15 +1,16 @@
-#!/usr/bin/env coffee
+#!/usr/bin/env node
 
-{ d } = require 'lightsaber'
-{ exec } = require 'shelljs'
+const { d } = require('lightsaber')
+const { exec } = require('shelljs')
 
-print = (text, logger) ->
+const print = function(text, logger) {
   text = text.replace(/[\r\n]+$/, '')
-  text = text.replace(/\u001b\[0m      \s*Contract:\s*\u001b\[0m/, '')
-  logger(text) if text.trim()
+  text = text.replace(/\u001b\[0m {6}\s*Contract:\s*\u001b\[0m/, '')
+  if (text.trim()) { return logger(text) }
+}
 
-command = "truffle test --compile-all --network test"
-testRun = exec(command, {async: true, silent: true})
-testRun.stdout.on 'data', (data) -> print(data, console.log)
-testRun.stderr.on 'data', (data) -> print(data, console.error)
-testRun.on 'close', (code) -> process.exit code
+const command = 'truffle test --compile-all --network test'
+const testRun = exec(command, {async: true, silent: true})
+testRun.stdout.on('data', data => print(data, console.log))
+testRun.stderr.on('data', data => print(data, console.error))
+testRun.on('close', code => process.exit(code))

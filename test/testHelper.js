@@ -1,8 +1,4 @@
-import Promise from 'bluebird'
-require('coffee-script/register')
 process.env.NODE_ENV = 'test'
-
-global.Promise = Promise
 
 export const contractShouldThrow = (description, functionToCall, options, expectedErrorMessage = null) => {
   contractIt(description, (done) => {

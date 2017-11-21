@@ -1,5 +1,7 @@
 const unusedVars = [
   'contractItOnly',
+  'contractShouldThrow',
+  'contractShouldThrowForNonOwner',
   'contractShouldThrowForNonOwnerOnly',
   'contractShouldThrowIfClosed',
   'contractShouldThrowIfClosedOnly',
