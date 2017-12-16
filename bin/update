@@ -12,5 +12,5 @@ git checkout --force master
 git reset --hard origin/master
 git clean -fd
 time yarn
-env `grep -v API_KEY .env` yarn run truffle -- compile --compile-all --network $NODE_ENV
+yarn run truffle compile --compile-all --network production
 pm2 gracefulReload server
